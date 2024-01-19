@@ -558,6 +558,7 @@ public class PlayerController : MonoBehaviourPunCallbacks
     [PunRPC]
     public void DecrementEyeAreaCounter()
     {
+        Debug.Log("DecrementEyeAreaCounter");
         EyeAreaCounter--;
     }
     private void CheckEyeAreaStatus()
@@ -593,6 +594,7 @@ public class PlayerController : MonoBehaviourPunCallbacks
 
     public void RemoveAllEnemyPlayerObject()
     {
+        Debug.Log("RemoveAllEnemyPlayerObject");
         uIManager.allowUpdateMapIcon = false;
 
         foreach (var enemyPlayer in uIManager.worldObjects.ToArray())
@@ -1310,6 +1312,7 @@ public class PlayerController : MonoBehaviourPunCallbacks
     // 死亡関数
     public void Death(string killerName, int actor)
     {
+        Debug.Log("Death");
         currentHP = 0;
 
         if (platform == "Oculus")
@@ -1330,6 +1333,7 @@ public class PlayerController : MonoBehaviourPunCallbacks
             Debug.Log("for内 : " + EnemyPhotonViews[i].Owner.NickName);
             EnemyPhotonViews[i].RPC("DecrementEyeAreaCounter", EnemyPhotonViews[i].Owner);
         }
+        Debug.Log("EnemyPlayers.Count : " + EnemyPhotonViews.Count);
         RemoveAllEnemyPlayerObject();
 
 
@@ -1354,6 +1358,7 @@ public class PlayerController : MonoBehaviourPunCallbacks
     [PunRPC]
     public void Kill(string deathName, int actor)
     {
+        Debug.Log("Kill");
         if (PhotonNetwork.LocalPlayer.ActorNumber == actor)
         {
             uIManager.UpdateKillUI(deathName);
@@ -1363,6 +1368,7 @@ public class PlayerController : MonoBehaviourPunCallbacks
     [PunRPC]
     public void AllDestroyThisPlayerMapIcon(int actor)
     {
+        Debug.Log("AllDestroyThisPlayerMapIcon");
         // GameObject playerObject = uIManager.worldObjects.Find(x => x.GetPhotonView().Owner.ActorNumber == actor);
         // if (playerObject != null)
         // {
@@ -1418,7 +1424,6 @@ public class PlayerController : MonoBehaviourPunCallbacks
 
             // プレイヤーリストからプレイヤー削除
             gameManager.OutPlayerGet(PhotonNetwork.LocalPlayer.ActorNumber);
-
 
             // シーン同期の解除
             PhotonNetwork.AutomaticallySyncScene = false;

@@ -198,13 +198,13 @@ public class PlayerController : MonoBehaviourPunCallbacks
     private void Awake()
     {
         // uIManager格納
-
         uIManager = GameObject.FindGameObjectWithTag("UIManager").GetComponent<UIManager>();
 
         // SpawnManager格納
         spawnManager = GameObject.FindGameObjectWithTag("SpawnManager").GetComponent<SpawnManager>();
 
         gameManager = GameObject.FindGameObjectWithTag("GameManager").GetComponent<GameManager>();
+
         gameManager.uIManager = uIManager;
 
         laserPointer = gameManager.laserPointer;
@@ -216,6 +216,7 @@ public class PlayerController : MonoBehaviourPunCallbacks
         if (photonView.IsMine)
         {
 
+
             uIManager.playerCanvas = playerCanvas;
             uIManager.playerAimIconsUI = aimIconsUI;
             uIManager.playerHpUI = hpUI;
@@ -223,7 +224,9 @@ public class PlayerController : MonoBehaviourPunCallbacks
             uIManager.playerMapUI = mapUI;
         }
 
+
         myIcon = uIManager.GetMyMapIcon();
+
         myIcon.GetComponent<Image>().material = whiteMaterial;
     }
     void InitializePlatformSpecificFeatures()
@@ -242,9 +245,7 @@ public class PlayerController : MonoBehaviourPunCallbacks
         }
         else if (platform == "Oculus")
         {
-
             centerEyeAnchor = GameObject.Find("CenterEyeAnchor").GetComponent<Camera>();
-
             oVRCameraRig = GameObject.Find("OVRCameraRig");
             oVRCameraRig.SetActive(true);
             gameManager.mainCamera.SetActive(false);
@@ -267,6 +268,7 @@ public class PlayerController : MonoBehaviourPunCallbacks
                     gunsHolder[i].transform.localPosition = gunModeTransforms[i].localPosition;
                     gunsHolder[i].transform.localRotation = gunModeTransforms[i].localRotation;
                 }
+
                 gameManager.rightControllerRenderer.enabled = false;
                 gameManager.leftControllerRenderer.enabled = false;
 
@@ -275,38 +277,52 @@ public class PlayerController : MonoBehaviourPunCallbacks
             }
 
             // UIをプレイヤーキャンバスに配置
+
             uIManager.SetUIAsChildOfPlayerCanvas();
             playerCanvas.enabled = false;
-
         }
     }
     private void Start()
     {
         // InputDevices.GetDeviceAtXRNodeを使ってHMDデバイスを取得
+
         headDevice = InputDevices.GetDeviceAtXRNode(XRNode.Head);
 
         // カスタムプロパティからプラットフォーム情報を取得して保存する
+
         ExitGames.Client.Photon.Hashtable customProperties = PhotonNetwork.LocalPlayer.CustomProperties;
+
         uIManager.platform = platform = (string)customProperties["Platform"];
 
+
+        // Debug.Log(gameManager == null ? "gameManagerはnullです" : "gameManagerはnullではありません");
         ShotMode = gameManager.ShotMode;
+
         uIManager.ShotMode = ShotMode;
         if (platform == "Oculus" && ShotMode == ShotMode.Gun)
         {
+
+            // Debug.Log(uIManager == null ? "uIManagerはnullです" : "uIManagerはnullではありません");
+            // Debug.Log(uIManager.aimIcon == null ? "uIManager.aimIconはnullです" : "uIManager.aimIconはnullではありません");
             uIManager.aimIcon.SetActive(false);
         }
 
         //カメラ格納 プラットフォームごとの初期化処理を行う
+
         myIconSpriteFacesCamera = myIcon.GetComponent<SpriteFacesCamera>();
+
         InitializePlatformSpecificFeatures();
+
         uIManager.myPlayerObject = this.gameObject;
 
         // 現在HPに最大HPを代入
+
         currentHP = maxHP;
 
         rb = GetComponent<Rigidbody>();
 
         // カーソルの表示判定関数
+
         UpdateCursorLock();
 
         // 銃を扱うリスト初期化
@@ -355,7 +371,6 @@ public class PlayerController : MonoBehaviourPunCallbacks
 
         // 全プレーヤー同期の銃切り替え
         photonView.RPC("SetGun", RpcTarget.All, selectedGun);
-
     }
 
     [PunRPC]
@@ -410,7 +425,8 @@ public class PlayerController : MonoBehaviourPunCallbacks
         if (!photonView.IsMine) return;
 
         CheckEyeAreaStatus();
-        //         uIManager.UpdateMapIconPos(this.gameObject, myIcon);
+        // Debug.Log("EyeAreaCounter : " + EyeAreaCounter);
+        uIManager.UpdateMapIconPos(this.gameObject, myIcon);
 
         //視点移動関数の呼び出し
         PlayerRotate();
@@ -1308,8 +1324,10 @@ public class PlayerController : MonoBehaviourPunCallbacks
         Destroy(myIcon);
         photonView.RPC("AllDestroyThisPlayerMapIcon", RpcTarget.All, photonView.Owner.ActorNumber);
         photonView.RPC("AllDestroyThisPlayerMapIcon", RpcTarget.All, actor);
+        Debug.Log("EnemyPlayers.Count : " + EnemyPhotonViews.Count);
         for (int i = 0; i < EnemyPhotonViews.Count; i++)
         {
+            Debug.Log("for内 : " + EnemyPhotonViews[i].Owner.NickName);
             EnemyPhotonViews[i].RPC("DecrementEyeAreaCounter", EnemyPhotonViews[i].Owner);
         }
         RemoveAllEnemyPlayerObject();

@@ -193,6 +193,7 @@ public class UIManager : MonoBehaviour
 
     public void ResetUICanvas()
     {
+        Debug.Log("ResetUICanvas");
         if (platform == "Oculus" && ShotMode == ShotMode.Gun)
         {
             aimIconsUI.transform.SetParent(aimIconsParent.transform);
@@ -480,6 +481,7 @@ public class UIManager : MonoBehaviour
     // 死亡パネルを更新して開く
     public void UpdateDeathUI(string name, float reSpawnTime)
     {
+        Debug.Log("UpdateDeathUI");
         this.reSpawnTime = reSpawnTime;
         fiveSecond = 5f;
 

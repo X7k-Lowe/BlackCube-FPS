@@ -518,8 +518,11 @@ public class PlayerController : MonoBehaviourPunCallbacks
         }
         else if (platform == "Oculus")
         {
-            //カメラの位置調整
-            oVRCameraRig.transform.position = viewPoint.position;
+            if (oVRCameraRig != null)
+            {
+                //カメラの位置調整
+                oVRCameraRig.transform.position = viewPoint.position;
+            }
             // // 回転
             // centerEyeAnchor.transform.parent.parent.gameObject.transform.rotation = viewPoint.rotation;
         }
@@ -707,7 +710,10 @@ public class PlayerController : MonoBehaviourPunCallbacks
         }
         else if (platform == "Oculus")
         {
-            movement = ((oVRCameraRig.transform.forward * moveDir.z) + (oVRCameraRig.transform.right * moveDir.x)).normalized;
+            if (oVRCameraRig != null)
+            {
+                movement = ((oVRCameraRig.transform.forward * moveDir.z) + (oVRCameraRig.transform.right * moveDir.x)).normalized;
+            }
         }
 
         // 状態ごとに移動量を変更

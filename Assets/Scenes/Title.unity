@@ -2722,7 +2722,7 @@ MonoBehaviour:
   m_text: ERROR
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 57543ca5d6e94dc428b9d0af34037ce8, type: 2}
-  m_sharedMaterial: {fileID: -5226340269765664369, guid: b2354c04c236995469dfc154a162e465, type: 2}
+  m_sharedMaterial: {fileID: 274806248547660405, guid: 57543ca5d6e94dc428b9d0af34037ce8, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -9260,7 +9260,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0, g: 0, b: 0, a: 0.85490197}
+  m_Color: {r: 0, g: 0, b: 0, a: 0.9882353}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1

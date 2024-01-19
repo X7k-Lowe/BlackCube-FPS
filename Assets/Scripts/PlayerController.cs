@@ -609,7 +609,7 @@ public class PlayerController : MonoBehaviourPunCallbacks
             // 変数にユーザーのサムスティックの動きを格納
             Vector2 rStickInput = OVRInput.Get(OVRInput.Axis2D.PrimaryThumbstick, OVRInput.Controller.RTouch);
 
-            // サムスティックのx軸の動きを反映
+            // サムスティックのx軸の動きを反映 
             transform.rotation = Quaternion.Euler(transform.eulerAngles.x,
             transform.eulerAngles.y + rStickInput.x * hmdSensitivity,
             transform.eulerAngles.z);

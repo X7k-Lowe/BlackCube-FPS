@@ -14,10 +14,10 @@ public enum Wall
     Ground,
 }
 
-public enum ShotMode
+public enum AimMode
 {
+    RightHand,
     Screen,
-    Gun,
 }
 public class PlayerController : MonoBehaviourPunCallbacks
 {
@@ -191,7 +191,7 @@ public class PlayerController : MonoBehaviourPunCallbacks
     private LaserPointer laserPointer;
     public GameObject oculusGunsHolder;
     public List<Transform> gunModeTransforms;
-    public ShotMode ShotMode { get; set; } = ShotMode.Gun;
+    public AimMode ShotMode { get; set; } = AimMode.RightHand;
 
     public GameObject gunModeAimIcon;
     GameObject laserPoint;
@@ -229,7 +229,7 @@ public class PlayerController : MonoBehaviourPunCallbacks
 
         myIcon = uIManager.GetMyMapIcon();
 
-        myIcon.GetComponent<Image>().material = whiteMaterial;
+        myIcon.transform.GetChild(0).GetComponent<Image>().material = whiteMaterial;
     }
     void InitializePlatformSpecificFeatures()
     {
@@ -255,11 +255,11 @@ public class PlayerController : MonoBehaviourPunCallbacks
             myIconSpriteFacesCamera.useCamera = centerEyeAnchor;
             billboard.useCamera = centerEyeAnchor;
 
-            if (ShotMode == ShotMode.Screen)
+            if (ShotMode == AimMode.Screen)
             {
                 gameManager.uIHelper.SetActive(false);
             }
-            else if (ShotMode == ShotMode.Gun)
+            else if (ShotMode == AimMode.RightHand)
             {
                 oculusGunsHolder.transform.SetParent(rightController.transform);
                 oculusGunsHolder.transform.localPosition = Vector3.zero;
@@ -298,10 +298,10 @@ public class PlayerController : MonoBehaviourPunCallbacks
         uIManager.platform = platform = (string)customProperties["Platform"];
 
         // Debug.Log(gameManager == null ? "gameManagerはnullです" : "gameManagerはnullではありません");
-        ShotMode = gameManager.ShotMode;
+        ShotMode = gameManager.AimMode;
 
         uIManager.ShotMode = ShotMode;
-        if (platform == "Oculus" && ShotMode == ShotMode.Gun)
+        if (platform == "Oculus" && ShotMode == AimMode.RightHand)
         {
 
             // Debug.Log(uIManager == null ? "uIManagerはnullです" : "uIManagerはnullではありません");
@@ -1138,8 +1138,8 @@ public class PlayerController : MonoBehaviourPunCallbacks
         else if (platform == "Oculus")
         {
             ray = new Ray();
-            if (ShotMode == ShotMode.Screen) ray = centerEyeAnchor.ViewportPointToRay(new Vector2(0.5f, 0.5f));
-            else if (ShotMode == ShotMode.Gun) ray = new Ray(laserPointer.StartPoint, (laserPointer.EndPoint - laserPointer.StartPoint).normalized);
+            if (ShotMode == AimMode.Screen) ray = centerEyeAnchor.ViewportPointToRay(new Vector2(0.5f, 0.5f));
+            else if (ShotMode == AimMode.RightHand) ray = new Ray(laserPointer.StartPoint, (laserPointer.EndPoint - laserPointer.StartPoint).normalized);
 
             if (Physics.Raycast(ray, out RaycastHit hit, Mathf.Infinity, ~eyeAreaLayer.value))
             {
@@ -1182,7 +1182,7 @@ public class PlayerController : MonoBehaviourPunCallbacks
 
     void UpdateLaserPoint()
     {
-        if (platform != "Oculus" || ShotMode != ShotMode.Gun) return;
+        if (platform != "Oculus" || ShotMode != AimMode.RightHand) return;
 
         Ray ray = new Ray(laserPointer.StartPoint, (laserPointer.EndPoint - laserPointer.StartPoint).normalized);
 
@@ -1336,7 +1336,7 @@ public class PlayerController : MonoBehaviourPunCallbacks
         if (platform == "Oculus")
         {
             uIManager.ResetUICanvas();
-            if (ShotMode == ShotMode.Gun)
+            if (ShotMode == AimMode.RightHand)
             {
                 oculusGunsHolder.transform.SetParent(this.gameObject.transform);
             }

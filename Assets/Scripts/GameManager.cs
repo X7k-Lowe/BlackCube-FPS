@@ -55,7 +55,7 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
     public SkinnedMeshRenderer rightControllerRenderer;
     public SkinnedMeshRenderer leftControllerRenderer;
 
-    public ShotMode ShotMode = ShotMode.Gun;
+    public AimMode AimMode = AimMode.RightHand;
 
     private void Awake()
     {
@@ -72,16 +72,20 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
         else
         {
             NewPlayerGet(PhotonNetwork.NickName);
-            // "KillNumber"というキーでルームのカスタムプロパティからkillSetの値を取得
-            // if (PhotonNetwork.IsMasterClient)
-            // {
+
             if (PhotonNetwork.CurrentRoom.CustomProperties.ContainsKey("KillNumber"))
             {
                 targetNumber = (int)PhotonNetwork.CurrentRoom.CustomProperties["KillNumber"];
-                Debug.Log("targetNumber: " + targetNumber);
                 KillNumberGet(targetNumber);
             }
-            // }
+
+            if (PlatformManager.Instance.Platform == "Oculus")
+            {
+                if (PhotonNetwork.CurrentRoom.CustomProperties.ContainsKey("AimMode"))
+                {
+                    AimMode = (AimMode)PhotonNetwork.CurrentRoom.CustomProperties["AimMode"];
+                }
+            }
 
             state = GameState.Playing;
         }

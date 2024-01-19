@@ -7,7 +7,6 @@ using Photon.Realtime;
 using UnityEngine.EventSystems;
 using System.Linq;
 
-
 public class PhotonManager : MonoBehaviourPunCallbacks // MonoBehaviourとPhotonの機能の継承
 {
     // static 変数
@@ -23,6 +22,7 @@ public class PhotonManager : MonoBehaviourPunCallbacks // MonoBehaviourとPhoton
 
     // タイトルイメージ
     public GameObject titleImage;
+    public GameObject titleText;
 
     // ロードパネル
     public GameObject loadingPanel;
@@ -119,6 +119,22 @@ public class PhotonManager : MonoBehaviourPunCallbacks // MonoBehaviourとPhoton
     public Button rightButton;
     public int killNumber = 1;
 
+    public GameObject aimModeButton;
+    public AimMode aimMode = AimMode.RightHand;
+    public TextMeshProUGUI aimModeText;
+
+    public void ChangeAimMode()
+    {
+        if (aimMode == AimMode.RightHand)
+        {
+            aimMode = AimMode.Screen;
+        }
+        else
+        {
+            aimMode = AimMode.RightHand;
+        }
+    }
+
     private void Awake()
     {
         // static 変数に格納
@@ -126,16 +142,23 @@ public class PhotonManager : MonoBehaviourPunCallbacks // MonoBehaviourとPhoton
         if (PlatformManager.Instance.Platform == "Windows")
         {
             pointerEventData = new PointerEventData(eventSystemWindows);
+            aimModeButton.SetActive(true);
         }
         else if (PlatformManager.Instance.Platform == "Oculus")
         {
             oVRPointerEventData = new OVRPointerEventData(eventSystemOculus);
+            aimModeButton.SetActive(true);
         }
     }
 
     void Update()
     {
         HandleHoverUI();
+        // if (PlatformManager.Instance.Platform == "Oculus")
+        // {
+        if (aimMode == AimMode.RightHand) aimModeText.text = "RIGHT HAND";
+        else aimModeText.text = "SCREEN";
+        // }
     }
     void HandleHoverUI()
     {
@@ -622,7 +645,8 @@ public class PhotonManager : MonoBehaviourPunCallbacks // MonoBehaviourとPhoton
         // killSetの情報をカスタムプロパティとして設定
         ExitGames.Client.Photon.Hashtable customProperties = new ExitGames.Client.Photon.Hashtable
         {
-            { "KillNumber", killNumber }
+            { "KillNumber", killNumber },
+            { "AimMode", (int)aimMode }
         };
         PhotonNetwork.CurrentRoom.SetCustomProperties(customProperties);
 

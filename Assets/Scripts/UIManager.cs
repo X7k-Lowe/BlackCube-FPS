@@ -116,7 +116,7 @@ public class UIManager : MonoBehaviour
     float fiveSecond = 5f;
 
     public LineRenderer laserSight;
-    public ShotMode ShotMode { get; set; }
+    public AimMode ShotMode { get; set; }
     void Update()
     {
         // if (!photonView.IsMine) return;
@@ -168,14 +168,14 @@ public class UIManager : MonoBehaviour
     }
     public void SetUIAsChildOfPlayerCanvas()
     {
-        if (platform == "Oculus" && ShotMode == ShotMode.Gun)
+        if (platform == "Oculus" && ShotMode == AimMode.RightHand)
         {
             aimIconsUI.transform.SetParent(playerAimIconsUI.transform);
             aimIconsUI.transform.localPosition = Vector3.zero;
             aimIconsUI.transform.localScale = Vector3.one;
             aimIconsUI.transform.localRotation = Quaternion.Euler(0, 0, 0);
         }
-        else if (platform == "Oculus" && ShotMode == ShotMode.Screen)
+        else if (platform == "Oculus" && ShotMode == AimMode.Screen)
         {
             aimIcon.transform.localPosition = new Vector3(aimIconsUI.transform.localPosition.x, aimIconsUI.transform.localPosition.y, 800);
             aimIcon.transform.localScale = Vector3.one * 1.5f;
@@ -210,7 +210,7 @@ public class UIManager : MonoBehaviour
     public void ResetUICanvas()
     {
         Debug.Log("ResetUICanvas");
-        if (platform == "Oculus" && ShotMode == ShotMode.Gun)
+        if (platform == "Oculus" && ShotMode == AimMode.RightHand)
         {
             aimIconsUI.transform.SetParent(aimIconsParent.transform);
             aimIconsUI.transform.localPosition = Vector3.zero;
@@ -274,7 +274,7 @@ public class UIManager : MonoBehaviour
     {
         gunChangeSlider.value = 0;
         gunChangeUI.SetActive(false);
-        if (platform == "Windows" || ShotMode == ShotMode.Screen) aimIcon.SetActive(true);
+        if (platform == "Windows" || ShotMode == AimMode.Screen) aimIcon.SetActive(true);
         changeAimIcon.gameObject.SetActive(false);
     }
 
@@ -392,7 +392,7 @@ public class UIManager : MonoBehaviour
         commandTexts[3].text = "L [下トリガー]";
         commandTexts[4].text = "L [上トリガー]";
         commandTexts[5].text = "R [上トリガー]";
-        if (ShotMode == ShotMode.Gun) actionTexts[5].text = "レーザーサイト";
+        if (ShotMode == AimMode.RightHand) actionTexts[5].text = "レーザーサイト";
         commandTexts[6].text = "R [下トリガー]";
         commandTexts[7].text = "[Aボタン]";
         commandTexts[8].text = "[Bボタン]";
@@ -551,7 +551,7 @@ public class UIManager : MonoBehaviour
         {
             if (!IsChanging)
             {
-                if (platform == "Windows" || ShotMode == ShotMode.Screen)
+                if (platform == "Windows" || ShotMode == AimMode.Screen)
                 {
                     aimIcon.SetActive(true);
                 }
@@ -570,7 +570,7 @@ public class UIManager : MonoBehaviour
         {
             if (!IsChanging)
             {
-                if (platform == "Windows" || ShotMode == ShotMode.Screen)
+                if (platform == "Windows" || ShotMode == AimMode.Screen)
                 {
                     aimIcon.SetActive(true);
                 }
@@ -596,7 +596,7 @@ public class UIManager : MonoBehaviour
         {
             if (!IsChanging)
             {
-                if (platform == "Windows" || ShotMode == ShotMode.Screen)
+                if (platform == "Windows" || ShotMode == AimMode.Screen)
                 {
                     aimIcon.SetActive(true);
                 }

@@ -193,6 +193,13 @@ public class UIManager : MonoBehaviour
 
     public void ResetUICanvas()
     {
+        if (platform == "Oculus" && ShotMode == ShotMode.Gun)
+        {
+            aimIconsUI.transform.SetParent(aimIconsParent.transform);
+            aimIconsUI.transform.localPosition = Vector3.zero;
+            aimIconsUI.transform.localScale = Vector3.one;
+            aimIconsUI.transform.localRotation = Quaternion.Euler(0, 0, 0);
+        }
         playerMapUI.transform.localScale = Vector3.one;
         hpUI.transform.SetParent(hpUIParent.transform);
         helpUI.transform.SetParent(helpUIParent.transform);

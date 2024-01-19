@@ -198,6 +198,7 @@ public class PlayerController : MonoBehaviourPunCallbacks
     private void Awake()
     {
         // uIManager格納
+
         uIManager = GameObject.FindGameObjectWithTag("UIManager").GetComponent<UIManager>();
 
         // SpawnManager格納
@@ -207,12 +208,14 @@ public class PlayerController : MonoBehaviourPunCallbacks
         gameManager.uIManager = uIManager;
 
         laserPointer = gameManager.laserPointer;
+
         rightController = GameObject.Find("RightHandAnchor");
 
         layerMaskGround = 1 << LayerMask.NameToLayer("Ground");
 
         if (photonView.IsMine)
         {
+
             uIManager.playerCanvas = playerCanvas;
             uIManager.playerAimIconsUI = aimIconsUI;
             uIManager.playerHpUI = hpUI;
@@ -239,7 +242,9 @@ public class PlayerController : MonoBehaviourPunCallbacks
         }
         else if (platform == "Oculus")
         {
+
             centerEyeAnchor = GameObject.Find("CenterEyeAnchor").GetComponent<Camera>();
+
             oVRCameraRig = GameObject.Find("OVRCameraRig");
             oVRCameraRig.SetActive(true);
             gameManager.mainCamera.SetActive(false);
@@ -272,6 +277,7 @@ public class PlayerController : MonoBehaviourPunCallbacks
             // UIをプレイヤーキャンバスに配置
             uIManager.SetUIAsChildOfPlayerCanvas();
             playerCanvas.enabled = false;
+
         }
     }
     private void Start()
@@ -404,8 +410,7 @@ public class PlayerController : MonoBehaviourPunCallbacks
         if (!photonView.IsMine) return;
 
         CheckEyeAreaStatus();
-        // Debug.Log("EyeAreaCounter : " + EyeAreaCounter);
-        uIManager.UpdateMapIconPos(this.gameObject, myIcon);
+        //         uIManager.UpdateMapIconPos(this.gameObject, myIcon);
 
         //視点移動関数の呼び出し
         PlayerRotate();
@@ -1303,10 +1308,8 @@ public class PlayerController : MonoBehaviourPunCallbacks
         Destroy(myIcon);
         photonView.RPC("AllDestroyThisPlayerMapIcon", RpcTarget.All, photonView.Owner.ActorNumber);
         photonView.RPC("AllDestroyThisPlayerMapIcon", RpcTarget.All, actor);
-        Debug.Log("EnemyPlayers.Count : " + EnemyPhotonViews.Count);
         for (int i = 0; i < EnemyPhotonViews.Count; i++)
         {
-            Debug.Log("for内 : " + EnemyPhotonViews[i].Owner.NickName);
             EnemyPhotonViews[i].RPC("DecrementEyeAreaCounter", EnemyPhotonViews[i].Owner);
         }
         RemoveAllEnemyPlayerObject();

@@ -46,6 +46,7 @@ public class PlayerController : MonoBehaviourPunCallbacks
     // プレイヤーキャンバスUI
     public Billboard billboard;
     public Canvas playerCanvas;
+    public RectTransform playerCanvasSize;
     public GameObject aimIconsUI;
     public GameObject hpUI;
     public GameObject helpUI;
@@ -195,6 +196,8 @@ public class PlayerController : MonoBehaviourPunCallbacks
     public GameObject gunModeAimIcon;
     GameObject laserPoint;
 
+    public Vector3 viewPointInitLocalPosition;
+
     private void Awake()
     {
         // uIManager格納
@@ -215,9 +218,8 @@ public class PlayerController : MonoBehaviourPunCallbacks
 
         if (photonView.IsMine)
         {
-
-
             uIManager.playerCanvas = playerCanvas;
+            uIManager.playerCanvasSize = playerCanvasSize;
             uIManager.playerAimIconsUI = aimIconsUI;
             uIManager.playerHpUI = hpUI;
             uIManager.playerHelpUI = helpUI;
@@ -288,12 +290,12 @@ public class PlayerController : MonoBehaviourPunCallbacks
 
         headDevice = InputDevices.GetDeviceAtXRNode(XRNode.Head);
 
+
         // カスタムプロパティからプラットフォーム情報を取得して保存する
 
         ExitGames.Client.Photon.Hashtable customProperties = PhotonNetwork.LocalPlayer.CustomProperties;
 
         uIManager.platform = platform = (string)customProperties["Platform"];
-
 
         // Debug.Log(gameManager == null ? "gameManagerはnullです" : "gameManagerはnullではありません");
         ShotMode = gameManager.ShotMode;
@@ -368,6 +370,8 @@ public class PlayerController : MonoBehaviourPunCallbacks
             float textWidth = billboard.nameText.preferredWidth;
             billboard.background.sizeDelta = new Vector2(textWidth + 20, billboard.background.sizeDelta.y + 5);
         }
+
+        InitPlayerRotate();
 
         // 全プレーヤー同期の銃切り替え
         photonView.RPC("SetGun", RpcTarget.All, selectedGun);
@@ -605,6 +609,20 @@ public class PlayerController : MonoBehaviourPunCallbacks
         uIManager.allowUpdateMapIcon = true;
     }
 
+    void InitPlayerRotate()
+    {
+        if (platform == "Oculus")
+        {
+            transform.rotation = Quaternion.identity;
+            viewPoint.rotation = Quaternion.identity;
+            playerCanvasPoint.rotation = Quaternion.identity;
+            oVRCameraRig.transform.rotation = Quaternion.identity;
+
+            viewPoint.localPosition = viewPointInitLocalPosition;
+            playerCanvasPoint.localPosition = viewPointInitLocalPosition;
+            oVRCameraRig.transform.position = viewPoint.position;
+        }
+    }
 
     // 視点移動関数
     public void PlayerRotate()

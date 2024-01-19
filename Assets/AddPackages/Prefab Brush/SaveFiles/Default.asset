@@ -1,0 +1,135 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 21cb495ffbca0404d878640680165899, type: 3}
+  m_Name: Default
+  m_EditorClassIdentifier: 
+  prefabList: []
+  prefabData:
+  - prefab: {fileID: 9081904295549263799, guid: 8a893e8c0c378024d9e3649013b1df3c, type: 3}
+    selected: 1
+  - prefab: {fileID: 9081904295549263799, guid: 3005bee584c08ec4cab0b7cdba617f89, type: 3}
+    selected: 1
+  - prefab: {fileID: 9081904295549263799, guid: 554d2c9153847724980b65a5549a4719, type: 3}
+    selected: 1
+  - prefab: {fileID: 9081904295549263799, guid: e0caaa226aadabd478aa59546d7787be, type: 3}
+    selected: 1
+  - prefab: {fileID: 9081904295549263799, guid: aff5cd16afc129f4e8d9368455da13ad, type: 3}
+    selected: 1
+  - prefab: {fileID: 9081904295549263799, guid: da76725827f219742bf6591ce4bc37ef, type: 3}
+    selected: 1
+  - prefab: {fileID: 9081904295549263799, guid: d90ffd80a87a4b349badfa530eeccc49, type: 3}
+    selected: 1
+  - prefab: {fileID: 9081904295549263799, guid: 3b375d58d3adfc14e9977acbec2bf703, type: 3}
+    selected: 1
+  - prefab: {fileID: 9081904295549263799, guid: 8e1ebd17167829147a25c912e1717d5a, type: 3}
+    selected: 1
+  - prefab: {fileID: 9081904295549263799, guid: c3ba409ff3a678f4cbdceac7fe6b0f79, type: 3}
+    selected: 1
+  - prefab: {fileID: 9081904295549263799, guid: 73e9416a87eb1fa4b85bc683d7f8cc38, type: 3}
+    selected: 1
+  - prefab: {fileID: 9081904295549263799, guid: 79e506b408357e749a9cb6cdab5465ab, type: 3}
+    selected: 1
+  - prefab: {fileID: 9081904295549263799, guid: 039208217828b7d4593df094ba10d02b, type: 3}
+    selected: 1
+  - prefab: {fileID: 9081904295549263799, guid: 5c1d64440eb65d1478e8c71667c69041, type: 3}
+    selected: 1
+  - prefab: {fileID: 9081904295549263799, guid: 766b352bff10a67489c116fcfcf4ae07, type: 3}
+    selected: 1
+  - prefab: {fileID: 9081904295549263799, guid: 8ef85363b37705b4db14640d044d5a1c, type: 3}
+    selected: 1
+  - prefab: {fileID: 9081904295549263799, guid: 924fb7a0be1379044804fa2cc51dd323, type: 3}
+    selected: 1
+  - prefab: {fileID: 9081904295549263799, guid: 029d4f32ab2f7104e83c9412705bb0ae, type: 3}
+    selected: 1
+  - prefab: {fileID: 9081904295549263799, guid: fa1e8d40ce4e139489f257bfa2ec913a, type: 3}
+    selected: 1
+  - prefab: {fileID: 9081904295549263799, guid: b045820bc31ea4a48a2b9a501a08ebbf, type: 3}
+    selected: 1
+  - prefab: {fileID: 9081904295549263799, guid: 42e909fcd786b1d4cbb1bfd79d77a1b2, type: 3}
+    selected: 1
+  - prefab: {fileID: 9081904295549263799, guid: 8cb717b75d0fe6541a103fb2d35afb81, type: 3}
+    selected: 1
+  - prefab: {fileID: 9081904295549263799, guid: 1e1aa94c8a40be34fb5ee6ade2582cb7, type: 3}
+    selected: 1
+  - prefab: {fileID: 9081904295549263799, guid: 0adf702461d794f48aec7954e7c3eb10, type: 3}
+    selected: 1
+  paintType: 0
+  brushSize: 37
+  minBrushSize: 0.1
+  maxBrushSize: 300
+  paintDeltaDistance: 114.8
+  maxPaintDeltaDistance: 200
+  minPaintDeltaDistance: 0.1
+  prefabsPerStroke: 1
+  maxprefabsPerStroke: 20
+  minprefabsPerStroke: 1
+  spawnHeight: 10
+  addRigidbodyToPaintedPrefab: 1
+  physicsIterations: 100
+  checkLayer: 0
+  checkTag: 0
+  checkSlope: 0
+  ignorePaintedPrefabs: 0
+  ignoreTriggers: 1
+  chainPivotAxis: 0
+  chainDirection: 0
+  requiredTagMask: 0
+  requiredLayerMask: 0
+  minRequiredSlope: 0
+  maxRequiredSlope: 0
+  prefabOriginOffset: {x: 0, y: 5, z: 0}
+  prefabRotationOffset: {x: 0, y: 0, z: 0}
+  draggingAction: 0
+  rotationAxis: 0
+  rotationSensitivity: 10
+  parentingStyle: 2
+  parent: {fileID: 0}
+  rotateToMatchSurface: 0
+  rotateSurfaceDirection: 0
+  randomizeRotation: 0
+  minXRotation: 0
+  maxXRotation: 0
+  minYRotation: 0
+  maxYRotation: 0
+  minZRotation: 0
+  maxZRotation: 0
+  scaleType: 0
+  scaleApplicationType: 0
+  minScale: 1
+  maxScale: 1
+  minXScale: 1
+  maxXScale: 1
+  minYScale: 1
+  maxYScale: 1
+  minZScale: 1
+  maxZScale: 1
+  parentList: []
+  eraseBrushSize: 20
+  minEraseBrushSize: 0.1
+  maxEraseBrushSize: 20
+  eraseType: 0
+  checkLayerForErase: 0
+  checkTagForErase: 0
+  checkSlopeForErase: 0
+  mustBeSelectedInBrush: 0
+  requiredTagMaskForErase: 0
+  requiredLayerMaskForErase: 0
+  minRequiredSlopeForErase: 0
+  maxRequiredSlopeForErase: 0
+  eraseDetection: 0
+  paintBrushHotKey: 112
+  paintBrushHoldKey: 1
+  removeBrushHotKey: 306
+  removeBrushHoldKey: 1
+  disableBrushHotKey: 105
+  disableBrushHoldKey: 1
+  hideToolsWarnings: 0

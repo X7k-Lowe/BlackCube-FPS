@@ -7,7 +7,6 @@ using Photon.Pun;
 public class UIManager : MonoBehaviour
 {
     public Canvas canvas;
-    public Transform canvasSize;
 
 
     // 弾薬テキスト
@@ -27,6 +26,7 @@ public class UIManager : MonoBehaviour
 
     // 死亡パネル
     public GameObject deathPanel;
+    public Image deathPanelBackground;
 
     // 死亡テキスト
     public TextMeshProUGUI deathText;
@@ -84,11 +84,13 @@ public class UIManager : MonoBehaviour
     public bool IsEnd { get; set; } = false;
 
 
+    public RectTransform canvasSize;
     public GameObject aimIconsParent;
     public GameObject hpUIParent;
     public GameObject helpUIParent;
     public GameObject mapUIParent;
     public RectTransform mapUIParentRect;
+    public GameObject panelsUI;
     public GameObject aimIconsUI;
     public GameObject hpUI;
     public GameObject helpUI;
@@ -96,6 +98,7 @@ public class UIManager : MonoBehaviour
 
     // プレイヤーキャンバス
     public Canvas playerCanvas { get; set; }
+    public RectTransform playerCanvasSize { get; set; }
     public GameObject playerAimIconsUI { get; set; }
     public GameObject playerHpUI { get; set; }
     public GameObject playerHelpUI { get; set; }
@@ -113,7 +116,7 @@ public class UIManager : MonoBehaviour
     float fiveSecond = 5f;
 
     public LineRenderer laserSight;
-    public ShotMode ShotMode { get; set; }
+    public AimMode ShotMode { get; set; }
     void Update()
     {
         // if (!photonView.IsMine) return;
@@ -165,47 +168,78 @@ public class UIManager : MonoBehaviour
     }
     public void SetUIAsChildOfPlayerCanvas()
     {
-        if (platform == "Oculus" && ShotMode == ShotMode.Gun)
+        if (platform == "Oculus" && ShotMode == AimMode.RightHand)
         {
             aimIconsUI.transform.SetParent(playerAimIconsUI.transform);
             aimIconsUI.transform.localPosition = Vector3.zero;
             aimIconsUI.transform.localScale = Vector3.one;
             aimIconsUI.transform.localRotation = Quaternion.Euler(0, 0, 0);
         }
+        else if (platform == "Oculus" && ShotMode == AimMode.Screen)
+        {
+            aimIcon.transform.localPosition = new Vector3(aimIconsUI.transform.localPosition.x, aimIconsUI.transform.localPosition.y, 800);
+            aimIcon.transform.localScale = Vector3.one * 1.5f;
+        }
 
+        panelsUI.transform.SetParent(playerCanvasSize.transform);
         hpUI.transform.SetParent(playerHpUI.transform);
         helpUI.transform.SetParent(playerHelpUI.transform);
         mapUI.transform.SetParent(playerMapUI.transform);
 
+        panelsUI.transform.localPosition = Vector3.zero;
         hpUI.transform.localPosition = Vector3.zero;
         helpUI.transform.localPosition = Vector3.zero;
         mapUI.transform.localPosition = Vector3.zero;
 
+        panelsUI.transform.localScale = Vector3.one;
         hpUI.transform.localScale = Vector3.one;
         helpUI.transform.localScale = Vector3.one;
         mapUI.transform.localScale = Vector3.one;
 
+        panelsUI.transform.localRotation = Quaternion.Euler(0, 0, 0);
         hpUI.transform.localRotation = Quaternion.Euler(0, 0, 0);
         helpUI.transform.localRotation = Quaternion.Euler(0, 0, 0);
         mapUI.transform.localRotation = Quaternion.Euler(0, 0, 0);
         playerMapUI.transform.localScale = Vector3.one * 1.75f;
+
+        deathPanelBackground.enabled = false;
+
+        hpUI.SetActive(true);
     }
 
     public void ResetUICanvas()
     {
+        Debug.Log("ResetUICanvas");
+        if (platform == "Oculus" && ShotMode == AimMode.RightHand)
+        {
+            aimIconsUI.transform.SetParent(aimIconsParent.transform);
+            aimIconsUI.transform.localPosition = Vector3.zero;
+            aimIconsUI.transform.localScale = Vector3.one;
+            aimIconsUI.transform.localRotation = Quaternion.Euler(0, 0, 0);
+        }
         playerMapUI.transform.localScale = Vector3.one;
+
+        panelsUI.transform.SetParent(canvasSize.transform);
         hpUI.transform.SetParent(hpUIParent.transform);
         helpUI.transform.SetParent(helpUIParent.transform);
         mapUI.transform.SetParent(mapUIParent.transform);
+
+        panelsUI.transform.localPosition = Vector3.zero;
         hpUI.transform.localPosition = Vector3.zero;
         helpUI.transform.localPosition = Vector3.zero;
         mapUI.transform.localPosition = Vector3.zero;
+
+        panelsUI.transform.localScale = Vector3.one;
         hpUI.transform.localScale = Vector3.one;
         helpUI.transform.localScale = Vector3.one;
         mapUI.transform.localScale = Vector3.one;
+
+        panelsUI.transform.localRotation = Quaternion.Euler(0, 0, 0);
         hpUI.transform.localRotation = Quaternion.Euler(0, 0, 0);
         helpUI.transform.localRotation = Quaternion.Euler(0, 0, 0);
         mapUI.transform.localRotation = Quaternion.Euler(0, 0, 0);
+
+        hpUI.SetActive(false);
     }
     void Start()
     {
@@ -240,7 +274,7 @@ public class UIManager : MonoBehaviour
     {
         gunChangeSlider.value = 0;
         gunChangeUI.SetActive(false);
-        if (platform == "Windows" || ShotMode == ShotMode.Screen) aimIcon.SetActive(true);
+        if (platform == "Windows" || ShotMode == AimMode.Screen) aimIcon.SetActive(true);
         changeAimIcon.gameObject.SetActive(false);
     }
 
@@ -358,7 +392,7 @@ public class UIManager : MonoBehaviour
         commandTexts[3].text = "L [下トリガー]";
         commandTexts[4].text = "L [上トリガー]";
         commandTexts[5].text = "R [上トリガー]";
-        if (ShotMode == ShotMode.Gun) actionTexts[5].text = "レーザーサイト";
+        if (ShotMode == AimMode.RightHand) actionTexts[5].text = "レーザーサイト";
         commandTexts[6].text = "R [下トリガー]";
         commandTexts[7].text = "[Aボタン]";
         commandTexts[8].text = "[Bボタン]";
@@ -473,6 +507,7 @@ public class UIManager : MonoBehaviour
     // 死亡パネルを更新して開く
     public void UpdateDeathUI(string name, float reSpawnTime)
     {
+        Debug.Log("UpdateDeathUI");
         this.reSpawnTime = reSpawnTime;
         fiveSecond = 5f;
 
@@ -516,7 +551,7 @@ public class UIManager : MonoBehaviour
         {
             if (!IsChanging)
             {
-                if (platform == "Windows" || ShotMode == ShotMode.Screen)
+                if (platform == "Windows" || ShotMode == AimMode.Screen)
                 {
                     aimIcon.SetActive(true);
                 }
@@ -535,7 +570,7 @@ public class UIManager : MonoBehaviour
         {
             if (!IsChanging)
             {
-                if (platform == "Windows" || ShotMode == ShotMode.Screen)
+                if (platform == "Windows" || ShotMode == AimMode.Screen)
                 {
                     aimIcon.SetActive(true);
                 }
@@ -561,7 +596,7 @@ public class UIManager : MonoBehaviour
         {
             if (!IsChanging)
             {
-                if (platform == "Windows" || ShotMode == ShotMode.Screen)
+                if (platform == "Windows" || ShotMode == AimMode.Screen)
                 {
                     aimIcon.SetActive(true);
                 }

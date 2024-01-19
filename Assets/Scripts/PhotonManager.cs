@@ -283,6 +283,7 @@ public class PhotonManager : MonoBehaviourPunCallbacks // MonoBehaviourとPhoton
     {
         CloseMenuUI();
         titleText.SetActive(false);
+        // titleText.DOColor(new Color(titleText.color.r, titleText.color.g, titleText.color.b, 0), 0.5f);
         buttons.SetActive(true);
     }
 

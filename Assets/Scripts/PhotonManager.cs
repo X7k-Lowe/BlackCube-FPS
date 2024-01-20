@@ -170,7 +170,9 @@ public class PhotonManager : MonoBehaviourPunCallbacks // MonoBehaviourとPhoton
 
         if (titleText.activeInHierarchy)
         {
-            if (Input.GetMouseButtonDown(0))
+            if (Input.GetMouseButtonDown(0)
+            || OVRInput.GetDown(OVRInput.Button.PrimaryIndexTrigger, OVRInput.Controller.RTouch)
+            || OVRInput.GetDown(OVRInput.Button.One, OVRInput.Controller.RTouch))
             {
                 LobbyMenuDisplay();
             }

@@ -6,7 +6,8 @@ using Photon.Pun;
 using Photon.Realtime;
 using UnityEngine.EventSystems;
 using System.Linq;
-
+using DG.Tweening;
+// using System.Collections;
 public class PhotonManager : MonoBehaviourPunCallbacks // MonoBehaviourとPhotonの機能の継承
 {
     // static 変数
@@ -123,6 +124,13 @@ public class PhotonManager : MonoBehaviourPunCallbacks // MonoBehaviourとPhoton
     public AimMode aimMode = AimMode.RightHand;
     public TextMeshProUGUI aimModeText;
 
+    // bool allowInput = true;
+    // IEnumerator InputInterval()
+    // {
+    //     allowInput = false;
+    //     yield return new WaitForSeconds(0.15f);
+    //     allowInput = true;
+    // }
     public void ChangeAimMode()
     {
         if (aimMode == AimMode.RightHand)
@@ -154,11 +162,21 @@ public class PhotonManager : MonoBehaviourPunCallbacks // MonoBehaviourとPhoton
     void Update()
     {
         HandleHoverUI();
-        // if (PlatformManager.Instance.Platform == "Oculus")
-        // {
-        if (aimMode == AimMode.RightHand) aimModeText.text = "RIGHT HAND";
-        else aimModeText.text = "SCREEN";
-        // }
+        if (PlatformManager.Instance.Platform == "Oculus")
+        {
+            if (aimMode == AimMode.RightHand) aimModeText.text = "RIGHT HAND";
+            else aimModeText.text = "SCREEN";
+        }
+
+        if (titleText.activeInHierarchy)
+        {
+            if (Input.GetMouseButtonDown(0)
+            || OVRInput.GetDown(OVRInput.Button.PrimaryIndexTrigger, OVRInput.Controller.RTouch)
+            || OVRInput.GetDown(OVRInput.Button.One, OVRInput.Controller.RTouch))
+            {
+                LobbyMenuDisplay();
+            }
+        }
     }
     void HandleHoverUI()
     {
@@ -197,6 +215,7 @@ public class PhotonManager : MonoBehaviourPunCallbacks // MonoBehaviourとPhoton
             canvas.renderMode = RenderMode.ScreenSpaceCamera;
             canvas.worldCamera = mainCamera.GetComponent<Camera>();
             canvasSize.localScale = Vector3.one;
+            aimModeButton.SetActive(false);
         }
         else if (PlatformManager.Instance.Platform == "Oculus")
         {
@@ -211,8 +230,9 @@ public class PhotonManager : MonoBehaviourPunCallbacks // MonoBehaviourとPhoton
                 LobbyButtons.localPosition.y,
                 -200
             );
+            aimModeButton.SetActive(true);
         }
-
+        titleText.SetActive(false);
 
         // メニューUIをすべて閉じる関数
         CloseMenuUI();
@@ -254,10 +274,18 @@ public class PhotonManager : MonoBehaviourPunCallbacks // MonoBehaviourとPhoton
         PhotonNetwork.LocalPlayer.SetCustomProperties(customProperties);
     }
 
+    public void ShowTitle()
+    {
+        CloseMenuUI();
+        titleImage.SetActive(true);
+        titleText.SetActive(true);
+    }
     // ロビーUIを表示する関数
     public void LobbyMenuDisplay()
     {
         CloseMenuUI();
+        titleText.SetActive(false);
+        // titleText.DOColor(new Color(titleText.color.r, titleText.color.g, titleText.color.b, 0), 0.5f);
         buttons.SetActive(true);
     }
 
@@ -566,8 +594,8 @@ public class PhotonManager : MonoBehaviourPunCallbacks // MonoBehaviourとPhoton
             PlayerPrefs.SetString("playerName", nameInput.text);
 
             // UI
-            LobbyMenuDisplay();
-            titleImage.SetActive(true);
+            // LobbyMenuDisplay();
+            ShowTitle();
 
             setName = true;
         }

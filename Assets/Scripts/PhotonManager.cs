@@ -338,7 +338,7 @@ public class PhotonManager : MonoBehaviourPunCallbacks // MonoBehaviourとPhoton
         titleFlushImage.SetActive(false);
 
         DOTween.Sequence()
-            .Append(textUnderLine.transform.DOScaleX(1, 1.2f))
+            .Append(textUnderLine.transform.DOScaleX(1, 1.0f))
             .Append(titleTextCanvasGroup.DOFade(1, 1.5f).SetEase(Ease.InOutCubic));
 
         yield return new WaitForSeconds(2.7f);

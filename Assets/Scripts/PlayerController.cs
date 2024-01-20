@@ -436,8 +436,19 @@ public class PlayerController : MonoBehaviourPunCallbacks
     IEnumerator FadeWhiteOut()
     {
         yield return new WaitForSeconds(1.0f);
-        whiteOutMaterial.DOFade(0, 3f).SetEase(Ease.InQuad);
+
+        gameManager.ShowScoreboard();
+        uIManager.hpUI.SetActive(false);
         yield return new WaitForSeconds(1.0f);
+
+        whiteOutMaterial.DOFade(0, 3f).SetEase(Ease.InQuad);
+        yield return new WaitForSeconds(2.5f);
+
+        uIManager.hpUI.SetActive(true);
+        uIManager.ChangeScoreUI();
+        uIManager.ShowHelpBox();
+        yield return new WaitForSeconds(2.0f);
+
         isWhiteOut = false;
     }
     private void Update()

@@ -95,7 +95,6 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
 
     void Start()
     {
-
     }
 
 

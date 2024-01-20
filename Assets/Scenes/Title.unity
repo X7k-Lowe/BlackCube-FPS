@@ -4136,7 +4136,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: GAME SET  KILL
+  m_text: END GAME KILLS
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 57543ca5d6e94dc428b9d0af34037ce8, type: 2}
   m_sharedMaterial: {fileID: 274806248547660405, guid: 57543ca5d6e94dc428b9d0af34037ce8, type: 2}
@@ -10201,7 +10201,7 @@ GameObject:
   - component: {fileID: 1953383321}
   - component: {fileID: 1953383320}
   m_Layer: 5
-  m_Name: TargetNumber
+  m_Name: EndKills
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

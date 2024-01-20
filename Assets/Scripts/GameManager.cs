@@ -8,6 +8,7 @@ using Photon.Realtime; // IOnEventCallback
 using ExitGames.Client.Photon; // IOnEventCallback
 using System.Linq;
 using UnityEngine.EventSystems;
+
 public enum GameState
 {
     Playing,
@@ -56,6 +57,7 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
     public SkinnedMeshRenderer leftControllerRenderer;
 
     public AimMode AimMode = AimMode.RightHand;
+    public Material whiteOutMaterial;
 
     private void Awake()
     {
@@ -91,14 +93,18 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
         }
     }
 
-
     void Start()
     {
-
     }
+
 
     void Update()
     {
+        if (PlatformManager.Instance.Platform == "Windows")
+        {
+            PlatformManager.Instance.WindowAspectRatio();
+        }
+
         // タブキー検知でスコアボード表示切り替え
         if (Input.GetKeyDown(KeyCode.Tab)
         || OVRInput.GetDown(OVRInput.Button.One, OVRInput.Controller.LTouch)) // X

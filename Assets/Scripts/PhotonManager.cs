@@ -7,7 +7,7 @@ using Photon.Realtime;
 using UnityEngine.EventSystems;
 using System.Linq;
 using DG.Tweening;
-// using System.Collections;
+using System.Collections;
 public class PhotonManager : MonoBehaviourPunCallbacks // MonoBehaviourとPhotonの機能の継承
 {
     // static 変数
@@ -24,18 +24,28 @@ public class PhotonManager : MonoBehaviourPunCallbacks // MonoBehaviourとPhoton
     // タイトルイメージ
     public GameObject titleImage;
     public GameObject titleText;
+    public CanvasGroup titleTextCanvasGroup;
+    public TextMeshProUGUI titleStartText;
+    public CanvasGroup titleStartTextCanvasGroup;
+    public GameObject textUnderLine;
+    public GameObject titleFlushImage;
+    bool onTitleText = false;
+    public CanvasGroup closeMenuUICanvasGroup;
 
     // ロードパネル
     public GameObject loadingPanel;
+    public CanvasGroup loadingCanvasGroup;
 
     // ロードテキスト
     public TextMeshProUGUI loadingText;
 
     // ボタンの親のオブジェクト
     public GameObject buttons;
+    public CanvasGroup masterButtonsCanvasGroup;
 
     // ルームパネル
     public GameObject createRoomPanel;
+    public CanvasGroup createRoomCanvasGroup;
 
     // ルーム名の入力テキスト
     public TMP_InputField enterRoomNameInputField;
@@ -43,6 +53,7 @@ public class PhotonManager : MonoBehaviourPunCallbacks // MonoBehaviourとPhoton
 
     // ルームパネル
     public GameObject roomPanel;
+    public CanvasGroup roomPanelCanvasGroup;
 
     // ルームネーム
     public TextMeshProUGUI roomName;
@@ -97,6 +108,7 @@ public class PhotonManager : MonoBehaviourPunCallbacks // MonoBehaviourとPhoton
     // 遷移シーン名
     public string levelToPlay;
 
+    public List<Image> buttonsHighLightImages;
     public List<GameObject> buttonsBlackImages;
     GameObject black;
     private PointerEventData pointerEventData;
@@ -118,19 +130,13 @@ public class PhotonManager : MonoBehaviourPunCallbacks // MonoBehaviourとPhoton
     public TextMeshProUGUI killNumberText;
     public Button leftButton;
     public Button rightButton;
-    public int killNumber = 1;
+    public int killNumber = 3;
 
     public GameObject aimModeButton;
     public AimMode aimMode = AimMode.RightHand;
     public TextMeshProUGUI aimModeText;
 
-    // bool allowInput = true;
-    // IEnumerator InputInterval()
-    // {
-    //     allowInput = false;
-    //     yield return new WaitForSeconds(0.15f);
-    //     allowInput = true;
-    // }
+    Sequence titleStartSequence;
     public void ChangeAimMode()
     {
         if (aimMode == AimMode.RightHand)
@@ -142,20 +148,31 @@ public class PhotonManager : MonoBehaviourPunCallbacks // MonoBehaviourとPhoton
             aimMode = AimMode.RightHand;
         }
     }
-
+    private void OnDestroy()
+    {
+        DOTween.KillAll();
+    }
     private void Awake()
     {
         // static 変数に格納
         instance = this;
+
+        titleStartSequence = DOTween.Sequence()
+       .Append(titleStartTextCanvasGroup.DOFade(0, 0.7f))
+       .Append(titleStartTextCanvasGroup.DOFade(1, 0.7f))
+       .SetLoops(-1);
+
         if (PlatformManager.Instance.Platform == "Windows")
         {
             pointerEventData = new PointerEventData(eventSystemWindows);
             aimModeButton.SetActive(true);
+            titleStartText.text = "Click to Start";
         }
         else if (PlatformManager.Instance.Platform == "Oculus")
         {
             oVRPointerEventData = new OVRPointerEventData(eventSystemOculus);
             aimModeButton.SetActive(true);
+            titleStartText.text = "Press to Start";
         }
     }
 
@@ -168,13 +185,15 @@ public class PhotonManager : MonoBehaviourPunCallbacks // MonoBehaviourとPhoton
             else aimModeText.text = "SCREEN";
         }
 
-        if (titleText.activeInHierarchy)
+        if (onTitleText)
         {
             if (Input.GetMouseButtonDown(0)
             || OVRInput.GetDown(OVRInput.Button.PrimaryIndexTrigger, OVRInput.Controller.RTouch)
             || OVRInput.GetDown(OVRInput.Button.One, OVRInput.Controller.RTouch))
             {
-                LobbyMenuDisplay();
+                titleStartSequence.Pause();
+                StartCoroutine(LobbyMenuDisplay());
+                onTitleText = false;
             }
         }
     }
@@ -207,7 +226,6 @@ public class PhotonManager : MonoBehaviourPunCallbacks // MonoBehaviourとPhoton
     {
         if (PlatformManager.Instance.Platform == "Windows")
         {
-            titleImage.SetActive(true);
             mainCamera.SetActive(true);
             oVRCameraRig.SetActive(false);
             eventSystemObjectWindows.SetActive(true);
@@ -219,7 +237,6 @@ public class PhotonManager : MonoBehaviourPunCallbacks // MonoBehaviourとPhoton
         }
         else if (PlatformManager.Instance.Platform == "Oculus")
         {
-            titleImage.SetActive(false);
             nameInputBackImage.color = Color.clear;
             oVRCameraRig.SetActive(true);
             mainCamera.SetActive(false);
@@ -232,7 +249,10 @@ public class PhotonManager : MonoBehaviourPunCallbacks // MonoBehaviourとPhoton
             );
             aimModeButton.SetActive(true);
         }
+        titleImage.SetActive(false);
         titleText.SetActive(false);
+        textUnderLine.SetActive(false);
+        titleStartTextCanvasGroup.gameObject.SetActive(false);
 
         // メニューUIをすべて閉じる関数
         CloseMenuUI();
@@ -259,6 +279,34 @@ public class PhotonManager : MonoBehaviourPunCallbacks // MonoBehaviourとPhoton
         errorPanel.SetActive(false);
         roomListPanel.SetActive(false);
         nameInputPanel.SetActive(false);
+        titleText.SetActive(false);
+        textUnderLine.SetActive(false);
+        titleStartTextCanvasGroup.gameObject.SetActive(false);
+        titleFlushImage.SetActive(false);
+    }
+
+    public IEnumerator FadeOutMenuUI(CanvasGroup canvasGroup, float times = 1f)
+    {
+        foreach (var image in buttonsHighLightImages)
+        {
+            image.enabled = false;
+        }
+        canvasGroup.alpha = 1;
+        canvasGroup.DOFade(0, times);
+        yield return new WaitForSeconds(times);
+        canvasGroup.alpha = 1;
+        foreach (var image in buttonsHighLightImages)
+        {
+            image.enabled = true;
+        }
+    }
+
+    public IEnumerator FadeInMenuUI(CanvasGroup canvasGroup, float times = 1f, bool inQuad = false)
+    {
+        canvasGroup.alpha = 0;
+        if (!inQuad) canvasGroup.DOFade(1, times);
+        else canvasGroup.DOFade(1, times).SetEase(Ease.OutQuad);
+        yield return new WaitForSeconds(times);
     }
 
     void SetPlayerPlatformProperty()
@@ -274,19 +322,48 @@ public class PhotonManager : MonoBehaviourPunCallbacks // MonoBehaviourとPhoton
         PhotonNetwork.LocalPlayer.SetCustomProperties(customProperties);
     }
 
-    public void ShowTitle()
+    public IEnumerator ShowTitle()
     {
         CloseMenuUI();
+        textUnderLine.transform.localScale = new Vector3(0, textUnderLine.transform.localScale.y, textUnderLine.transform.localScale.z);
+        textUnderLine.SetActive(true);
         titleImage.SetActive(true);
         titleText.SetActive(true);
+        titleFlushImage.SetActive(true);
+        titleText.GetComponent<CanvasGroup>().alpha = 0;
+
+        yield return new WaitForSeconds(1.0f);
+
+        yield return FadeOutMenuUI(closeMenuUICanvasGroup, 1.5f);
+        titleFlushImage.SetActive(false);
+
+        DOTween.Sequence()
+            .Append(textUnderLine.transform.DOScaleX(1, 1.0f))
+            .Append(titleTextCanvasGroup.DOFade(1, 1.5f).SetEase(Ease.InOutCubic));
+
+        yield return new WaitForSeconds(2.7f);
+        titleStartTextCanvasGroup.alpha = 0;
+        titleStartTextCanvasGroup.gameObject.SetActive(true);
+        titleStartSequence.Play();
+
+        yield return new WaitForSeconds(0.3f);
+        onTitleText = true;
+
     }
     // ロビーUIを表示する関数
-    public void LobbyMenuDisplay()
+    public IEnumerator LobbyMenuDisplay(float times = 1.0f)
     {
+        yield return FadeOutMenuUI(closeMenuUICanvasGroup, times);
+
         CloseMenuUI();
-        titleText.SetActive(false);
-        // titleText.DOColor(new Color(titleText.color.r, titleText.color.g, titleText.color.b, 0), 0.5f);
+
         buttons.SetActive(true);
+        yield return FadeInMenuUI(closeMenuUICanvasGroup);
+    }
+
+    public void LobbyMenuDisplayButton()
+    {
+        StartCoroutine(LobbyMenuDisplay(0.5f));
     }
 
     // マスターサーバーに接続されたときに呼ばれる関数（継承：コールバック）
@@ -311,7 +388,6 @@ public class PhotonManager : MonoBehaviourPunCallbacks // MonoBehaviourとPhoton
     public override void OnJoinedLobby()
     {
         Debug.Log("ロビー接続");
-        LobbyMenuDisplay();
 
         // 辞書の初期化
         roomsList.Clear();
@@ -322,12 +398,17 @@ public class PhotonManager : MonoBehaviourPunCallbacks // MonoBehaviourとPhoton
         // 名前が入力済みか確認してUI更新
         ConfirmationName();
     }
-
     // ルームを作るボタン用の関数
-    public void OpenCreateRoomPanel()
+    public void OpenCreateRoomPanelButton()
     {
+        StartCoroutine(OpenCreateRoomPanel());
+    }
+    public IEnumerator OpenCreateRoomPanel()
+    {
+        yield return FadeOutMenuUI(closeMenuUICanvasGroup, 0.8f);
         CloseMenuUI();
         createRoomPanel.SetActive(true);
+        yield return FadeInMenuUI(closeMenuUICanvasGroup, 0.5f);
     }
 
     // ルーム作成ボタン用の関数
@@ -353,18 +434,30 @@ public class PhotonManager : MonoBehaviourPunCallbacks // MonoBehaviourとPhoton
     // ルームに参加時に呼ばれる関数（継承；コールバック）
     public override void OnJoinedRoom()
     {
-        CloseMenuUI();
-        roomPanel.SetActive(true);
+        StartCoroutine(JoinRoom());
+    }
 
+    public IEnumerator JoinRoom()
+    {
         // 入室中のルーム名を取得
         roomName.text = PhotonNetwork.CurrentRoom.Name;
 
         // ルームにいるプレイヤー情報を取得
         GetAllPlayer();
 
+        roomPanel.SetActive(true);
+        masterButtonsCanvasGroup.alpha = 0;
+
+        StartCoroutine(FadeInMenuUI(roomPanelCanvasGroup, 0.5f));
+
+        StartCoroutine(FadeOutMenuUI(loadingCanvasGroup));
+        // CloseMenuUI();
+        yield return new WaitForSeconds(0.5f);
+        loadingPanel.SetActive(false);
+
         // マスターか判定してボタン表示
         CheckRoomMaster();
-
+        yield return FadeInMenuUI(masterButtonsCanvasGroup, 1f, true);
     }
 
     // ルーム退出の関数
@@ -385,7 +478,7 @@ public class PhotonManager : MonoBehaviourPunCallbacks // MonoBehaviourとPhoton
     public override void OnLeftRoom()
     {
         // ロビーUI表示
-        LobbyMenuDisplay();
+        StartCoroutine(LobbyMenuDisplay());
     }
 
     // ルーム作成できなかった時に呼ばれる関数（継承：コールバック）
@@ -399,10 +492,16 @@ public class PhotonManager : MonoBehaviourPunCallbacks // MonoBehaviourとPhoton
     }
 
     // ルーム一覧パネルを開く関数
-    public void FindRoom()
+    public void FindRoomButton()
     {
+        StartCoroutine(FindRoom());
+    }
+    public IEnumerator FindRoom()
+    {
+        yield return FadeOutMenuUI(closeMenuUICanvasGroup, 0.8f);
         CloseMenuUI();
         roomListPanel.SetActive(true);
+        yield return FadeInMenuUI(closeMenuUICanvasGroup, 0.5f);
     }
 
     // ルームリストに更新があったときに呼ばれる関数（継承；コールバック）
@@ -595,7 +694,7 @@ public class PhotonManager : MonoBehaviourPunCallbacks // MonoBehaviourとPhoton
 
             // UI
             // LobbyMenuDisplay();
-            ShowTitle();
+            StartCoroutine(ShowTitle());
 
             setName = true;
         }

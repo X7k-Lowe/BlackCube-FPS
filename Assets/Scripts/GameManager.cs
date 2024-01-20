@@ -57,8 +57,8 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
     public SkinnedMeshRenderer leftControllerRenderer;
 
     public AimMode AimMode = AimMode.RightHand;
-    public Material whiteOutMaterial;
 
+    public bool isStart { get; set; } = false;
     private void Awake()
     {
         mainCamera.SetActive(true);
@@ -103,6 +103,11 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
         if (PlatformManager.Instance.Platform == "Windows")
         {
             PlatformManager.Instance.WindowAspectRatio();
+        }
+
+        if (!isStart)
+        {
+            return;
         }
 
         // タブキー検知でスコアボード表示切り替え

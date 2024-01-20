@@ -11,10 +11,10 @@ public class SpawnManager : MonoBehaviour
     // 生成するプレイヤーオブジェクト
     public GameObject playerPrefab;
 
+    public GameObject healingCubePrefab;
+
     // 生成したプレイヤーオブジェクト
     private GameObject player;
-
-    public GameObject healingCubePrefab;
 
     // スポーンまでのインターバル
     public float respawnInterval = 5f;

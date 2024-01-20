@@ -338,7 +338,7 @@ public class PhotonManager : MonoBehaviourPunCallbacks // MonoBehaviourとPhoton
         titleFlushImage.SetActive(false);
 
         DOTween.Sequence()
-            .Append(textUnderLine.transform.DOScaleX(1, 1.0f))
+            .Append(textUnderLine.transform.DOScaleX(1, 0.8f))
             .Append(titleTextCanvasGroup.DOFade(1, 1.5f).SetEase(Ease.InOutCubic));
 
         yield return new WaitForSeconds(2.7f);
@@ -348,7 +348,6 @@ public class PhotonManager : MonoBehaviourPunCallbacks // MonoBehaviourとPhoton
 
         yield return new WaitForSeconds(0.3f);
         onTitleText = true;
-
     }
     // ロビーUIを表示する関数
     public IEnumerator LobbyMenuDisplay(float times = 1.0f)

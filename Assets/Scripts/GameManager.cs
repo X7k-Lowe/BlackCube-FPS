@@ -113,25 +113,28 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
             return;
         }
 
-        // タブキー検知でスコアボード表示切り替え
-        if (Input.GetKeyDown(KeyCode.Tab)
-        || OVRInput.GetDown(OVRInput.Button.One, OVRInput.Controller.LTouch)) // X
+        if (state == GameState.Playing)
         {
-            // 内容を更新しつつスコアボードを開く
-            ShowScoreboard();
-        }
-        else if (Input.GetKeyUp(KeyCode.Tab)
-        || OVRInput.GetUp(OVRInput.Button.One, OVRInput.Controller.LTouch)) // X
-        {
-            uIManager.ChangeScoreUI();
-            uIManager.ShowHelpBox();
-        }
+            // タブキー検知でスコアボード表示切り替え
+            if (Input.GetKeyDown(KeyCode.Tab)
+            || OVRInput.GetDown(OVRInput.Button.One, OVRInput.Controller.LTouch)) // X
+            {
+                // 内容を更新しつつスコアボードを開く
+                ShowScoreboard();
+            }
+            else if (Input.GetKeyUp(KeyCode.Tab)
+            || OVRInput.GetUp(OVRInput.Button.One, OVRInput.Controller.LTouch)) // X
+            {
+                uIManager.ChangeScoreUI();
+                uIManager.ShowHelpBox();
+            }
 
-        // ヘルプレコード表示切替
-        if (Input.GetKeyDown(KeyCode.Q)
-        || OVRInput.GetDown(OVRInput.Button.Two, OVRInput.Controller.LTouch)) // Y
-        {
-            uIManager.ChangeHelpRecord();
+            // ヘルプレコード表示切替
+            if (Input.GetKeyDown(KeyCode.Q)
+            || OVRInput.GetDown(OVRInput.Button.Two, OVRInput.Controller.LTouch)) // Y
+            {
+                uIManager.ChangeHelpRecord();
+            }
         }
 
         if (AllowLeaveRoom)

@@ -236,7 +236,15 @@ public class PlayerController : MonoBehaviourPunCallbacks
         myIcon = uIManager.GetMyMapIcon();
 
         myIcon.transform.GetChild(0).GetComponent<Image>().material = whiteMaterial;
-        whiteOutMaterial.color = new Color(whiteOutMaterial.color.r, whiteOutMaterial.color.g, whiteOutMaterial.color.b, 1);
+
+        if (!gameManager.isStart)
+        {
+            whiteOutMaterial.color = new Color(whiteOutMaterial.color.r, whiteOutMaterial.color.g, whiteOutMaterial.color.b, 1);
+        }
+        else
+        {
+            isWhiteOut = false;
+        }
     }
     void InitializePlatformSpecificFeatures()
     {
@@ -286,7 +294,6 @@ public class PlayerController : MonoBehaviourPunCallbacks
             }
 
             // UIをプレイヤーキャンバスに配置
-
             uIManager.SetUIAsChildOfPlayerCanvas();
             playerCanvas.enabled = false;
         }
@@ -383,7 +390,7 @@ public class PlayerController : MonoBehaviourPunCallbacks
         // 全プレーヤー同期の銃切り替え
         photonView.RPC("SetGun", RpcTarget.All, selectedGun);
 
-        StartCoroutine(FadeWhiteOut());
+        if (photonView.IsMine && !gameManager.isStart) StartCoroutine(FadeWhiteOut());
     }
 
     [PunRPC]
@@ -437,10 +444,15 @@ public class PlayerController : MonoBehaviourPunCallbacks
     {
         yield return new WaitForSeconds(1.0f);
 
+        while (!gameManager.onSetKills)
+        {
+            yield return null;
+        }
+
         gameManager.ShowScoreboard();
         uIManager.hpUI.SetActive(false);
         uIManager.ShowStartPanel();
-        yield return new WaitForSeconds(1.0f);
+        yield return new WaitForSeconds(1.3f);
 
         whiteOutMaterial.DOFade(0, 3f).SetEase(Ease.InQuad);
         yield return new WaitForSeconds(2.5f);
@@ -466,6 +478,7 @@ public class PlayerController : MonoBehaviourPunCallbacks
         }
 
         // Debug.Log("EyeAreaCounter : " + EyeAreaCounter);
+        CheckEyeAreaStatus();
         uIManager.UpdateMapIconPos(this.gameObject, myIcon);
 
         //視点移動関数の呼び出し
@@ -599,8 +612,10 @@ public class PlayerController : MonoBehaviourPunCallbacks
     [PunRPC]
     public void DecrementEyeAreaCounter()
     {
-        Debug.Log("DecrementEyeAreaCounter");
+        Debug.Log("DecrementEyeAreaCounter : " + EyeAreaCounter);
         EyeAreaCounter--;
+        Debug.Log("DecrementEyeAreaCounter : " + EyeAreaCounter);
+
     }
     private void CheckEyeAreaStatus()
     {

@@ -25,10 +25,10 @@ public class PlatformManager : MonoBehaviour
 
     void Update()
     {
-        if (Platform == "Windows")
-        {
-            WindowAspectRatio();
-        }
+        // if (Platform == "Windows")
+        // {
+        //     WindowAspectRatio();
+        // }
     }
 
     public void WindowAspectRatio()

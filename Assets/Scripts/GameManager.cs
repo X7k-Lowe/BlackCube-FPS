@@ -59,6 +59,8 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
     public AimMode AimMode = AimMode.RightHand;
 
     public bool isStart { get; set; } = false;
+
+    public bool onSetKills { get; set; } = false;
     private void Awake()
     {
         mainCamera.SetActive(true);
@@ -78,6 +80,7 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
             if (PhotonNetwork.CurrentRoom.CustomProperties.ContainsKey("KillNumber"))
             {
                 targetNumber = (int)PhotonNetwork.CurrentRoom.CustomProperties["KillNumber"];
+                Debug.Log("targetNumber: " + targetNumber);
                 KillNumberGet(targetNumber);
             }
 
@@ -100,35 +103,38 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
 
     void Update()
     {
-        if (PlatformManager.Instance.Platform == "Windows")
-        {
-            PlatformManager.Instance.WindowAspectRatio();
-        }
+        // if (PlatformManager.Instance.Platform == "Windows")
+        // {
+        //     PlatformManager.Instance.WindowAspectRatio();
+        // }
 
         if (!isStart)
         {
             return;
         }
 
-        // タブキー検知でスコアボード表示切り替え
-        if (Input.GetKeyDown(KeyCode.Tab)
-        || OVRInput.GetDown(OVRInput.Button.One, OVRInput.Controller.LTouch)) // X
+        if (state == GameState.Playing)
         {
-            // 内容を更新しつつスコアボードを開く
-            ShowScoreboard();
-        }
-        else if (Input.GetKeyUp(KeyCode.Tab)
-        || OVRInput.GetUp(OVRInput.Button.One, OVRInput.Controller.LTouch)) // X
-        {
-            uIManager.ChangeScoreUI();
-            uIManager.ShowHelpBox();
-        }
+            // タブキー検知でスコアボード表示切り替え
+            if (Input.GetKeyDown(KeyCode.Tab)
+            || OVRInput.GetDown(OVRInput.Button.One, OVRInput.Controller.LTouch)) // X
+            {
+                // 内容を更新しつつスコアボードを開く
+                ShowScoreboard();
+            }
+            else if (Input.GetKeyUp(KeyCode.Tab)
+            || OVRInput.GetUp(OVRInput.Button.One, OVRInput.Controller.LTouch)) // X
+            {
+                uIManager.ChangeScoreUI();
+                uIManager.ShowHelpBox();
+            }
 
-        // ヘルプレコード表示切替
-        if (Input.GetKeyDown(KeyCode.Q)
-        || OVRInput.GetDown(OVRInput.Button.Two, OVRInput.Controller.LTouch)) // Y
-        {
-            uIManager.ChangeHelpRecord();
+            // ヘルプレコード表示切替
+            if (Input.GetKeyDown(KeyCode.Q)
+            || OVRInput.GetDown(OVRInput.Button.Two, OVRInput.Controller.LTouch)) // Y
+            {
+                uIManager.ChangeHelpRecord();
+            }
         }
 
         if (AllowLeaveRoom)
@@ -329,6 +335,8 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
     public void TargetNumberSet(object[] data)
     {
         targetNumber = (int)data[0];
+        onSetKills = true;
+        Debug.Log("TtargetNumber: " + targetNumber);
     }
 
     // 内容を更新しつつスコアボードを開く

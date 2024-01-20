@@ -14,10 +14,10 @@ public enum Wall
     Ground,
 }
 
-public enum ShotMode
+public enum AimMode
 {
+    RightHand,
     Screen,
-    Gun,
 }
 public class PlayerController : MonoBehaviourPunCallbacks
 {
@@ -46,6 +46,7 @@ public class PlayerController : MonoBehaviourPunCallbacks
     // プレイヤーキャンバスUI
     public Billboard billboard;
     public Canvas playerCanvas;
+    public RectTransform playerCanvasSize;
     public GameObject aimIconsUI;
     public GameObject hpUI;
     public GameObject helpUI;
@@ -190,10 +191,12 @@ public class PlayerController : MonoBehaviourPunCallbacks
     private LaserPointer laserPointer;
     public GameObject oculusGunsHolder;
     public List<Transform> gunModeTransforms;
-    public ShotMode ShotMode { get; set; } = ShotMode.Gun;
+    public AimMode ShotMode { get; set; } = AimMode.RightHand;
 
     public GameObject gunModeAimIcon;
     GameObject laserPoint;
+
+    public Vector3 viewPointInitLocalPosition;
 
     private void Awake()
     {
@@ -204,9 +207,11 @@ public class PlayerController : MonoBehaviourPunCallbacks
         spawnManager = GameObject.FindGameObjectWithTag("SpawnManager").GetComponent<SpawnManager>();
 
         gameManager = GameObject.FindGameObjectWithTag("GameManager").GetComponent<GameManager>();
+
         gameManager.uIManager = uIManager;
 
         laserPointer = gameManager.laserPointer;
+
         rightController = GameObject.Find("RightHandAnchor");
 
         layerMaskGround = 1 << LayerMask.NameToLayer("Ground");
@@ -214,14 +219,17 @@ public class PlayerController : MonoBehaviourPunCallbacks
         if (photonView.IsMine)
         {
             uIManager.playerCanvas = playerCanvas;
+            uIManager.playerCanvasSize = playerCanvasSize;
             uIManager.playerAimIconsUI = aimIconsUI;
             uIManager.playerHpUI = hpUI;
             uIManager.playerHelpUI = helpUI;
             uIManager.playerMapUI = mapUI;
         }
 
+
         myIcon = uIManager.GetMyMapIcon();
-        myIcon.GetComponent<Image>().material = whiteMaterial;
+
+        myIcon.transform.GetChild(0).GetComponent<Image>().material = whiteMaterial;
     }
     void InitializePlatformSpecificFeatures()
     {
@@ -247,11 +255,11 @@ public class PlayerController : MonoBehaviourPunCallbacks
             myIconSpriteFacesCamera.useCamera = centerEyeAnchor;
             billboard.useCamera = centerEyeAnchor;
 
-            if (ShotMode == ShotMode.Screen)
+            if (ShotMode == AimMode.Screen)
             {
                 gameManager.uIHelper.SetActive(false);
             }
-            else if (ShotMode == ShotMode.Gun)
+            else if (ShotMode == AimMode.RightHand)
             {
                 oculusGunsHolder.transform.SetParent(rightController.transform);
                 oculusGunsHolder.transform.localPosition = Vector3.zero;
@@ -262,6 +270,7 @@ public class PlayerController : MonoBehaviourPunCallbacks
                     gunsHolder[i].transform.localPosition = gunModeTransforms[i].localPosition;
                     gunsHolder[i].transform.localRotation = gunModeTransforms[i].localRotation;
                 }
+
                 gameManager.rightControllerRenderer.enabled = false;
                 gameManager.leftControllerRenderer.enabled = false;
 
@@ -270,6 +279,7 @@ public class PlayerController : MonoBehaviourPunCallbacks
             }
 
             // UIをプレイヤーキャンバスに配置
+
             uIManager.SetUIAsChildOfPlayerCanvas();
             playerCanvas.enabled = false;
         }
@@ -277,30 +287,44 @@ public class PlayerController : MonoBehaviourPunCallbacks
     private void Start()
     {
         // InputDevices.GetDeviceAtXRNodeを使ってHMDデバイスを取得
+
         headDevice = InputDevices.GetDeviceAtXRNode(XRNode.Head);
 
+
         // カスタムプロパティからプラットフォーム情報を取得して保存する
+
         ExitGames.Client.Photon.Hashtable customProperties = PhotonNetwork.LocalPlayer.CustomProperties;
+
         uIManager.platform = platform = (string)customProperties["Platform"];
 
-        ShotMode = gameManager.ShotMode;
+        // Debug.Log(gameManager == null ? "gameManagerはnullです" : "gameManagerはnullではありません");
+        ShotMode = gameManager.AimMode;
+
         uIManager.ShotMode = ShotMode;
-        if (platform == "Oculus" && ShotMode == ShotMode.Gun)
+        if (platform == "Oculus" && ShotMode == AimMode.RightHand)
         {
+
+            // Debug.Log(uIManager == null ? "uIManagerはnullです" : "uIManagerはnullではありません");
+            // Debug.Log(uIManager.aimIcon == null ? "uIManager.aimIconはnullです" : "uIManager.aimIconはnullではありません");
             uIManager.aimIcon.SetActive(false);
         }
 
         //カメラ格納 プラットフォームごとの初期化処理を行う
+
         myIconSpriteFacesCamera = myIcon.GetComponent<SpriteFacesCamera>();
+
         InitializePlatformSpecificFeatures();
+
         uIManager.myPlayerObject = this.gameObject;
 
         // 現在HPに最大HPを代入
+
         currentHP = maxHP;
 
         rb = GetComponent<Rigidbody>();
 
         // カーソルの表示判定関数
+
         UpdateCursorLock();
 
         // 銃を扱うリスト初期化
@@ -347,9 +371,10 @@ public class PlayerController : MonoBehaviourPunCallbacks
             billboard.background.sizeDelta = new Vector2(textWidth + 20, billboard.background.sizeDelta.y + 5);
         }
 
+        InitPlayerRotate();
+
         // 全プレーヤー同期の銃切り替え
         photonView.RPC("SetGun", RpcTarget.All, selectedGun);
-
     }
 
     [PunRPC]
@@ -518,8 +543,11 @@ public class PlayerController : MonoBehaviourPunCallbacks
         }
         else if (platform == "Oculus")
         {
-            //カメラの位置調整
-            oVRCameraRig.transform.position = viewPoint.position;
+            if (oVRCameraRig != null)
+            {
+                //カメラの位置調整
+                oVRCameraRig.transform.position = viewPoint.position;
+            }
             // // 回転
             // centerEyeAnchor.transform.parent.parent.gameObject.transform.rotation = viewPoint.rotation;
         }
@@ -534,6 +562,7 @@ public class PlayerController : MonoBehaviourPunCallbacks
     [PunRPC]
     public void DecrementEyeAreaCounter()
     {
+        Debug.Log("DecrementEyeAreaCounter");
         EyeAreaCounter--;
     }
     private void CheckEyeAreaStatus()
@@ -569,6 +598,7 @@ public class PlayerController : MonoBehaviourPunCallbacks
 
     public void RemoveAllEnemyPlayerObject()
     {
+        Debug.Log("RemoveAllEnemyPlayerObject");
         uIManager.allowUpdateMapIcon = false;
 
         foreach (var enemyPlayer in uIManager.worldObjects.ToArray())
@@ -579,6 +609,20 @@ public class PlayerController : MonoBehaviourPunCallbacks
         uIManager.allowUpdateMapIcon = true;
     }
 
+    void InitPlayerRotate()
+    {
+        if (platform == "Oculus")
+        {
+            transform.rotation = Quaternion.identity;
+            viewPoint.rotation = Quaternion.identity;
+            playerCanvasPoint.rotation = Quaternion.identity;
+            oVRCameraRig.transform.rotation = Quaternion.identity;
+
+            viewPoint.localPosition = viewPointInitLocalPosition;
+            playerCanvasPoint.localPosition = viewPointInitLocalPosition;
+            oVRCameraRig.transform.position = viewPoint.position;
+        }
+    }
 
     // 視点移動関数
     public void PlayerRotate()
@@ -707,7 +751,10 @@ public class PlayerController : MonoBehaviourPunCallbacks
         }
         else if (platform == "Oculus")
         {
-            movement = ((oVRCameraRig.transform.forward * moveDir.z) + (oVRCameraRig.transform.right * moveDir.x)).normalized;
+            if (oVRCameraRig != null)
+            {
+                movement = ((oVRCameraRig.transform.forward * moveDir.z) + (oVRCameraRig.transform.right * moveDir.x)).normalized;
+            }
         }
 
         // 状態ごとに移動量を変更
@@ -1091,8 +1138,8 @@ public class PlayerController : MonoBehaviourPunCallbacks
         else if (platform == "Oculus")
         {
             ray = new Ray();
-            if (ShotMode == ShotMode.Screen) ray = centerEyeAnchor.ViewportPointToRay(new Vector2(0.5f, 0.5f));
-            else if (ShotMode == ShotMode.Gun) ray = new Ray(laserPointer.StartPoint, (laserPointer.EndPoint - laserPointer.StartPoint).normalized);
+            if (ShotMode == AimMode.Screen) ray = centerEyeAnchor.ViewportPointToRay(new Vector2(0.5f, 0.5f));
+            else if (ShotMode == AimMode.RightHand) ray = new Ray(laserPointer.StartPoint, (laserPointer.EndPoint - laserPointer.StartPoint).normalized);
 
             if (Physics.Raycast(ray, out RaycastHit hit, Mathf.Infinity, ~eyeAreaLayer.value))
             {
@@ -1135,7 +1182,7 @@ public class PlayerController : MonoBehaviourPunCallbacks
 
     void UpdateLaserPoint()
     {
-        if (platform != "Oculus" || ShotMode != ShotMode.Gun) return;
+        if (platform != "Oculus" || ShotMode != AimMode.RightHand) return;
 
         Ray ray = new Ray(laserPointer.StartPoint, (laserPointer.EndPoint - laserPointer.StartPoint).normalized);
 
@@ -1283,12 +1330,13 @@ public class PlayerController : MonoBehaviourPunCallbacks
     // 死亡関数
     public void Death(string killerName, int actor)
     {
+        Debug.Log("Death");
         currentHP = 0;
 
         if (platform == "Oculus")
         {
             uIManager.ResetUICanvas();
-            if (ShotMode == ShotMode.Gun)
+            if (ShotMode == AimMode.RightHand)
             {
                 oculusGunsHolder.transform.SetParent(this.gameObject.transform);
             }
@@ -1303,6 +1351,7 @@ public class PlayerController : MonoBehaviourPunCallbacks
             Debug.Log("for内 : " + EnemyPhotonViews[i].Owner.NickName);
             EnemyPhotonViews[i].RPC("DecrementEyeAreaCounter", EnemyPhotonViews[i].Owner);
         }
+        Debug.Log("EnemyPlayers.Count : " + EnemyPhotonViews.Count);
         RemoveAllEnemyPlayerObject();
 
 
@@ -1327,6 +1376,7 @@ public class PlayerController : MonoBehaviourPunCallbacks
     [PunRPC]
     public void Kill(string deathName, int actor)
     {
+        Debug.Log("Kill");
         if (PhotonNetwork.LocalPlayer.ActorNumber == actor)
         {
             uIManager.UpdateKillUI(deathName);
@@ -1336,6 +1386,7 @@ public class PlayerController : MonoBehaviourPunCallbacks
     [PunRPC]
     public void AllDestroyThisPlayerMapIcon(int actor)
     {
+        Debug.Log("AllDestroyThisPlayerMapIcon");
         // GameObject playerObject = uIManager.worldObjects.Find(x => x.GetPhotonView().Owner.ActorNumber == actor);
         // if (playerObject != null)
         // {
@@ -1391,7 +1442,6 @@ public class PlayerController : MonoBehaviourPunCallbacks
 
             // プレイヤーリストからプレイヤー削除
             gameManager.OutPlayerGet(PhotonNetwork.LocalPlayer.ActorNumber);
-
 
             // シーン同期の解除
             PhotonNetwork.AutomaticallySyncScene = false;

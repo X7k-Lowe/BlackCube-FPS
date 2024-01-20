@@ -102,6 +102,7 @@ public class SpawnManager : MonoBehaviour
     // 削除とリスポーン
     public void Die(float reSpawnTime)
     {
+        Debug.Log("Die");
         if (player != null)
         {
             // リスポーン関数を呼ぶ

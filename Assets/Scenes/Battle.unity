@@ -34938,7 +34938,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!81 &963194226
 AudioListener:
   m_ObjectHideFlags: 0
@@ -35435,7 +35435,7 @@ MonoBehaviour:
   laserPointer: {fileID: 476204079}
   rightControllerRenderer: {fileID: 5008821447553634619}
   leftControllerRenderer: {fileID: 2659024654019272726}
-  ShotMode: 0
+  AimMode: 0
 --- !u!4 &967329555
 Transform:
   m_ObjectHideFlags: 0

@@ -63,6 +63,13 @@ public class UIManager : MonoBehaviour
 
 
     // ゲーム終了パネル
+    public GameObject startPanel;
+    public TextMeshProUGUI startKillsText;
+    public GameObject readyPanel;
+    public TextMeshProUGUI readyCountdownText;
+    public GameObject goText;
+    public float readyCountdown { get; set; } = 0;
+    public bool isReady { get; set; } = false;
     public GameObject endPanel;
     public TextMeshProUGUI endText;
     public Material victoryFontMaterial;
@@ -117,12 +124,38 @@ public class UIManager : MonoBehaviour
 
     public LineRenderer laserSight;
     public AimMode ShotMode { get; set; }
+
     void Update()
     {
         // if (!photonView.IsMine) return;
         UpdateHelpUI();
         // if (myPlayerObject != null && myMapIcon != null) UpdateMapIconPos(myPlayerObject, myMapIcon);
         UpdateAllMapIconsPos();
+
+        if (isReady)
+        {
+            readyCountdown -= Time.deltaTime;
+            Debug.Log(readyCountdown);
+            if (readyCountdown > 0)
+            {
+                aimIconsUI.SetActive(false);
+                int readyCount = Mathf.CeilToInt(readyCountdown);
+                readyCountdownText.text = readyCount.ToString();
+                readyPanel.SetActive(true);
+            }
+            else if (readyCountdown <= 0 && readyCountdown > -2.0f)
+            {
+                readyPanel.SetActive(false);
+                goText.SetActive(true);
+            }
+            else if (readyCountdown <= -1.5f)
+            {
+                aimIconsUI.SetActive(true);
+                goText.SetActive(false);
+                isReady = false;
+                gameManager.isStart = true;
+            }
+        }
 
 
 
@@ -405,6 +438,11 @@ public class UIManager : MonoBehaviour
         currentKeyHelpTextColor = keyHelpTexts[0].color;
     }
 
+    public void ShowStartPanel()
+    {
+        startPanel.SetActive(true);
+        startKillsText.text = gameManager.targetNumber.ToString() + " Kills";
+    }
     void UpdateHelpUI()
     {
         // QキーまたはYボタンの操作

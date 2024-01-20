@@ -439,17 +439,21 @@ public class PlayerController : MonoBehaviourPunCallbacks
 
         gameManager.ShowScoreboard();
         uIManager.hpUI.SetActive(false);
+        uIManager.ShowStartPanel();
         yield return new WaitForSeconds(1.0f);
 
         whiteOutMaterial.DOFade(0, 3f).SetEase(Ease.InQuad);
         yield return new WaitForSeconds(2.5f);
 
+        uIManager.startPanel.SetActive(false);
         uIManager.hpUI.SetActive(true);
         uIManager.ChangeScoreUI();
         uIManager.ShowHelpBox();
-        yield return new WaitForSeconds(2.0f);
+        yield return new WaitForSeconds(1.0f);
 
         isWhiteOut = false;
+        uIManager.readyCountdown = 3.0f;
+        uIManager.isReady = true;
     }
     private void Update()
     {
@@ -461,7 +465,6 @@ public class PlayerController : MonoBehaviourPunCallbacks
             return;
         }
 
-        CheckEyeAreaStatus();
         // Debug.Log("EyeAreaCounter : " + EyeAreaCounter);
         uIManager.UpdateMapIconPos(this.gameObject, myIcon);
 
@@ -484,12 +487,14 @@ public class PlayerController : MonoBehaviourPunCallbacks
         // 覗き込み関数
         Aim();
 
-
-
-
-
         // カーソルの表示判定関数
         UpdateCursorLock();
+        UpdateLaserPoint();
+
+        if (!gameManager.isStart)
+        {
+            return;
+        }
 
         if (allowSwitchGuns)
         {
@@ -528,7 +533,6 @@ public class PlayerController : MonoBehaviourPunCallbacks
             }
         }
 
-        UpdateLaserPoint();
 
         uIManager.IsChanging = isReloading || !allowSwitchGuns;
 

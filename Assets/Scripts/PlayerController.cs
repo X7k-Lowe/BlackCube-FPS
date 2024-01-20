@@ -383,7 +383,7 @@ public class PlayerController : MonoBehaviourPunCallbacks
         // 全プレーヤー同期の銃切り替え
         photonView.RPC("SetGun", RpcTarget.All, selectedGun);
 
-        StartCoroutine(FadeWhiteOut());
+        if (photonView.IsMine && !gameManager.isStart) StartCoroutine(FadeWhiteOut());
     }
 
     [PunRPC]
@@ -437,10 +437,15 @@ public class PlayerController : MonoBehaviourPunCallbacks
     {
         yield return new WaitForSeconds(1.0f);
 
+        while (!gameManager.onSetKills)
+        {
+            yield return null;
+        }
+
         gameManager.ShowScoreboard();
         uIManager.hpUI.SetActive(false);
         uIManager.ShowStartPanel();
-        yield return new WaitForSeconds(1.0f);
+        yield return new WaitForSeconds(1.3f);
 
         whiteOutMaterial.DOFade(0, 3f).SetEase(Ease.InQuad);
         yield return new WaitForSeconds(2.5f);

@@ -59,6 +59,8 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
     public AimMode AimMode = AimMode.RightHand;
 
     public bool isStart { get; set; } = false;
+
+    public bool onSetKills { get; set; } = false;
     private void Awake()
     {
         mainCamera.SetActive(true);
@@ -329,6 +331,7 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
     public void TargetNumberSet(object[] data)
     {
         targetNumber = (int)data[0];
+        onSetKills = true;
     }
 
     // 内容を更新しつつスコアボードを開く

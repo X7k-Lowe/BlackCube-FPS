@@ -135,7 +135,6 @@ public class UIManager : MonoBehaviour
         if (isReady)
         {
             readyCountdown -= Time.deltaTime;
-            Debug.Log(readyCountdown);
             if (readyCountdown > 0)
             {
                 aimIconsUI.SetActive(false);

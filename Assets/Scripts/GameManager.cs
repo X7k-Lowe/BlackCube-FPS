@@ -80,6 +80,7 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
             if (PhotonNetwork.CurrentRoom.CustomProperties.ContainsKey("KillNumber"))
             {
                 targetNumber = (int)PhotonNetwork.CurrentRoom.CustomProperties["KillNumber"];
+                Debug.Log("targetNumber: " + targetNumber);
                 KillNumberGet(targetNumber);
             }
 
@@ -102,10 +103,10 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
 
     void Update()
     {
-        if (PlatformManager.Instance.Platform == "Windows")
-        {
-            PlatformManager.Instance.WindowAspectRatio();
-        }
+        // if (PlatformManager.Instance.Platform == "Windows")
+        // {
+        //     PlatformManager.Instance.WindowAspectRatio();
+        // }
 
         if (!isStart)
         {
@@ -332,6 +333,7 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
     {
         targetNumber = (int)data[0];
         onSetKills = true;
+        Debug.Log("TtargetNumber: " + targetNumber);
     }
 
     // 内容を更新しつつスコアボードを開く

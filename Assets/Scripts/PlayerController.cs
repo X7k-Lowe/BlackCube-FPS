@@ -236,7 +236,15 @@ public class PlayerController : MonoBehaviourPunCallbacks
         myIcon = uIManager.GetMyMapIcon();
 
         myIcon.transform.GetChild(0).GetComponent<Image>().material = whiteMaterial;
-        whiteOutMaterial.color = new Color(whiteOutMaterial.color.r, whiteOutMaterial.color.g, whiteOutMaterial.color.b, 1);
+
+        if (!gameManager.isStart)
+        {
+            whiteOutMaterial.color = new Color(whiteOutMaterial.color.r, whiteOutMaterial.color.g, whiteOutMaterial.color.b, 1);
+        }
+        else
+        {
+            isWhiteOut = false;
+        }
     }
     void InitializePlatformSpecificFeatures()
     {
@@ -286,7 +294,6 @@ public class PlayerController : MonoBehaviourPunCallbacks
             }
 
             // UIをプレイヤーキャンバスに配置
-
             uIManager.SetUIAsChildOfPlayerCanvas();
             playerCanvas.enabled = false;
         }
@@ -471,6 +478,7 @@ public class PlayerController : MonoBehaviourPunCallbacks
         }
 
         // Debug.Log("EyeAreaCounter : " + EyeAreaCounter);
+        CheckEyeAreaStatus();
         uIManager.UpdateMapIconPos(this.gameObject, myIcon);
 
         //視点移動関数の呼び出し
@@ -604,8 +612,10 @@ public class PlayerController : MonoBehaviourPunCallbacks
     [PunRPC]
     public void DecrementEyeAreaCounter()
     {
-        Debug.Log("DecrementEyeAreaCounter");
+        Debug.Log("DecrementEyeAreaCounter : " + EyeAreaCounter);
         EyeAreaCounter--;
+        Debug.Log("DecrementEyeAreaCounter : " + EyeAreaCounter);
+
     }
     private void CheckEyeAreaStatus()
     {

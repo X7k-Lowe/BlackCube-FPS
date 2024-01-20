@@ -28,6 +28,7 @@ public class PhotonManager : MonoBehaviourPunCallbacks // MonoBehaviourとPhoton
     public TextMeshProUGUI titleStartText;
     public CanvasGroup titleStartTextCanvasGroup;
     public GameObject textUnderLine;
+    public GameObject titleFlushImage;
     bool onTitleText = false;
     public CanvasGroup closeMenuUICanvasGroup;
 
@@ -225,7 +226,6 @@ public class PhotonManager : MonoBehaviourPunCallbacks // MonoBehaviourとPhoton
     {
         if (PlatformManager.Instance.Platform == "Windows")
         {
-            titleImage.SetActive(true);
             mainCamera.SetActive(true);
             oVRCameraRig.SetActive(false);
             eventSystemObjectWindows.SetActive(true);
@@ -237,7 +237,6 @@ public class PhotonManager : MonoBehaviourPunCallbacks // MonoBehaviourとPhoton
         }
         else if (PlatformManager.Instance.Platform == "Oculus")
         {
-            titleImage.SetActive(false);
             nameInputBackImage.color = Color.clear;
             oVRCameraRig.SetActive(true);
             mainCamera.SetActive(false);
@@ -250,6 +249,7 @@ public class PhotonManager : MonoBehaviourPunCallbacks // MonoBehaviourとPhoton
             );
             aimModeButton.SetActive(true);
         }
+        titleImage.SetActive(false);
         titleText.SetActive(false);
         textUnderLine.SetActive(false);
         titleStartTextCanvasGroup.gameObject.SetActive(false);
@@ -282,6 +282,7 @@ public class PhotonManager : MonoBehaviourPunCallbacks // MonoBehaviourとPhoton
         titleText.SetActive(false);
         textUnderLine.SetActive(false);
         titleStartTextCanvasGroup.gameObject.SetActive(false);
+        titleFlushImage.SetActive(false);
     }
 
     public IEnumerator FadeOutMenuUI(CanvasGroup canvasGroup, float times = 1f)
@@ -328,7 +329,14 @@ public class PhotonManager : MonoBehaviourPunCallbacks // MonoBehaviourとPhoton
         textUnderLine.SetActive(true);
         titleImage.SetActive(true);
         titleText.SetActive(true);
+        titleFlushImage.SetActive(true);
         titleText.GetComponent<CanvasGroup>().alpha = 0;
+
+        yield return new WaitForSeconds(1.0f);
+
+        yield return FadeOutMenuUI(closeMenuUICanvasGroup, 1.5f);
+        titleFlushImage.SetActive(false);
+
         DOTween.Sequence()
             .Append(textUnderLine.transform.DOScaleX(1, 1.2f))
             .Append(titleTextCanvasGroup.DOFade(1, 1.5f).SetEase(Ease.InOutCubic));

@@ -6,6 +6,9 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.XR;
 using UnityEngine.EventSystems;
+using DG.Tweening;
+
+
 public enum Wall
 {
     Front,
@@ -198,6 +201,9 @@ public class PlayerController : MonoBehaviourPunCallbacks
 
     public Vector3 viewPointInitLocalPosition;
 
+    public Material whiteOutMaterial;
+    bool isWhiteOut = true;
+
     private void Awake()
     {
         // uIManager格納
@@ -230,6 +236,7 @@ public class PlayerController : MonoBehaviourPunCallbacks
         myIcon = uIManager.GetMyMapIcon();
 
         myIcon.transform.GetChild(0).GetComponent<Image>().material = whiteMaterial;
+        whiteOutMaterial.color = new Color(whiteOutMaterial.color.r, whiteOutMaterial.color.g, whiteOutMaterial.color.b, 1);
     }
     void InitializePlatformSpecificFeatures()
     {
@@ -375,6 +382,8 @@ public class PlayerController : MonoBehaviourPunCallbacks
 
         // 全プレーヤー同期の銃切り替え
         photonView.RPC("SetGun", RpcTarget.All, selectedGun);
+
+        StartCoroutine(FadeWhiteOut());
     }
 
     [PunRPC]
@@ -423,10 +432,23 @@ public class PlayerController : MonoBehaviourPunCallbacks
         GameObject healingCube = uIManager.worldObjects.Find(x => x.GetPhotonView().ViewID == viewID);
         RemoveWorldObject(healingCube);
     }
+
+    IEnumerator FadeWhiteOut()
+    {
+        yield return new WaitForSeconds(1.0f);
+        whiteOutMaterial.DOFade(0, 3f).SetEase(Ease.InQuad);
+        yield return new WaitForSeconds(1.0f);
+        isWhiteOut = false;
+    }
     private void Update()
     {
         // 自分じゃなければ
         if (!photonView.IsMine) return;
+
+        if (isWhiteOut)
+        {
+            return;
+        }
 
         CheckEyeAreaStatus();
         // Debug.Log("EyeAreaCounter : " + EyeAreaCounter);

@@ -442,6 +442,10 @@ public class PlayerController : MonoBehaviourPunCallbacks
 
     IEnumerator FadeWhiteOut()
     {
+        uIManager.hpUI.SetActive(false);
+        gameManager.ShowScoreboard();
+        uIManager.scoreboard.SetActive(false);
+
         yield return new WaitForSeconds(1.0f);
 
         while (!gameManager.onSetKills)
@@ -449,23 +453,48 @@ public class PlayerController : MonoBehaviourPunCallbacks
             yield return null;
         }
 
-        gameManager.ShowScoreboard();
-        uIManager.hpUI.SetActive(false);
-        uIManager.ShowStartPanel();
+
+        if (gameManager.isPracticeMode)
+        {
+            uIManager.PracticeModeSetStartText();
+        }
+        else
+        {
+            uIManager.ShowStartPanel();
+            uIManager.scoreboard.SetActive(true);
+        }
+
         yield return new WaitForSeconds(1.3f);
 
         whiteOutMaterial.DOFade(0, 3f).SetEase(Ease.InQuad);
         yield return new WaitForSeconds(2.5f);
 
-        uIManager.startPanel.SetActive(false);
-        uIManager.hpUI.SetActive(true);
+        if (gameManager.isPracticeMode)
+        {
+            uIManager.practicePanel.SetActive(false);
+            uIManager.scoreboard.SetActive(true);
+        }
+        else
+        {
+            uIManager.startPanel.SetActive(false);
+        }
         uIManager.ChangeScoreUI();
         uIManager.ShowHelpBox();
+        uIManager.hpUI.SetActive(true);
+
         yield return new WaitForSeconds(1.0f);
 
         isWhiteOut = false;
-        uIManager.readyCountdown = 3.0f;
-        uIManager.isReady = true;
+
+        if (gameManager.isPracticeMode)
+        {
+            gameManager.isStart = true;
+        }
+        else
+        {
+            uIManager.readyCountdown = 3.0f;
+            uIManager.isReady = true;
+        }
     }
     private void Update()
     {
@@ -569,7 +598,10 @@ public class PlayerController : MonoBehaviourPunCallbacks
         }
 
         // 特定のボタンが押されたらメニューに戻る
-        OutGame();
+        if (gameManager.isPracticeMode)
+        {
+            OutGame();
+        }
     }
     private void FixedUpdate()
     {
@@ -1476,7 +1508,7 @@ public class PlayerController : MonoBehaviourPunCallbacks
     public void OutGame()
     {
         if (Input.GetKeyDown(KeyCode.M)
-        || OVRInput.GetDown(OVRInput.Button.Start)) // Start
+        || OVRInput.GetDown(OVRInput.Button.Start))
         {
             if (platform == "Oculus")
             {

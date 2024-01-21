@@ -61,6 +61,9 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
     public bool isStart { get; set; } = false;
 
     public bool onSetKills { get; set; } = false;
+
+    public bool isPracticeMode { get; set; } = false;
+
     private void Awake()
     {
         mainCamera.SetActive(true);
@@ -90,6 +93,12 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
                 {
                     AimMode = (AimMode)PhotonNetwork.CurrentRoom.CustomProperties["AimMode"];
                 }
+            }
+
+            if (PhotonNetwork.CurrentRoom.PlayerCount == 1)
+            {
+                isPracticeMode = true;
+                onSetKills = true;
             }
 
             state = GameState.Playing;

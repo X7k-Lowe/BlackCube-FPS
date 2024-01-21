@@ -50,6 +50,8 @@ public class UIManager : MonoBehaviour
     public List<TextMeshProUGUI> actionTexts;
     public List<TextMeshProUGUI> commandTexts;
     public List<TextMeshProUGUI> keyHelpTexts;
+    public GameObject practiceRecord;
+    public TextMeshProUGUI practiceText;
     public Color keyHelpColor;
     public Color defaultColor;
     public Color highlightColor;
@@ -62,8 +64,10 @@ public class UIManager : MonoBehaviour
     public GameObject mapIconHelpBox;
 
 
-    // ゲーム終了パネル
+    // ゲームパネル
+    public GameObject practicePanel;
     public GameObject startPanel;
+    public TextMeshProUGUI startText;
     public TextMeshProUGUI startKillsText;
     public GameObject readyPanel;
     public TextMeshProUGUI readyCountdownText;
@@ -124,6 +128,8 @@ public class UIManager : MonoBehaviour
 
     public LineRenderer laserSight;
     public AimMode ShotMode { get; set; }
+
+    bool isPracticeMode = false;
 
     void Update()
     {
@@ -282,6 +288,14 @@ public class UIManager : MonoBehaviour
         onCountdown = false;
     }
 
+    public void PracticeModeSetStartText()
+    {
+        startPanel.SetActive(false);
+        practicePanel.SetActive(true);
+        practiceRecord.SetActive(true);
+        helpUI.GetComponent<RectTransform>().offsetMin = new Vector2(helpUI.GetComponent<RectTransform>().offsetMin.x, -65);
+        isPracticeMode = true;
+    }
     void WorldObjectAdded(GameObject worldObject)
     {
         InstantiateMapIcon(worldObject);
@@ -410,6 +424,7 @@ public class UIManager : MonoBehaviour
         commandTexts[7].text = "[R]";
         commandTexts[8].text = "[ホイール回転]";
         commandTexts[9].text = "[Tab]";
+        practiceText.text = "[M]";
         helpBoxBackgroundImage.sprite = winHelpBackgroundSprite;
         helpBoxBackgroundImage.color = winHelpBackgroundColor;
         mapUIParentRect.localScale = Vector3.one * 1.6f;
@@ -429,6 +444,7 @@ public class UIManager : MonoBehaviour
         commandTexts[7].text = "[Aボタン]";
         commandTexts[8].text = "[Bボタン]";
         commandTexts[9].text = "[Xボタン]";
+        practiceText.text = "[Startボタン]";
     }
 
 
@@ -440,7 +456,7 @@ public class UIManager : MonoBehaviour
     public void ShowStartPanel()
     {
         startPanel.SetActive(true);
-        startKillsText.text = gameManager.targetNumber.ToString() + " Kills";
+        startKillsText.text = gameManager.targetNumber.ToString() + "キル";
     }
     void UpdateHelpUI()
     {

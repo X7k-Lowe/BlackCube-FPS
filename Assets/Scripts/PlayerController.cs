@@ -204,6 +204,8 @@ public class PlayerController : MonoBehaviourPunCallbacks
     public Material whiteOutMaterial;
     bool isWhiteOut = true;
 
+    private float playerRotateY;
+
     private void Awake()
     {
         // uIManager格納
@@ -262,6 +264,7 @@ public class PlayerController : MonoBehaviourPunCallbacks
         }
         else if (platform == "Oculus")
         {
+            playerRotateY = transform.eulerAngles.y;
             centerEyeAnchor = GameObject.Find("CenterEyeAnchor").GetComponent<Camera>();
             oVRCameraRig = GameObject.Find("OVRCameraRig");
             oVRCameraRig.SetActive(true);
@@ -459,7 +462,7 @@ public class PlayerController : MonoBehaviourPunCallbacks
         }
         else
         {
-            uIManager.panelsUIRect.localPosition = new Vector3(uIManager.panelsUIRect.localPosition.x, -120, uIManager.panelsUIRect.localPosition.z);
+            uIManager.panelsUIRect.localPosition = new Vector3(uIManager.panelsUIRect.localPosition.x, -150, uIManager.panelsUIRect.localPosition.z);
             uIManager.scoreboard.SetActive(true);
             uIManager.ChangeScoreUI();
             uIManager.ShowHelpBox();
@@ -746,10 +749,9 @@ public class PlayerController : MonoBehaviourPunCallbacks
             // 変数にユーザーのサムスティックの動きを格納
             Vector2 rStickInput = OVRInput.Get(OVRInput.Axis2D.PrimaryThumbstick, OVRInput.Controller.RTouch);
 
-            // サムスティックのx軸の動きを反映 
-            transform.rotation = Quaternion.Euler(transform.eulerAngles.x,
-            transform.eulerAngles.y + rStickInput.x * hmdSensitivity,
-            transform.eulerAngles.z);
+            playerRotateY += rStickInput.x * hmdSensitivity;
+            if (playerRotateY < 0) playerRotateY = 360 + playerRotateY;
+            if (playerRotateY > 360) playerRotateY = playerRotateY - 360;
 
             // サムスティックのx軸の動きを反映
             if (oVRCameraRig != null)
@@ -758,21 +760,6 @@ public class PlayerController : MonoBehaviourPunCallbacks
                 oVRCameraRig.transform.eulerAngles.y + rStickInput.x * hmdSensitivity,
                 oVRCameraRig.transform.eulerAngles.z);
             }
-
-            // サムスティックのx軸の動きを反映
-            viewPoint.rotation = Quaternion.Euler(viewPoint.eulerAngles.x,
-            viewPoint.eulerAngles.y + rStickInput.x * hmdSensitivity,
-            viewPoint.eulerAngles.z);
-
-            // サムスティックのx軸の動きを反映
-            playerCanvasPoint.rotation = Quaternion.Euler(playerCanvasPoint.eulerAngles.x,
-            playerCanvasPoint.eulerAngles.y + rStickInput.x * hmdSensitivity,
-            playerCanvasPoint.eulerAngles.z);
-
-            // サムスティックのx軸の動きを反映
-            eyePoint.rotation = Quaternion.Euler(eyePoint.eulerAngles.x,
-            eyePoint.eulerAngles.y + rStickInput.x * hmdSensitivity,
-            eyePoint.eulerAngles.z);
 
             // y軸の値に現在の値を足す
             verticalInput += rStickInput.y;
@@ -788,8 +775,8 @@ public class PlayerController : MonoBehaviourPunCallbacks
             if (headDevice.TryGetFeatureValue(CommonUsages.deviceRotation, out Quaternion headRotation))
             {
                 // プレイヤーの水平回転（y軸）をHMDの回転に合わせる
-                transform.rotation = Quaternion.Euler(transform.eulerAngles.x, headRotation.eulerAngles.y, transform.eulerAngles.z);
-
+                transform.rotation = Quaternion.Euler(transform.eulerAngles.x, playerRotateY + headRotation.eulerAngles.y, transform.eulerAngles.z);
+                Debug.Log("headRotation : " + headRotation.eulerAngles.y);
                 // 垂直回転（x軸）のためにHMDのPitch値を使用して、viewPointを回転させる
                 // ここでは範囲を-60fから60fに制限している
                 float headPitch = headRotation.eulerAngles.x;
@@ -801,14 +788,6 @@ public class PlayerController : MonoBehaviourPunCallbacks
                 // viewPointの回転を設定
                 viewPoint.rotation = Quaternion.Euler(headPitch, viewPoint.eulerAngles.y, viewPoint.eulerAngles.z);
             }
-
-
-            // 右コントローラーの向きをそのまま反映    
-            // viewPoint.rotation = Quaternion.Euler(currentControllerRotation.eulerAngles.x, currentControllerRotation.eulerAngles.y, viewPoint.eulerAngles.z);
-
-
-
-
         }
     }
 

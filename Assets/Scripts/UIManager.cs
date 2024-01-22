@@ -667,10 +667,10 @@ public class UIManager : MonoBehaviour
     }
 
     // スコアボードを開く関数
-    public void ChangeScoreUI()
+    public void ChangeScoreUI(bool enable)
     {
         // 表示中なら非表示に、非表示中なら表示に切り替える 
-        scoreboard.SetActive(!scoreboard.activeInHierarchy);
+        scoreboard.SetActive(enable);
         if (scoreboard.activeInHierarchy)
         {
             aimIcon.SetActive(false);
@@ -695,6 +695,7 @@ public class UIManager : MonoBehaviour
     public void ShowHelpBox()
     {
         helpUI.SetActive(true);
+        if (!mapUI.activeSelf) mapUI.SetActive(true);
     }
     public void HideHelpBox()
     {

@@ -176,7 +176,7 @@ public class PlayerController : MonoBehaviourPunCallbacks
 
     GameManager gameManager;
 
-    private string platform;
+    public string platform;
     GameObject myIcon;
     public Material whiteMaterial;
     SpriteFacesCamera myIconSpriteFacesCamera;
@@ -467,7 +467,7 @@ public class PlayerController : MonoBehaviourPunCallbacks
                 uIManager.panelsUIRect.localPosition = new Vector3(uIManager.panelsUIRect.localPosition.x, -150, uIManager.panelsUIRect.localPosition.z);
             }
             uIManager.scoreboard.SetActive(true);
-            uIManager.ChangeScoreUI();
+            uIManager.ChangeScoreUI(false);
             uIManager.ShowHelpBox();
             gameManager.ShowScoreboard();
             yield return uIManager.ShowStartPanel();
@@ -492,7 +492,7 @@ public class PlayerController : MonoBehaviourPunCallbacks
                 uIManager.panelsUIRect.localPosition = new Vector3(uIManager.panelsUIRect.localPosition.x, 0, uIManager.panelsUIRect.localPosition.z);
             }
         }
-        uIManager.ChangeScoreUI();
+        uIManager.ChangeScoreUI(false);
         uIManager.ShowHelpBox();
         uIManager.hpUI.SetActive(true);
         if (platform == "Oculus")

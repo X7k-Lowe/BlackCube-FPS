@@ -64,7 +64,7 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
 
     public bool isPracticeMode { get; set; } = false;
     public bool allowInput { get; set; } = false;
-    float waitTime = 2f;
+    float waitTime = 1f;
 
     private void Awake()
     {
@@ -160,7 +160,7 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
             else if (Input.GetKeyUp(KeyCode.Tab)
             || OVRInput.GetUp(OVRInput.Button.One, OVRInput.Controller.LTouch)) // X
             {
-                uIManager.ChangeScoreUI();
+                uIManager.ChangeScoreUI(false);
                 uIManager.ShowHelpBox();
             }
 
@@ -381,7 +381,7 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
         uIManager.HideHelpBox();
 
         // スコアボードを開く
-        uIManager.ChangeScoreUI();
+        uIManager.ChangeScoreUI(true);
 
         // 表示されているスコアボードを一旦すべて削除
         foreach (PlayerInfomation info in playerInfoList)

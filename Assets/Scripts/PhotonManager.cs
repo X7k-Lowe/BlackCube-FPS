@@ -27,6 +27,7 @@ public class PhotonManager : MonoBehaviourPunCallbacks // MonoBehaviourとPhoton
     public CanvasGroup titleTextCanvasGroup;
     public TextMeshProUGUI titleStartText;
     public CanvasGroup titleStartTextCanvasGroup;
+    public RectTransform titleStartTextRectTransform;
     public GameObject textUnderLine;
     public GameObject titleFlushImage;
     bool onTitleText = false;
@@ -173,6 +174,7 @@ public class PhotonManager : MonoBehaviourPunCallbacks // MonoBehaviourとPhoton
             oVRPointerEventData = new OVRPointerEventData(eventSystemOculus);
             aimModeButton.SetActive(true);
             titleStartText.text = "Press to Start";
+            titleStartTextRectTransform.localPosition = new Vector3(titleStartTextRectTransform.localPosition.x, titleStartTextRectTransform.localPosition.y, -30);
         }
     }
 
@@ -769,12 +771,21 @@ public class PhotonManager : MonoBehaviourPunCallbacks // MonoBehaviourとPhoton
         PhotonNetwork.CurrentRoom.IsVisible = false;
 
         // killSetの情報をカスタムプロパティとして設定
-        ExitGames.Client.Photon.Hashtable customProperties = new ExitGames.Client.Photon.Hashtable
+        // ExitGames.Client.Photon.Hashtable customProperties = new ExitGames.Client.Photon.Hashtable
+        // {
+        //     { "KillNumber", killNumber },
+        //     { "AimMode", (int)aimMode }
+        // };
+        // PhotonNetwork.CurrentRoom.SetCustomProperties(customProperties);
+
+        if (PhotonNetwork.IsMasterClient)
         {
-            { "KillNumber", killNumber },
-            { "AimMode", (int)aimMode }
-        };
-        PhotonNetwork.CurrentRoom.SetCustomProperties(customProperties);
+            PlayerPrefs.SetInt("KillNumber", killNumber);
+        }
+        if (PlatformManager.Instance.Platform == "Oculus")
+        {
+            PlayerPrefs.SetInt("AimMode", (int)aimMode);
+        }
 
         // ステージをよみこむ
         PhotonNetwork.LoadLevel(levelToPlay);

@@ -82,19 +82,32 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
         {
             NewPlayerGet(PhotonNetwork.NickName);
 
-            if (PhotonNetwork.CurrentRoom.CustomProperties.ContainsKey("KillNumber"))
+            // if (PhotonNetwork.CurrentRoom.CustomProperties.ContainsKey("KillNumber"))
+            // {
+            //     targetNumber = (int)PhotonNetwork.CurrentRoom.CustomProperties["KillNumber"];
+            //     Debug.Log("GameManager KillNumber: " + targetNumber);
+            //     KillNumberGet(targetNumber);
+            // }
+
+            // if (PlatformManager.Instance.Platform == "Oculus")
+            // {
+            //     if (PhotonNetwork.CurrentRoom.CustomProperties.ContainsKey("AimMode"))
+            //     {
+            //         AimMode = (AimMode)PhotonNetwork.CurrentRoom.CustomProperties["AimMode"];
+            //     }
+            // }
+
+            if (PhotonNetwork.IsMasterClient)
             {
-                targetNumber = (int)PhotonNetwork.CurrentRoom.CustomProperties["KillNumber"];
-                Debug.Log("targetNumber: " + targetNumber);
+                targetNumber = PlayerPrefs.GetInt("KillNumber");
+                PlayerPrefs.DeleteKey("KillNumber");
                 KillNumberGet(targetNumber);
             }
 
             if (PlatformManager.Instance.Platform == "Oculus")
             {
-                if (PhotonNetwork.CurrentRoom.CustomProperties.ContainsKey("AimMode"))
-                {
-                    AimMode = (AimMode)PhotonNetwork.CurrentRoom.CustomProperties["AimMode"];
-                }
+                AimMode = (AimMode)PlayerPrefs.GetInt("AimMode");
+                PlayerPrefs.DeleteKey("AimMode");
             }
 
             if (PhotonNetwork.CurrentRoom.PlayerCount == 1)

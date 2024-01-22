@@ -76,6 +76,7 @@ public class UIManager : MonoBehaviour
     public GameObject readyPanel;
     public TextMeshProUGUI readyCountdownText;
     public GameObject goText;
+    public List<RectTransform> panelsTextRectTransforms;
     public float readyCountdown { get; set; } = 0;
     public bool isReady { get; set; } = false;
     public GameObject endPanel;
@@ -133,7 +134,6 @@ public class UIManager : MonoBehaviour
     public LineRenderer laserSight;
     public AimMode ShotMode { get; set; }
 
-    // bool isPracticeMode = false;
 
     void Update()
     {
@@ -245,7 +245,6 @@ public class UIManager : MonoBehaviour
         playerMapUI.transform.localScale = Vector3.one * 1.75f;
 
         deathPanelBackground.enabled = false;
-
         hpUI.SetActive(true);
     }
 
@@ -294,11 +293,23 @@ public class UIManager : MonoBehaviour
 
     public IEnumerator PracticeModeSetStartText()
     {
+        if (platform == "Windows")
+        {
+            helpUI.GetComponent<RectTransform>().offsetMin = new Vector2(helpUI.GetComponent<RectTransform>().offsetMin.x, -65);
+        }
+        else
+        {
+            helpUI.GetComponent<RectTransform>().offsetMin = new Vector2(helpUI.GetComponent<RectTransform>().offsetMin.x, 260);
+            foreach (var rectTransform in panelsTextRectTransforms)
+            {
+                var position = rectTransform.localPosition;
+                position.y = 40;
+                rectTransform.localPosition = position;
+            }
+        }
         startPanel.SetActive(false);
         practicePanel.SetActive(true);
         practiceRecord.SetActive(true);
-        helpUI.GetComponent<RectTransform>().offsetMin = new Vector2(helpUI.GetComponent<RectTransform>().offsetMin.x, -65);
-        // isPracticeMode = true;
 
         yield return FadeInMenuUI(practiceCanvasGroup, 0.4f);
     }

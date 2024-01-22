@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 705507994}
-  m_IndirectSpecularColor: {r: 0.06361822, g: 0.052069563, b: 0.056787517, a: 1}
+  m_IndirectSpecularColor: {r: 0.063516974, g: 0.05198465, b: 0.056738935, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -12603,7 +12603,7 @@ RectTransform:
   m_Children:
   - {fileID: 249200317}
   - {fileID: 885236182}
-  m_Father: {fileID: 4276936055827733882}
+  m_Father: {fileID: 1221760525}
   m_RootOrder: -1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -16474,7 +16474,7 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 4276936055827733882}
+  m_Father: {fileID: 1221760525}
   m_RootOrder: -1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
@@ -41754,7 +41754,7 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1135498469}
-  m_Father: {fileID: 4276936055827733882}
+  m_Father: {fileID: 1221760525}
   m_RootOrder: -1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -51475,6 +51475,10 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 7672890663659094802}
+  - {fileID: 1107387468}
+  - {fileID: 1539470103}
+  - {fileID: 303730621}
+  - {fileID: 432407312}
   m_Father: {fileID: 4276936055827733882}
   m_RootOrder: -1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -56697,37 +56701,13 @@ PrefabInstance:
       propertyPath: m_Name
       value: Player
       objectReference: {fileID: 0}
-    - target: {fileID: 1009559829291235292, guid: cf9742576a427054e9e7840fcf837699, type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4048650608238301363, guid: cf9742576a427054e9e7840fcf837699, type: 3}
-      propertyPath: m_AnchorMax.x
-      value: 0.653
-      objectReference: {fileID: 0}
-    - target: {fileID: 4048650608238301363, guid: cf9742576a427054e9e7840fcf837699, type: 3}
-      propertyPath: m_AnchorMax.y
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 4462004166008880966, guid: cf9742576a427054e9e7840fcf837699, type: 3}
-      propertyPath: m_AnchorMax.x
-      value: 0.653
-      objectReference: {fileID: 0}
-    - target: {fileID: 4462004166008880966, guid: cf9742576a427054e9e7840fcf837699, type: 3}
-      propertyPath: m_AnchorMax.y
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 4462004166008880966, guid: cf9742576a427054e9e7840fcf837699, type: 3}
-      propertyPath: m_AnchorMin.x
-      value: 0.653
-      objectReference: {fileID: 0}
     - target: {fileID: 6069274907637420504, guid: cf9742576a427054e9e7840fcf837699, type: 3}
       propertyPath: sceneViewId
-      value: 3
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6962590852842908480, guid: cf9742576a427054e9e7840fcf837699, type: 3}
       propertyPath: sceneViewId
-      value: 1
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 7140943252906745514, guid: cf9742576a427054e9e7840fcf837699, type: 3}
       propertyPath: m_RootOrder
@@ -63106,7 +63086,7 @@ RectTransform:
   m_Children:
   - {fileID: 866392124}
   - {fileID: 596916130}
-  m_Father: {fileID: 4276936055827733882}
+  m_Father: {fileID: 1221760525}
   m_RootOrder: -1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -95195,6 +95175,11 @@ MonoBehaviour:
   readyPanel: {fileID: 303730620}
   readyCountdownText: {fileID: 885236183}
   goText: {fileID: 432407311}
+  panelsTextRectTransforms:
+  - {fileID: 1135498469}
+  - {fileID: 249200317}
+  - {fileID: 885236182}
+  - {fileID: 432407312}
   endPanel: {fileID: 7672890662908812404}
   endText: {fileID: 7672890663924003525}
   victoryFontMaterial: {fileID: 2100000, guid: c173d9c4dfdb6fd4891daf75d04d0acf, type: 2}
@@ -96714,10 +96699,6 @@ RectTransform:
   m_Children:
   - {fileID: 1243376042}
   - {fileID: 316226303}
-  - {fileID: 1107387468}
-  - {fileID: 1539470103}
-  - {fileID: 303730621}
-  - {fileID: 432407312}
   - {fileID: 7672890662859565092}
   - {fileID: 1914432720}
   - {fileID: 7672890662908812407}

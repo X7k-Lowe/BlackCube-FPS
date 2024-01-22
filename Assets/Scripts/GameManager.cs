@@ -71,7 +71,7 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
         mainCamera.SetActive(true);
         oVRCameraRig.SetActive(true);
         AllowLeaveRoom = false;
-
+        allowInput = false;
         // uIManager = GameObject.FindGameObjectWithTag("UIManager").GetComponent<UIManager>();
         if (!PhotonNetwork.IsConnected)
         {
@@ -82,19 +82,33 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
         {
             NewPlayerGet(PhotonNetwork.NickName);
 
-            if (PhotonNetwork.CurrentRoom.CustomProperties.ContainsKey("KillNumber"))
+            // if (PhotonNetwork.CurrentRoom.CustomProperties.ContainsKey("KillNumber"))
+            // {
+            //     targetNumber = (int)PhotonNetwork.CurrentRoom.CustomProperties["KillNumber"];
+            //     Debug.Log("GameManager KillNumber: " + targetNumber);
+            //     KillNumberGet(targetNumber);
+            // }
+
+            // if (PlatformManager.Instance.Platform == "Oculus")
+            // {
+            //     if (PhotonNetwork.CurrentRoom.CustomProperties.ContainsKey("AimMode"))
+            //     {
+            //         AimMode = (AimMode)PhotonNetwork.CurrentRoom.CustomProperties["AimMode"];
+            //     }
+            // }
+
+            if (PhotonNetwork.IsMasterClient)
             {
-                targetNumber = (int)PhotonNetwork.CurrentRoom.CustomProperties["KillNumber"];
-                Debug.Log("targetNumber: " + targetNumber);
+                targetNumber = PlayerPrefs.GetInt("KillNumber");
+                PlayerPrefs.DeleteKey("KillNumber");
                 KillNumberGet(targetNumber);
             }
 
             if (PlatformManager.Instance.Platform == "Oculus")
             {
-                if (PhotonNetwork.CurrentRoom.CustomProperties.ContainsKey("AimMode"))
-                {
-                    AimMode = (AimMode)PhotonNetwork.CurrentRoom.CustomProperties["AimMode"];
-                }
+                ExitGames.Client.Photon.Hashtable customProperties = PhotonNetwork.LocalPlayer.CustomProperties;
+                AimMode = (AimMode)(int)customProperties["AimMode"];
+                // PlayerPrefs.DeleteKey("AimMode");
             }
 
             if (PhotonNetwork.CurrentRoom.PlayerCount == 1)
@@ -457,6 +471,10 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
 
     private void ShowEndPanel()
     {
+        if (PlatformManager.Instance.Platform == "Oculus")
+        {
+            uIManager.scoreboardRect.localPosition = new Vector3(uIManager.scoreboardRect.localPosition.x, uIManager.scoreboardRect.localPosition.y, 0);
+        }
         // スコアパネル表示
         ShowScoreboard();
 

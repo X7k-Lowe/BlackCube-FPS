@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.0011351202, g: 0.0031264166, b: 0.0022876433, a: 1}
+  m_IndirectSpecularColor: {r: 0.0011112214, g: 0.0030393223, b: 0.0023889553, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -7259,7 +7259,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: -525, y: -55}
+  m_AnchoredPosition: {x: -450, y: -55}
   m_SizeDelta: {x: 500, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1330246644
@@ -7477,7 +7477,7 @@ GameObject:
   - component: {fileID: 1341099965}
   - component: {fileID: 1341099964}
   m_Layer: 5
-  m_Name: BlackOutImage
+  m_Name: WhiteOutImage
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -9230,10 +9230,13 @@ MonoBehaviour:
   oVRCameraRig: {fileID: 2517672616442649291}
   centerEyeAnchor: {fileID: 2517672616443267383}
   titleImage: {fileID: 720407226}
-  titleText: {fileID: 276679994}
+  titleText: {fileID: 276679996}
+  titleTextMaterial: {fileID: 2100000, guid: 2a2ab87aab505d14ba227949742b5eaf, type: 2}
+  titleTextFlushMaterial: {fileID: 2100000, guid: 0b1ab3f11a379df45838ea5800cf394c, type: 2}
   titleTextCanvasGroup: {fileID: 276679998}
   titleStartText: {fileID: 2067012572}
   titleStartTextCanvasGroup: {fileID: 2067012571}
+  titleStartTextRectTransform: {fileID: 2067012570}
   textUnderLine: {fileID: 1770237071}
   titleFlushImage: {fileID: 1341099962}
   closeMenuUICanvasGroup: {fileID: 617287776}

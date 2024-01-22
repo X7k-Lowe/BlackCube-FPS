@@ -37,6 +37,7 @@ public class UIManager : MonoBehaviour
 
 
     public GameObject scoreboard;
+    public RectTransform scoreboardRect;
 
     public PlayerInfomation info;
 
@@ -76,6 +77,7 @@ public class UIManager : MonoBehaviour
     public GameObject readyPanel;
     public TextMeshProUGUI readyCountdownText;
     public GameObject goText;
+    public List<RectTransform> panelsTextRectTransforms;
     public float readyCountdown { get; set; } = 0;
     public bool isReady { get; set; } = false;
     public GameObject endPanel;
@@ -106,6 +108,8 @@ public class UIManager : MonoBehaviour
     public GameObject mapUIParent;
     public RectTransform mapUIParentRect;
     public GameObject panelsUI;
+    public RectTransform panelsUIRect;
+
     public GameObject aimIconsUI;
     public GameObject hpUI;
     public GameObject helpUI;
@@ -133,7 +137,6 @@ public class UIManager : MonoBehaviour
     public LineRenderer laserSight;
     public AimMode ShotMode { get; set; }
 
-    // bool isPracticeMode = false;
 
     void Update()
     {
@@ -246,7 +249,8 @@ public class UIManager : MonoBehaviour
 
         deathPanelBackground.enabled = false;
 
-        hpUI.SetActive(true);
+        if (gameManager.isStart) hpUI.SetActive(true);
+        else hpUI.SetActive(false);
     }
 
     public void ResetUICanvas()
@@ -294,11 +298,23 @@ public class UIManager : MonoBehaviour
 
     public IEnumerator PracticeModeSetStartText()
     {
+        if (platform == "Windows")
+        {
+            helpUI.GetComponent<RectTransform>().offsetMin = new Vector2(helpUI.GetComponent<RectTransform>().offsetMin.x, -65);
+        }
+        else
+        {
+            helpUI.GetComponent<RectTransform>().offsetMin = new Vector2(helpUI.GetComponent<RectTransform>().offsetMin.x, 260);
+            foreach (var rectTransform in panelsTextRectTransforms)
+            {
+                var position = rectTransform.localPosition;
+                position.y = 40;
+                rectTransform.localPosition = position;
+            }
+        }
         startPanel.SetActive(false);
         practicePanel.SetActive(true);
         practiceRecord.SetActive(true);
-        helpUI.GetComponent<RectTransform>().offsetMin = new Vector2(helpUI.GetComponent<RectTransform>().offsetMin.x, -65);
-        // isPracticeMode = true;
 
         yield return FadeInMenuUI(practiceCanvasGroup, 0.4f);
     }
@@ -457,7 +473,7 @@ public class UIManager : MonoBehaviour
         commandTexts[7].text = "[Aボタン]";
         commandTexts[8].text = "[Bボタン]";
         commandTexts[9].text = "[Xボタン]";
-        practiceText.text = "[Startボタン]";
+        practiceText.text = "[≡ボタン]";
     }
 
 

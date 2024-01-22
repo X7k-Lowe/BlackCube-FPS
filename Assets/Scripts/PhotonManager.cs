@@ -23,10 +23,13 @@ public class PhotonManager : MonoBehaviourPunCallbacks // MonoBehaviourとPhoton
 
     // タイトルイメージ
     public GameObject titleImage;
-    public GameObject titleText;
+    public TextMeshProUGUI titleText;
+    public Material titleTextMaterial;
+    public Material titleTextFlushMaterial;
     public CanvasGroup titleTextCanvasGroup;
     public TextMeshProUGUI titleStartText;
     public CanvasGroup titleStartTextCanvasGroup;
+    public RectTransform titleStartTextRectTransform;
     public GameObject textUnderLine;
     public GameObject titleFlushImage;
     bool onTitleText = false;
@@ -179,10 +182,21 @@ public class PhotonManager : MonoBehaviourPunCallbacks // MonoBehaviourとPhoton
     void Update()
     {
         HandleHoverUI();
-        if (PlatformManager.Instance.Platform == "Oculus")
+        if (PlatformManager.Instance.Platform == "Oculus" && buttons.activeSelf)
         {
             if (aimMode == AimMode.RightHand) aimModeText.text = "RIGHT HAND";
             else aimModeText.text = "SCREEN";
+
+            if (PlatformManager.Instance.Platform == "Oculus")
+            {
+                // カスタムプロパティにプラットフォーム情報を設定
+                ExitGames.Client.Photon.Hashtable customProperties = new ExitGames.Client.Photon.Hashtable
+            {
+                { "Platform", PlatformManager.Instance.Platform },
+                { "AimMode", (int)aimMode }
+            };
+                PhotonNetwork.LocalPlayer.SetCustomProperties(customProperties);
+            }
         }
 
         if (onTitleText)
@@ -192,10 +206,17 @@ public class PhotonManager : MonoBehaviourPunCallbacks // MonoBehaviourとPhoton
             || OVRInput.GetDown(OVRInput.Button.One, OVRInput.Controller.RTouch))
             {
                 titleStartSequence.Pause();
-                StartCoroutine(LobbyMenuDisplay());
+                StartCoroutine(TitleFlushText());
                 onTitleText = false;
             }
         }
+    }
+    IEnumerator TitleFlushText()
+    {
+        titleText.fontMaterial = titleTextFlushMaterial;
+        // yield return new WaitForSeconds(0.1f);
+        yield return LobbyMenuDisplay();
+        titleText.fontMaterial = titleTextMaterial;
     }
     void HandleHoverUI()
     {
@@ -250,7 +271,7 @@ public class PhotonManager : MonoBehaviourPunCallbacks // MonoBehaviourとPhoton
             aimModeButton.SetActive(true);
         }
         titleImage.SetActive(false);
-        titleText.SetActive(false);
+        titleText.gameObject.SetActive(false);
         textUnderLine.SetActive(false);
         titleStartTextCanvasGroup.gameObject.SetActive(false);
 
@@ -279,7 +300,7 @@ public class PhotonManager : MonoBehaviourPunCallbacks // MonoBehaviourとPhoton
         errorPanel.SetActive(false);
         roomListPanel.SetActive(false);
         nameInputPanel.SetActive(false);
-        titleText.SetActive(false);
+        titleText.gameObject.SetActive(false);
         textUnderLine.SetActive(false);
         titleStartTextCanvasGroup.gameObject.SetActive(false);
         titleFlushImage.SetActive(false);
@@ -328,7 +349,7 @@ public class PhotonManager : MonoBehaviourPunCallbacks // MonoBehaviourとPhoton
         textUnderLine.transform.localScale = new Vector3(0, textUnderLine.transform.localScale.y, textUnderLine.transform.localScale.z);
         textUnderLine.SetActive(true);
         titleImage.SetActive(true);
-        titleText.SetActive(true);
+        titleText.gameObject.SetActive(true);
         titleFlushImage.SetActive(true);
         titleText.GetComponent<CanvasGroup>().alpha = 0;
 
@@ -768,13 +789,10 @@ public class PhotonManager : MonoBehaviourPunCallbacks // MonoBehaviourとPhoton
         PhotonNetwork.CurrentRoom.IsOpen = false;
         PhotonNetwork.CurrentRoom.IsVisible = false;
 
-        // killSetの情報をカスタムプロパティとして設定
-        ExitGames.Client.Photon.Hashtable customProperties = new ExitGames.Client.Photon.Hashtable
+        if (PhotonNetwork.IsMasterClient)
         {
-            { "KillNumber", killNumber },
-            { "AimMode", (int)aimMode }
-        };
-        PhotonNetwork.CurrentRoom.SetCustomProperties(customProperties);
+            PlayerPrefs.SetInt("KillNumber", killNumber);
+        }
 
         // ステージをよみこむ
         PhotonNetwork.LoadLevel(levelToPlay);

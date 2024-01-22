@@ -41733,6 +41733,7 @@ GameObject:
   - component: {fileID: 1107387468}
   - component: {fileID: 1107387470}
   - component: {fileID: 1107387469}
+  - component: {fileID: 1107387471}
   m_Layer: 5
   m_Name: PracticePanel
   m_TagString: Untagged
@@ -41799,6 +41800,18 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1107387467}
   m_CullTransparentMesh: 1
+--- !u!225 &1107387471
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1107387467}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
 --- !u!1001 &1109326715
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -63071,6 +63084,7 @@ GameObject:
   - component: {fileID: 1539470103}
   - component: {fileID: 1539470105}
   - component: {fileID: 1539470104}
+  - component: {fileID: 1539470106}
   m_Layer: 5
   m_Name: StartPanel
   m_TagString: Untagged
@@ -63138,6 +63152,18 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1539470102}
   m_CullTransparentMesh: 1
+--- !u!225 &1539470106
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1539470102}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
 --- !u!1001 &1540846622
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -95160,9 +95186,12 @@ MonoBehaviour:
   highlightDuration: 0.3
   mapIconHelpBox: {fileID: 757588009}
   practicePanel: {fileID: 1107387467}
+  practiceCanvasGroup: {fileID: 1107387471}
   startPanel: {fileID: 1539470102}
   startText: {fileID: 866392125}
   startKillsText: {fileID: 596916131}
+  startCanvasGroup: {fileID: 1539470106}
+  scoreboardCanvasGroup: {fileID: 7672890663659094804}
   readyPanel: {fileID: 303730620}
   readyCountdownText: {fileID: 885236183}
   goText: {fileID: 432407311}
@@ -102971,6 +103000,7 @@ GameObject:
   - component: {fileID: 7672890663659094796}
   - component: {fileID: 7672890663659094797}
   - component: {fileID: 7672890663659094799}
+  - component: {fileID: 7672890663659094804}
   m_Layer: 5
   m_Name: ScorePanel
   m_TagString: Untagged
@@ -102978,6 +103008,18 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 0
+--- !u!225 &7672890663659094804
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7672890663659094803}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
 --- !u!1 &7672890663759998564
 GameObject:
   m_ObjectHideFlags: 0

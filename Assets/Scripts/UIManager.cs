@@ -4,6 +4,7 @@ using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
 using Photon.Pun;
+using DG.Tweening;
 public class UIManager : MonoBehaviour
 {
     public Canvas canvas;
@@ -66,9 +67,12 @@ public class UIManager : MonoBehaviour
 
     // ゲームパネル
     public GameObject practicePanel;
+    public CanvasGroup practiceCanvasGroup;
     public GameObject startPanel;
     public TextMeshProUGUI startText;
     public TextMeshProUGUI startKillsText;
+    public CanvasGroup startCanvasGroup;
+    public CanvasGroup scoreboardCanvasGroup;
     public GameObject readyPanel;
     public TextMeshProUGUI readyCountdownText;
     public GameObject goText;
@@ -129,7 +133,7 @@ public class UIManager : MonoBehaviour
     public LineRenderer laserSight;
     public AimMode ShotMode { get; set; }
 
-    bool isPracticeMode = false;
+    // bool isPracticeMode = false;
 
     void Update()
     {
@@ -288,13 +292,22 @@ public class UIManager : MonoBehaviour
         onCountdown = false;
     }
 
-    public void PracticeModeSetStartText()
+    public IEnumerator PracticeModeSetStartText()
     {
         startPanel.SetActive(false);
         practicePanel.SetActive(true);
         practiceRecord.SetActive(true);
         helpUI.GetComponent<RectTransform>().offsetMin = new Vector2(helpUI.GetComponent<RectTransform>().offsetMin.x, -65);
-        isPracticeMode = true;
+        // isPracticeMode = true;
+
+        yield return FadeInMenuUI(practiceCanvasGroup, 0.4f);
+    }
+    public IEnumerator FadeInMenuUI(CanvasGroup canvasGroup, float times = 1f, bool inQuad = false)
+    {
+        canvasGroup.alpha = 0;
+        if (!inQuad) canvasGroup.DOFade(1, times);
+        else canvasGroup.DOFade(1, times).SetEase(Ease.OutQuad);
+        yield return new WaitForSeconds(times);
     }
     void WorldObjectAdded(GameObject worldObject)
     {
@@ -453,10 +466,13 @@ public class UIManager : MonoBehaviour
         currentKeyHelpTextColor = keyHelpTexts[0].color;
     }
 
-    public void ShowStartPanel()
+    public IEnumerator ShowStartPanel()
     {
         startPanel.SetActive(true);
         startKillsText.text = gameManager.targetNumber.ToString() + "キル";
+        StartCoroutine(FadeInMenuUI(startCanvasGroup, 0.4f));
+        yield return FadeInMenuUI(scoreboardCanvasGroup, 0.4f);
+
     }
     void UpdateHelpUI()
     {

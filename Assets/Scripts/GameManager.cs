@@ -63,6 +63,8 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
     public bool onSetKills { get; set; } = false;
 
     public bool isPracticeMode { get; set; } = false;
+    public bool allowInput { get; set; } = false;
+    float waitTime = 2f;
 
     private void Awake()
     {
@@ -119,6 +121,16 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
 
         if (!isStart)
         {
+            return;
+        }
+
+        if (!allowInput)
+        {
+            waitTime -= Time.deltaTime;
+            if (waitTime <= 0)
+            {
+                allowInput = true;
+            }
             return;
         }
 

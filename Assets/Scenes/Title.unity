@@ -3952,7 +3952,7 @@ MonoBehaviour:
   m_text: "\u5BFE\u6226\u30EB\u30FC\u30E0\u4E00\u89A7"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 57543ca5d6e94dc428b9d0af34037ce8, type: 2}
-  m_sharedMaterial: {fileID: -5226340269765664369, guid: b2354c04c236995469dfc154a162e465, type: 2}
+  m_sharedMaterial: {fileID: 274806248547660405, guid: 57543ca5d6e94dc428b9d0af34037ce8, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -6075,7 +6075,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Name
+  m_text: RoomName
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 57543ca5d6e94dc428b9d0af34037ce8, type: 2}
   m_sharedMaterial: {fileID: 2100000, guid: 13a3ac3167480f64980961c4d6e9370a, type: 2}
@@ -6112,7 +6112,7 @@ MonoBehaviour:
   m_HorizontalAlignment: 2
   m_VerticalAlignment: 512
   m_textAlignment: 65535
-  m_characterSpacing: 0
+  m_characterSpacing: 7
   m_wordSpacing: 0
   m_lineSpacing: 0
   m_lineSpacingMax: 0
@@ -9252,9 +9252,9 @@ MonoBehaviour:
   errorPanel: {fileID: 1856457488}
   errorText: {fileID: 466934527}
   roomListPanel: {fileID: 420053621}
-  originalRoomButton: {fileID: 8630198990614517820, guid: bcf961e40f78fe94a8eccff423e3891e, type: 3}
+  originalRoomButton: {fileID: 8040354060676649172, guid: bcf961e40f78fe94a8eccff423e3891e, type: 3}
   roomButtonContent: {fileID: 539645476}
-  playerNameText: {fileID: 4194577930360996678, guid: b4c95f0375950484c8e5c2967714950f, type: 3}
+  playerNameText: {fileID: 2043185238405749753, guid: b4c95f0375950484c8e5c2967714950f, type: 3}
   playerNameContent: {fileID: 1299388832}
   nameInputPanel: {fileID: 817353084}
   placeholderText: {fileID: 1541606429}

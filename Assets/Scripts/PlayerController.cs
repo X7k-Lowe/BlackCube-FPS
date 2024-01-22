@@ -390,7 +390,7 @@ public class PlayerController : MonoBehaviourPunCallbacks
         // 全プレーヤー同期の銃切り替え
         photonView.RPC("SetGun", RpcTarget.All, selectedGun);
 
-        if (photonView.IsMine && !gameManager.isStart) StartCoroutine(FadeWhiteOut());
+        if (photonView.IsMine && !gameManager.isStart) StartCoroutine(FadeInStartDisplay());
     }
 
     [PunRPC]
@@ -440,12 +440,11 @@ public class PlayerController : MonoBehaviourPunCallbacks
         RemoveWorldObject(healingCube);
     }
 
-    IEnumerator FadeWhiteOut()
+    IEnumerator FadeInStartDisplay()
     {
         uIManager.hpUI.SetActive(false);
         gameManager.ShowScoreboard();
         uIManager.scoreboard.SetActive(false);
-
         yield return new WaitForSeconds(1.0f);
 
         while (!gameManager.onSetKills)
@@ -453,15 +452,18 @@ public class PlayerController : MonoBehaviourPunCallbacks
             yield return null;
         }
 
-
         if (gameManager.isPracticeMode)
         {
-            uIManager.PracticeModeSetStartText();
+            yield return uIManager.PracticeModeSetStartText();
         }
         else
         {
-            uIManager.ShowStartPanel();
             uIManager.scoreboard.SetActive(true);
+            uIManager.ChangeScoreUI();
+            uIManager.ShowHelpBox();
+            gameManager.ShowScoreboard();
+            yield return uIManager.ShowStartPanel();
+            yield return new WaitForSeconds(0.5f);
         }
 
         yield return new WaitForSeconds(1.3f);

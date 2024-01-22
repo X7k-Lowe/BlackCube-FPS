@@ -174,17 +174,27 @@ public class PhotonManager : MonoBehaviourPunCallbacks // MonoBehaviourとPhoton
             oVRPointerEventData = new OVRPointerEventData(eventSystemOculus);
             aimModeButton.SetActive(true);
             titleStartText.text = "Press to Start";
-            titleStartTextRectTransform.localPosition = new Vector3(titleStartTextRectTransform.localPosition.x, titleStartTextRectTransform.localPosition.y, -30);
         }
     }
 
     void Update()
     {
         HandleHoverUI();
-        if (PlatformManager.Instance.Platform == "Oculus")
+        if (PlatformManager.Instance.Platform == "Oculus" && buttons.activeSelf)
         {
             if (aimMode == AimMode.RightHand) aimModeText.text = "RIGHT HAND";
             else aimModeText.text = "SCREEN";
+
+            if (PlatformManager.Instance.Platform == "Oculus")
+            {
+                // カスタムプロパティにプラットフォーム情報を設定
+                ExitGames.Client.Photon.Hashtable customProperties = new ExitGames.Client.Photon.Hashtable
+            {
+                { "Platform", PlatformManager.Instance.Platform },
+                { "AimMode", (int)aimMode }
+            };
+                PhotonNetwork.LocalPlayer.SetCustomProperties(customProperties);
+            }
         }
 
         if (onTitleText)
@@ -770,21 +780,9 @@ public class PhotonManager : MonoBehaviourPunCallbacks // MonoBehaviourとPhoton
         PhotonNetwork.CurrentRoom.IsOpen = false;
         PhotonNetwork.CurrentRoom.IsVisible = false;
 
-        // killSetの情報をカスタムプロパティとして設定
-        // ExitGames.Client.Photon.Hashtable customProperties = new ExitGames.Client.Photon.Hashtable
-        // {
-        //     { "KillNumber", killNumber },
-        //     { "AimMode", (int)aimMode }
-        // };
-        // PhotonNetwork.CurrentRoom.SetCustomProperties(customProperties);
-
         if (PhotonNetwork.IsMasterClient)
         {
             PlayerPrefs.SetInt("KillNumber", killNumber);
-        }
-        if (PlatformManager.Instance.Platform == "Oculus")
-        {
-            PlayerPrefs.SetInt("AimMode", (int)aimMode);
         }
 
         // ステージをよみこむ

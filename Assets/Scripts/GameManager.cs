@@ -71,7 +71,7 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
         mainCamera.SetActive(true);
         oVRCameraRig.SetActive(true);
         AllowLeaveRoom = false;
-
+        allowInput = false;
         // uIManager = GameObject.FindGameObjectWithTag("UIManager").GetComponent<UIManager>();
         if (!PhotonNetwork.IsConnected)
         {
@@ -106,8 +106,9 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
 
             if (PlatformManager.Instance.Platform == "Oculus")
             {
-                AimMode = (AimMode)PlayerPrefs.GetInt("AimMode");
-                PlayerPrefs.DeleteKey("AimMode");
+                ExitGames.Client.Photon.Hashtable customProperties = PhotonNetwork.LocalPlayer.CustomProperties;
+                AimMode = (AimMode)(int)customProperties["AimMode"];
+                // PlayerPrefs.DeleteKey("AimMode");
             }
 
             if (PhotonNetwork.CurrentRoom.PlayerCount == 1)
@@ -470,6 +471,10 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
 
     private void ShowEndPanel()
     {
+        if (PlatformManager.Instance.Platform == "Oculus")
+        {
+            uIManager.scoreboardRect.localPosition = new Vector3(uIManager.scoreboardRect.localPosition.x, uIManager.scoreboardRect.localPosition.y, 0);
+        }
         // スコアパネル表示
         ShowScoreboard();
 

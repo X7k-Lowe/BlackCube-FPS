@@ -42774,7 +42774,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 40}
   m_SizeDelta: {x: 1920, y: 200}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1135498470
@@ -51475,8 +51475,8 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 7672890663659094802}
-  - {fileID: 1107387468}
   - {fileID: 1539470103}
+  - {fileID: 1107387468}
   - {fileID: 303730621}
   - {fileID: 432407312}
   m_Father: {fileID: 4276936055827733882}
@@ -56695,19 +56695,43 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 985424392827368519, guid: cf9742576a427054e9e7840fcf837699, type: 3}
       propertyPath: sceneViewId
-      value: 2
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 1009559829291235292, guid: cf9742576a427054e9e7840fcf837699, type: 3}
       propertyPath: m_Name
       value: Player
       objectReference: {fileID: 0}
+    - target: {fileID: 1009559829291235292, guid: cf9742576a427054e9e7840fcf837699, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4048650608238301363, guid: cf9742576a427054e9e7840fcf837699, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0.653
+      objectReference: {fileID: 0}
+    - target: {fileID: 4048650608238301363, guid: cf9742576a427054e9e7840fcf837699, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4462004166008880966, guid: cf9742576a427054e9e7840fcf837699, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0.653
+      objectReference: {fileID: 0}
+    - target: {fileID: 4462004166008880966, guid: cf9742576a427054e9e7840fcf837699, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4462004166008880966, guid: cf9742576a427054e9e7840fcf837699, type: 3}
+      propertyPath: m_AnchorMin.x
+      value: 0.653
+      objectReference: {fileID: 0}
     - target: {fileID: 6069274907637420504, guid: cf9742576a427054e9e7840fcf837699, type: 3}
       propertyPath: sceneViewId
-      value: 1
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 6962590852842908480, guid: cf9742576a427054e9e7840fcf837699, type: 3}
       propertyPath: sceneViewId
-      value: 3
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7140943252906745514, guid: cf9742576a427054e9e7840fcf837699, type: 3}
       propertyPath: m_RootOrder
@@ -95117,6 +95141,7 @@ MonoBehaviour:
   killPanel: {fileID: 1914432719}
   killText: {fileID: 729380087}
   scoreboard: {fileID: 7672890663659094803}
+  scoreboardRect: {fileID: 7672890663659094802}
   info: {fileID: 154135274}
   helpBox: {fileID: 3889373758565360850}
   helpBoxBackground: {fileID: 6929583553639053694}
@@ -95194,6 +95219,7 @@ MonoBehaviour:
   mapUIParent: {fileID: 732612525}
   mapUIParentRect: {fileID: 732612526}
   panelsUI: {fileID: 1221760524}
+  panelsUIRect: {fileID: 1221760525}
   aimIconsUI: {fileID: 2068031308}
   hpUI: {fileID: 7672890662642486012}
   helpUI: {fileID: 56578779}

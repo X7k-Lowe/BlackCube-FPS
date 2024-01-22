@@ -301,7 +301,6 @@ public class PlayerController : MonoBehaviourPunCallbacks
     private void Start()
     {
         // InputDevices.GetDeviceAtXRNodeを使ってHMDデバイスを取得
-
         headDevice = InputDevices.GetDeviceAtXRNode(XRNode.Head);
 
 
@@ -317,9 +316,6 @@ public class PlayerController : MonoBehaviourPunCallbacks
         uIManager.ShotMode = ShotMode;
         if (platform == "Oculus" && ShotMode == AimMode.RightHand)
         {
-
-            // Debug.Log(uIManager == null ? "uIManagerはnullです" : "uIManagerはnullではありません");
-            // Debug.Log(uIManager.aimIcon == null ? "uIManager.aimIconはnullです" : "uIManager.aimIconはnullではありません");
             uIManager.aimIcon.SetActive(false);
         }
 
@@ -385,12 +381,17 @@ public class PlayerController : MonoBehaviourPunCallbacks
             billboard.background.sizeDelta = new Vector2(textWidth + 20, billboard.background.sizeDelta.y + 5);
         }
 
-        InitPlayerRotate();
 
         // 全プレーヤー同期の銃切り替え
         photonView.RPC("SetGun", RpcTarget.All, selectedGun);
 
-        if (photonView.IsMine && !gameManager.isStart) StartCoroutine(FadeInStartDisplay());
+
+
+        if (photonView.IsMine)
+        {
+            InitPlayerRotate();
+            if (!gameManager.isStart) StartCoroutine(FadeInStartDisplay());
+        }
     }
 
     [PunRPC]
@@ -458,6 +459,7 @@ public class PlayerController : MonoBehaviourPunCallbacks
         }
         else
         {
+            uIManager.panelsUIRect.localPosition = new Vector3(uIManager.panelsUIRect.localPosition.x, -80, uIManager.panelsUIRect.localPosition.z);
             uIManager.scoreboard.SetActive(true);
             uIManager.ChangeScoreUI();
             uIManager.ShowHelpBox();
@@ -479,10 +481,15 @@ public class PlayerController : MonoBehaviourPunCallbacks
         else
         {
             uIManager.startPanel.SetActive(false);
+            uIManager.panelsUIRect.localPosition = new Vector3(uIManager.panelsUIRect.localPosition.x, 0, uIManager.panelsUIRect.localPosition.z);
         }
         uIManager.ChangeScoreUI();
         uIManager.ShowHelpBox();
         uIManager.hpUI.SetActive(true);
+        if (platform == "Oculus")
+        {
+            uIManager.scoreboardRect.localPosition = new Vector3(uIManager.scoreboardRect.localPosition.x, uIManager.scoreboardRect.localPosition.y, 200);
+        }
 
         yield return new WaitForSeconds(1.0f);
 
@@ -1033,9 +1040,11 @@ public class PlayerController : MonoBehaviourPunCallbacks
 
     public void SwitchingGuns()
     {
+        if (!photonView.IsMine) return;
+
         // マウスホイールを回して銃の切り替え
         if (Input.GetAxisRaw("Mouse ScrollWheel") > 0
-        || OVRInput.GetDown(OVRInput.Button.Two, OVRInput.Controller.RTouch)) // B
+    || OVRInput.GetDown(OVRInput.Button.Two, OVRInput.Controller.RTouch)) // B
         {
             selectedGun++;
 

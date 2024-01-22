@@ -462,7 +462,10 @@ public class PlayerController : MonoBehaviourPunCallbacks
         }
         else
         {
-            uIManager.panelsUIRect.localPosition = new Vector3(uIManager.panelsUIRect.localPosition.x, -150, uIManager.panelsUIRect.localPosition.z);
+            if (platform == "Oculus")
+            {
+                uIManager.panelsUIRect.localPosition = new Vector3(uIManager.panelsUIRect.localPosition.x, -150, uIManager.panelsUIRect.localPosition.z);
+            }
             uIManager.scoreboard.SetActive(true);
             uIManager.ChangeScoreUI();
             uIManager.ShowHelpBox();
@@ -484,7 +487,10 @@ public class PlayerController : MonoBehaviourPunCallbacks
         else
         {
             uIManager.startPanel.SetActive(false);
-            uIManager.panelsUIRect.localPosition = new Vector3(uIManager.panelsUIRect.localPosition.x, 0, uIManager.panelsUIRect.localPosition.z);
+            if (platform == "Oculus")
+            {
+                uIManager.panelsUIRect.localPosition = new Vector3(uIManager.panelsUIRect.localPosition.x, 0, uIManager.panelsUIRect.localPosition.z);
+            }
         }
         uIManager.ChangeScoreUI();
         uIManager.ShowHelpBox();

@@ -1,4 +1,5 @@
 using UnityEngine;
+using Photon.Pun;
 
 public class Gun : MonoBehaviour
 {
@@ -22,6 +23,9 @@ public class Gun : MonoBehaviour
     public GameObject bulletImpact;
 
     public AudioSource shotSound;
+
+    public PhotonView playerPhotonView;
+
 
     // シングル銃音
     public void SoundGunShot()

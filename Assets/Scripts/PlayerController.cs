@@ -274,7 +274,7 @@ public class PlayerController : MonoBehaviourPunCallbacks
             {
                 gameManager.uIHelper.SetActive(false);
             }
-            else if (ShotMode == AimMode.RightHand)
+            else if (ShotMode == AimMode.RightHand && photonView.IsMine)
             {
                 oculusGunsHolder.transform.SetParent(rightController.transform);
                 oculusGunsHolder.transform.localPosition = Vector3.zero;
@@ -459,7 +459,7 @@ public class PlayerController : MonoBehaviourPunCallbacks
         }
         else
         {
-            uIManager.panelsUIRect.localPosition = new Vector3(uIManager.panelsUIRect.localPosition.x, -80, uIManager.panelsUIRect.localPosition.z);
+            uIManager.panelsUIRect.localPosition = new Vector3(uIManager.panelsUIRect.localPosition.x, -120, uIManager.panelsUIRect.localPosition.z);
             uIManager.scoreboard.SetActive(true);
             uIManager.ChangeScoreUI();
             uIManager.ShowHelpBox();
@@ -1040,8 +1040,6 @@ public class PlayerController : MonoBehaviourPunCallbacks
 
     public void SwitchingGuns()
     {
-        if (!photonView.IsMine) return;
-
         // マウスホイールを回して銃の切り替え
         if (Input.GetAxisRaw("Mouse ScrollWheel") > 0
     || OVRInput.GetDown(OVRInput.Button.Two, OVRInput.Controller.RTouch)) // B

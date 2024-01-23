@@ -25,10 +25,11 @@ public class SpawnManager : MonoBehaviour
     public bool IsEnd { get; set; } = false;
     private Player[] playerList;
 
-    private List<int> usedSpawnPointIndexList;
+    private List<int> usedSpawnPointIndexList = new List<int>();
 
     void Awake()
     {
+        usedSpawnPointIndexList = new List<int>();
         if (PhotonNetwork.IsMasterClient)
         {
             // マスタークライアントが利用可能なスポーンポイントのリストを初期化

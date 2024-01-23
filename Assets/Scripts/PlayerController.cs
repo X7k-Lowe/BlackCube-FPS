@@ -176,7 +176,7 @@ public class PlayerController : MonoBehaviourPunCallbacks
 
     GameManager gameManager;
 
-    private string platform;
+    public string platform;
     GameObject myIcon;
     public Material whiteMaterial;
     SpriteFacesCamera myIconSpriteFacesCamera;
@@ -203,6 +203,9 @@ public class PlayerController : MonoBehaviourPunCallbacks
 
     public Material whiteOutMaterial;
     bool isWhiteOut = true;
+
+    private float playerRotateY;
+
 
     private void Awake()
     {
@@ -262,6 +265,7 @@ public class PlayerController : MonoBehaviourPunCallbacks
         }
         else if (platform == "Oculus")
         {
+            playerRotateY = transform.eulerAngles.y;
             centerEyeAnchor = GameObject.Find("CenterEyeAnchor").GetComponent<Camera>();
             oVRCameraRig = GameObject.Find("OVRCameraRig");
             oVRCameraRig.SetActive(true);
@@ -274,7 +278,7 @@ public class PlayerController : MonoBehaviourPunCallbacks
             {
                 gameManager.uIHelper.SetActive(false);
             }
-            else if (ShotMode == AimMode.RightHand)
+            else if (ShotMode == AimMode.RightHand && photonView.IsMine)
             {
                 oculusGunsHolder.transform.SetParent(rightController.transform);
                 oculusGunsHolder.transform.localPosition = Vector3.zero;
@@ -301,9 +305,7 @@ public class PlayerController : MonoBehaviourPunCallbacks
     private void Start()
     {
         // InputDevices.GetDeviceAtXRNodeを使ってHMDデバイスを取得
-
         headDevice = InputDevices.GetDeviceAtXRNode(XRNode.Head);
-
 
         // カスタムプロパティからプラットフォーム情報を取得して保存する
 
@@ -317,10 +319,8 @@ public class PlayerController : MonoBehaviourPunCallbacks
         uIManager.ShotMode = ShotMode;
         if (platform == "Oculus" && ShotMode == AimMode.RightHand)
         {
-
-            // Debug.Log(uIManager == null ? "uIManagerはnullです" : "uIManagerはnullではありません");
-            // Debug.Log(uIManager.aimIcon == null ? "uIManager.aimIconはnullです" : "uIManager.aimIconはnullではありません");
             uIManager.aimIcon.SetActive(false);
+            uIManager.laserSight.enabled = false;
         }
 
         //カメラ格納 プラットフォームごとの初期化処理を行う
@@ -385,12 +385,17 @@ public class PlayerController : MonoBehaviourPunCallbacks
             billboard.background.sizeDelta = new Vector2(textWidth + 20, billboard.background.sizeDelta.y + 5);
         }
 
-        InitPlayerRotate();
 
         // 全プレーヤー同期の銃切り替え
         photonView.RPC("SetGun", RpcTarget.All, selectedGun);
 
-        if (photonView.IsMine && !gameManager.isStart) StartCoroutine(FadeInStartDisplay());
+
+
+        if (photonView.IsMine)
+        {
+            InitPlayerRotate();
+            if (!gameManager.isStart) StartCoroutine(FadeInStartDisplay());
+        }
     }
 
     [PunRPC]
@@ -458,8 +463,12 @@ public class PlayerController : MonoBehaviourPunCallbacks
         }
         else
         {
+            if (platform == "Oculus")
+            {
+                uIManager.panelsUIRect.localPosition = new Vector3(uIManager.panelsUIRect.localPosition.x, -150, uIManager.panelsUIRect.localPosition.z);
+            }
             uIManager.scoreboard.SetActive(true);
-            uIManager.ChangeScoreUI();
+            uIManager.ChangeScoreUI(false);
             uIManager.ShowHelpBox();
             gameManager.ShowScoreboard();
             yield return uIManager.ShowStartPanel();
@@ -479,10 +488,18 @@ public class PlayerController : MonoBehaviourPunCallbacks
         else
         {
             uIManager.startPanel.SetActive(false);
+            if (platform == "Oculus")
+            {
+                uIManager.panelsUIRect.localPosition = new Vector3(uIManager.panelsUIRect.localPosition.x, 0, uIManager.panelsUIRect.localPosition.z);
+            }
         }
-        uIManager.ChangeScoreUI();
+        uIManager.ChangeScoreUI(false);
         uIManager.ShowHelpBox();
         uIManager.hpUI.SetActive(true);
+        if (platform == "Oculus")
+        {
+            uIManager.scoreboardRect.localPosition = new Vector3(uIManager.scoreboardRect.localPosition.x, uIManager.scoreboardRect.localPosition.y, 200);
+        }
 
         yield return new WaitForSeconds(1.0f);
 
@@ -601,9 +618,8 @@ public class PlayerController : MonoBehaviourPunCallbacks
 
         // 特定のボタンが押されたらメニューに戻る
         if (gameManager.isPracticeMode)
-        {
             OutGame();
-        }
+
     }
     private void FixedUpdate()
     {
@@ -739,10 +755,9 @@ public class PlayerController : MonoBehaviourPunCallbacks
             // 変数にユーザーのサムスティックの動きを格納
             Vector2 rStickInput = OVRInput.Get(OVRInput.Axis2D.PrimaryThumbstick, OVRInput.Controller.RTouch);
 
-            // サムスティックのx軸の動きを反映 
-            transform.rotation = Quaternion.Euler(transform.eulerAngles.x,
-            transform.eulerAngles.y + rStickInput.x * hmdSensitivity,
-            transform.eulerAngles.z);
+            playerRotateY += rStickInput.x * hmdSensitivity;
+            if (playerRotateY < 0) playerRotateY = 360 + playerRotateY;
+            if (playerRotateY > 360) playerRotateY = playerRotateY - 360;
 
             // サムスティックのx軸の動きを反映
             if (oVRCameraRig != null)
@@ -751,21 +766,6 @@ public class PlayerController : MonoBehaviourPunCallbacks
                 oVRCameraRig.transform.eulerAngles.y + rStickInput.x * hmdSensitivity,
                 oVRCameraRig.transform.eulerAngles.z);
             }
-
-            // サムスティックのx軸の動きを反映
-            viewPoint.rotation = Quaternion.Euler(viewPoint.eulerAngles.x,
-            viewPoint.eulerAngles.y + rStickInput.x * hmdSensitivity,
-            viewPoint.eulerAngles.z);
-
-            // サムスティックのx軸の動きを反映
-            playerCanvasPoint.rotation = Quaternion.Euler(playerCanvasPoint.eulerAngles.x,
-            playerCanvasPoint.eulerAngles.y + rStickInput.x * hmdSensitivity,
-            playerCanvasPoint.eulerAngles.z);
-
-            // サムスティックのx軸の動きを反映
-            eyePoint.rotation = Quaternion.Euler(eyePoint.eulerAngles.x,
-            eyePoint.eulerAngles.y + rStickInput.x * hmdSensitivity,
-            eyePoint.eulerAngles.z);
 
             // y軸の値に現在の値を足す
             verticalInput += rStickInput.y;
@@ -781,8 +781,8 @@ public class PlayerController : MonoBehaviourPunCallbacks
             if (headDevice.TryGetFeatureValue(CommonUsages.deviceRotation, out Quaternion headRotation))
             {
                 // プレイヤーの水平回転（y軸）をHMDの回転に合わせる
-                transform.rotation = Quaternion.Euler(transform.eulerAngles.x, headRotation.eulerAngles.y, transform.eulerAngles.z);
-
+                transform.rotation = Quaternion.Euler(transform.eulerAngles.x, playerRotateY + headRotation.eulerAngles.y, transform.eulerAngles.z);
+                Debug.Log("headRotation : " + headRotation.eulerAngles.y);
                 // 垂直回転（x軸）のためにHMDのPitch値を使用して、viewPointを回転させる
                 // ここでは範囲を-60fから60fに制限している
                 float headPitch = headRotation.eulerAngles.x;
@@ -794,14 +794,6 @@ public class PlayerController : MonoBehaviourPunCallbacks
                 // viewPointの回転を設定
                 viewPoint.rotation = Quaternion.Euler(headPitch, viewPoint.eulerAngles.y, viewPoint.eulerAngles.z);
             }
-
-
-            // 右コントローラーの向きをそのまま反映    
-            // viewPoint.rotation = Quaternion.Euler(currentControllerRotation.eulerAngles.x, currentControllerRotation.eulerAngles.y, viewPoint.eulerAngles.z);
-
-
-
-
         }
     }
 
@@ -1035,7 +1027,7 @@ public class PlayerController : MonoBehaviourPunCallbacks
     {
         // マウスホイールを回して銃の切り替え
         if (Input.GetAxisRaw("Mouse ScrollWheel") > 0
-        || OVRInput.GetDown(OVRInput.Button.Two, OVRInput.Controller.RTouch)) // B
+    || OVRInput.GetDown(OVRInput.Button.Two, OVRInput.Controller.RTouch)) // B
         {
             selectedGun++;
 
@@ -1413,12 +1405,8 @@ public class PlayerController : MonoBehaviourPunCallbacks
         guns[2].SoundLoopOffMachineGun();
     }
 
-    // 死亡関数
-    public void Death(string killerName, int actor)
+    public void OculusResetUI()
     {
-        Debug.Log("Death");
-        currentHP = 0;
-
         if (platform == "Oculus")
         {
             uIManager.ResetUICanvas();
@@ -1427,6 +1415,15 @@ public class PlayerController : MonoBehaviourPunCallbacks
                 oculusGunsHolder.transform.SetParent(this.gameObject.transform);
             }
         }
+    }
+    // 死亡関数
+    public void Death(string killerName, int actor)
+    {
+        Debug.Log("Death");
+
+        currentHP = 0;
+
+        OculusResetUI();
 
         Destroy(myIcon);
         photonView.RPC("AllDestroyThisPlayerMapIcon", RpcTarget.All, photonView.Owner.ActorNumber);
@@ -1452,6 +1449,7 @@ public class PlayerController : MonoBehaviourPunCallbacks
         }
 
         uIManager.UpdateDeathUI(killerName, reSpawnTime);
+
         spawnManager.Die(reSpawnTime);
 
         // キルデスイベント呼び出し (actor, state(0:キル 1:デス), amount)
@@ -1525,6 +1523,11 @@ public class PlayerController : MonoBehaviourPunCallbacks
             {
                 PlayerPrefs.DeleteKey("playerName");
             }
+
+            // ローカルプレイヤーのカスタムプロパティの内容をすべて削除
+            ExitGames.Client.Photon.Hashtable properties = PhotonNetwork.LocalPlayer.CustomProperties;
+            properties.Clear();
+            PhotonNetwork.LocalPlayer.SetCustomProperties(properties);
 
             // プレイヤーリストからプレイヤー削除
             gameManager.OutPlayerGet(PhotonNetwork.LocalPlayer.ActorNumber);

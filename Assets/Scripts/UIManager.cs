@@ -37,6 +37,7 @@ public class UIManager : MonoBehaviour
 
 
     public GameObject scoreboard;
+    public RectTransform scoreboardRect;
 
     public PlayerInfomation info;
 
@@ -76,6 +77,7 @@ public class UIManager : MonoBehaviour
     public GameObject readyPanel;
     public TextMeshProUGUI readyCountdownText;
     public GameObject goText;
+    public List<RectTransform> panelsTextRectTransforms;
     public float readyCountdown { get; set; } = 0;
     public bool isReady { get; set; } = false;
     public GameObject endPanel;
@@ -106,6 +108,8 @@ public class UIManager : MonoBehaviour
     public GameObject mapUIParent;
     public RectTransform mapUIParentRect;
     public GameObject panelsUI;
+    public RectTransform panelsUIRect;
+
     public GameObject aimIconsUI;
     public GameObject hpUI;
     public GameObject helpUI;
@@ -133,7 +137,6 @@ public class UIManager : MonoBehaviour
     public LineRenderer laserSight;
     public AimMode ShotMode { get; set; }
 
-    // bool isPracticeMode = false;
 
     void Update()
     {
@@ -246,7 +249,8 @@ public class UIManager : MonoBehaviour
 
         deathPanelBackground.enabled = false;
 
-        hpUI.SetActive(true);
+        if (gameManager.isStart) hpUI.SetActive(true);
+        else hpUI.SetActive(false);
     }
 
     public void ResetUICanvas()
@@ -294,11 +298,23 @@ public class UIManager : MonoBehaviour
 
     public IEnumerator PracticeModeSetStartText()
     {
+        if (platform == "Windows")
+        {
+            helpUI.GetComponent<RectTransform>().offsetMin = new Vector2(helpUI.GetComponent<RectTransform>().offsetMin.x, -65);
+        }
+        else
+        {
+            helpUI.GetComponent<RectTransform>().offsetMin = new Vector2(helpUI.GetComponent<RectTransform>().offsetMin.x, 260);
+            foreach (var rectTransform in panelsTextRectTransforms)
+            {
+                var position = rectTransform.localPosition;
+                position.y = 40;
+                rectTransform.localPosition = position;
+            }
+        }
         startPanel.SetActive(false);
         practicePanel.SetActive(true);
         practiceRecord.SetActive(true);
-        helpUI.GetComponent<RectTransform>().offsetMin = new Vector2(helpUI.GetComponent<RectTransform>().offsetMin.x, -65);
-        // isPracticeMode = true;
 
         yield return FadeInMenuUI(practiceCanvasGroup, 0.4f);
     }
@@ -457,7 +473,7 @@ public class UIManager : MonoBehaviour
         commandTexts[7].text = "[Aボタン]";
         commandTexts[8].text = "[Bボタン]";
         commandTexts[9].text = "[Xボタン]";
-        practiceText.text = "[Startボタン]";
+        practiceText.text = "[≡ボタン]";
     }
 
 
@@ -478,7 +494,7 @@ public class UIManager : MonoBehaviour
     {
         // QキーまたはYボタンの操作
         // UpdateHelpRecordAndActionText(Input.GetKey(KeyCode.Q) || OVRInput.Get(OVRInput.Touch.Two, OVRInput.Controller.LTouch), 0);
-        //Q
+        //QキーまたはYボタンの操作
         if (Input.GetKey(KeyCode.Q)
         || OVRInput.Get(OVRInput.Touch.Two, OVRInput.Controller.LTouch)) // Y
         {
@@ -533,15 +549,18 @@ public class UIManager : MonoBehaviour
 
     void UpdateHelpRecordAndActionText(bool isOperationActive, int index)
     {
-        if (isOperationActive)
+        if (helpRecords[index] != null && actionTexts[index] != null)
         {
-            helpRecords[index].color = highlightColor;
-            actionTexts[index].color = Color.black;
-        }
-        else
-        {
-            helpRecords[index].color = defaultColor;
-            actionTexts[index].color = Color.white;
+            if (isOperationActive)
+            {
+                helpRecords[index].color = highlightColor;
+                actionTexts[index].color = Color.black;
+            }
+            else
+            {
+                helpRecords[index].color = defaultColor;
+                actionTexts[index].color = Color.white;
+            }
         }
     }
 
@@ -576,7 +595,6 @@ public class UIManager : MonoBehaviour
     // 死亡パネルを更新して開く
     public void UpdateDeathUI(string name, float reSpawnTime)
     {
-        Debug.Log("UpdateDeathUI");
         this.reSpawnTime = reSpawnTime;
         fiveSecond = 5f;
 
@@ -651,10 +669,10 @@ public class UIManager : MonoBehaviour
     }
 
     // スコアボードを開く関数
-    public void ChangeScoreUI()
+    public void ChangeScoreUI(bool enable)
     {
         // 表示中なら非表示に、非表示中なら表示に切り替える 
-        scoreboard.SetActive(!scoreboard.activeInHierarchy);
+        scoreboard.SetActive(enable);
         if (scoreboard.activeInHierarchy)
         {
             aimIcon.SetActive(false);
@@ -679,6 +697,7 @@ public class UIManager : MonoBehaviour
     public void ShowHelpBox()
     {
         helpUI.SetActive(true);
+        if (!mapUI.activeSelf) mapUI.SetActive(true);
     }
     public void HideHelpBox()
     {

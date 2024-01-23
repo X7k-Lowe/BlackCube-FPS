@@ -221,7 +221,6 @@ public class PlayerController : MonoBehaviourPunCallbacks
 
         laserPointer = gameManager.laserPointer;
 
-
         rightController = GameObject.Find("RightHandAnchor");
 
         layerMaskGround = 1 << LayerMask.NameToLayer("Ground");
@@ -619,9 +618,8 @@ public class PlayerController : MonoBehaviourPunCallbacks
 
         // 特定のボタンが押されたらメニューに戻る
         if (gameManager.isPracticeMode)
-        {
             OutGame();
-        }
+
     }
     private void FixedUpdate()
     {
@@ -1525,6 +1523,11 @@ public class PlayerController : MonoBehaviourPunCallbacks
             {
                 PlayerPrefs.DeleteKey("playerName");
             }
+
+            // ローカルプレイヤーのカスタムプロパティの内容をすべて削除
+            ExitGames.Client.Photon.Hashtable properties = PhotonNetwork.LocalPlayer.CustomProperties;
+            properties.Clear();
+            PhotonNetwork.LocalPlayer.SetCustomProperties(properties);
 
             // プレイヤーリストからプレイヤー削除
             gameManager.OutPlayerGet(PhotonNetwork.LocalPlayer.ActorNumber);

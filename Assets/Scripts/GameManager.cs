@@ -73,6 +73,7 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
         oVRCameraRig.SetActive(true);
         AllowLeaveRoom = false;
         allowInput = false;
+
         // uIManager = GameObject.FindGameObjectWithTag("UIManager").GetComponent<UIManager>();
         if (!PhotonNetwork.IsConnected)
         {
@@ -510,6 +511,11 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
     private void ProcessingAfterCompletion()
     {
         if (!PhotonNetwork.IsConnectedAndReady) return;
+
+        // ローカルプレイヤーのカスタムプロパティの内容をすべて削除
+        ExitGames.Client.Photon.Hashtable properties = PhotonNetwork.LocalPlayer.CustomProperties;
+        properties.Clear();
+        PhotonNetwork.LocalPlayer.SetCustomProperties(properties);
 
         // シーンの同期解除
         PhotonNetwork.AutomaticallySyncScene = false;

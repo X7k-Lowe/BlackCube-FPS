@@ -8,6 +8,7 @@ using Photon.Realtime; // IOnEventCallback
 using ExitGames.Client.Photon; // IOnEventCallback
 using System.Linq;
 using UnityEngine.EventSystems;
+using UnityEngine.Events;
 
 public enum GameState
 {
@@ -64,7 +65,7 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
 
     public bool isPracticeMode { get; set; } = false;
     public bool allowInput { get; set; } = false;
-    float waitTime = 2f;
+    float waitTime = 1f;
 
     private void Awake()
     {
@@ -72,6 +73,7 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
         oVRCameraRig.SetActive(true);
         AllowLeaveRoom = false;
         allowInput = false;
+
         // uIManager = GameObject.FindGameObjectWithTag("UIManager").GetComponent<UIManager>();
         if (!PhotonNetwork.IsConnected)
         {
@@ -160,7 +162,7 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
             else if (Input.GetKeyUp(KeyCode.Tab)
             || OVRInput.GetUp(OVRInput.Button.One, OVRInput.Controller.LTouch)) // X
             {
-                uIManager.ChangeScoreUI();
+                uIManager.ChangeScoreUI(false);
                 uIManager.ShowHelpBox();
             }
 
@@ -381,7 +383,7 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
         uIManager.HideHelpBox();
 
         // スコアボードを開く
-        uIManager.ChangeScoreUI();
+        uIManager.ChangeScoreUI(true);
 
         // 表示されているスコアボードを一旦すべて削除
         foreach (PlayerInfomation info in playerInfoList)
@@ -457,6 +459,16 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
     // ゲーム終了関数
     public void EndGame()
     {
+        GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
+        foreach (GameObject player in players)
+        {
+            PhotonView photonView = player.GetComponent<PhotonView>();
+            if (photonView != null && photonView.IsMine)
+            {
+                player.GetComponent<PlayerController>().OculusResetUI();
+            }
+        }
+
         // 全てのネットワークオブジェクトを削除
         if (PhotonNetwork.IsMasterClient)
         {
@@ -499,6 +511,11 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
     private void ProcessingAfterCompletion()
     {
         if (!PhotonNetwork.IsConnectedAndReady) return;
+
+        // ローカルプレイヤーのカスタムプロパティの内容をすべて削除
+        ExitGames.Client.Photon.Hashtable properties = PhotonNetwork.LocalPlayer.CustomProperties;
+        properties.Clear();
+        PhotonNetwork.LocalPlayer.SetCustomProperties(properties);
 
         // シーンの同期解除
         PhotonNetwork.AutomaticallySyncScene = false;

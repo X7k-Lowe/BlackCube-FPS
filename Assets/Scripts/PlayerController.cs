@@ -176,7 +176,7 @@ public class PlayerController : MonoBehaviourPunCallbacks
 
     GameManager gameManager;
 
-    private string platform;
+    public string platform;
     GameObject myIcon;
     public Material whiteMaterial;
     SpriteFacesCamera myIconSpriteFacesCamera;
@@ -205,6 +205,7 @@ public class PlayerController : MonoBehaviourPunCallbacks
     bool isWhiteOut = true;
 
     private float playerRotateY;
+
 
     private void Awake()
     {
@@ -306,7 +307,6 @@ public class PlayerController : MonoBehaviourPunCallbacks
         // InputDevices.GetDeviceAtXRNodeを使ってHMDデバイスを取得
         headDevice = InputDevices.GetDeviceAtXRNode(XRNode.Head);
 
-
         // カスタムプロパティからプラットフォーム情報を取得して保存する
 
         ExitGames.Client.Photon.Hashtable customProperties = PhotonNetwork.LocalPlayer.CustomProperties;
@@ -320,6 +320,7 @@ public class PlayerController : MonoBehaviourPunCallbacks
         if (platform == "Oculus" && ShotMode == AimMode.RightHand)
         {
             uIManager.aimIcon.SetActive(false);
+            uIManager.laserSight.enabled = false;
         }
 
         //カメラ格納 プラットフォームごとの初期化処理を行う
@@ -462,9 +463,12 @@ public class PlayerController : MonoBehaviourPunCallbacks
         }
         else
         {
-            uIManager.panelsUIRect.localPosition = new Vector3(uIManager.panelsUIRect.localPosition.x, -150, uIManager.panelsUIRect.localPosition.z);
+            if (platform == "Oculus")
+            {
+                uIManager.panelsUIRect.localPosition = new Vector3(uIManager.panelsUIRect.localPosition.x, -150, uIManager.panelsUIRect.localPosition.z);
+            }
             uIManager.scoreboard.SetActive(true);
-            uIManager.ChangeScoreUI();
+            uIManager.ChangeScoreUI(false);
             uIManager.ShowHelpBox();
             gameManager.ShowScoreboard();
             yield return uIManager.ShowStartPanel();
@@ -484,9 +488,12 @@ public class PlayerController : MonoBehaviourPunCallbacks
         else
         {
             uIManager.startPanel.SetActive(false);
-            uIManager.panelsUIRect.localPosition = new Vector3(uIManager.panelsUIRect.localPosition.x, 0, uIManager.panelsUIRect.localPosition.z);
+            if (platform == "Oculus")
+            {
+                uIManager.panelsUIRect.localPosition = new Vector3(uIManager.panelsUIRect.localPosition.x, 0, uIManager.panelsUIRect.localPosition.z);
+            }
         }
-        uIManager.ChangeScoreUI();
+        uIManager.ChangeScoreUI(false);
         uIManager.ShowHelpBox();
         uIManager.hpUI.SetActive(true);
         if (platform == "Oculus")
@@ -611,9 +618,8 @@ public class PlayerController : MonoBehaviourPunCallbacks
 
         // 特定のボタンが押されたらメニューに戻る
         if (gameManager.isPracticeMode)
-        {
             OutGame();
-        }
+
     }
     private void FixedUpdate()
     {
@@ -1399,12 +1405,8 @@ public class PlayerController : MonoBehaviourPunCallbacks
         guns[2].SoundLoopOffMachineGun();
     }
 
-    // 死亡関数
-    public void Death(string killerName, int actor)
+    public void OculusResetUI()
     {
-        Debug.Log("Death");
-        currentHP = 0;
-
         if (platform == "Oculus")
         {
             uIManager.ResetUICanvas();
@@ -1413,6 +1415,15 @@ public class PlayerController : MonoBehaviourPunCallbacks
                 oculusGunsHolder.transform.SetParent(this.gameObject.transform);
             }
         }
+    }
+    // 死亡関数
+    public void Death(string killerName, int actor)
+    {
+        Debug.Log("Death");
+
+        currentHP = 0;
+
+        OculusResetUI();
 
         Destroy(myIcon);
         photonView.RPC("AllDestroyThisPlayerMapIcon", RpcTarget.All, photonView.Owner.ActorNumber);
@@ -1438,6 +1449,7 @@ public class PlayerController : MonoBehaviourPunCallbacks
         }
 
         uIManager.UpdateDeathUI(killerName, reSpawnTime);
+
         spawnManager.Die(reSpawnTime);
 
         // キルデスイベント呼び出し (actor, state(0:キル 1:デス), amount)
@@ -1511,6 +1523,11 @@ public class PlayerController : MonoBehaviourPunCallbacks
             {
                 PlayerPrefs.DeleteKey("playerName");
             }
+
+            // ローカルプレイヤーのカスタムプロパティの内容をすべて削除
+            ExitGames.Client.Photon.Hashtable properties = PhotonNetwork.LocalPlayer.CustomProperties;
+            properties.Clear();
+            PhotonNetwork.LocalPlayer.SetCustomProperties(properties);
 
             // プレイヤーリストからプレイヤー削除
             gameManager.OutPlayerGet(PhotonNetwork.LocalPlayer.ActorNumber);

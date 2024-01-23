@@ -206,6 +206,7 @@ public class PlayerController : MonoBehaviourPunCallbacks
 
     private float playerRotateY;
 
+
     private void Awake()
     {
         // uIManager格納
@@ -219,6 +220,7 @@ public class PlayerController : MonoBehaviourPunCallbacks
         gameManager.uIManager = uIManager;
 
         laserPointer = gameManager.laserPointer;
+
 
         rightController = GameObject.Find("RightHandAnchor");
 
@@ -306,7 +308,6 @@ public class PlayerController : MonoBehaviourPunCallbacks
         // InputDevices.GetDeviceAtXRNodeを使ってHMDデバイスを取得
         headDevice = InputDevices.GetDeviceAtXRNode(XRNode.Head);
 
-
         // カスタムプロパティからプラットフォーム情報を取得して保存する
 
         ExitGames.Client.Photon.Hashtable customProperties = PhotonNetwork.LocalPlayer.CustomProperties;
@@ -320,6 +321,7 @@ public class PlayerController : MonoBehaviourPunCallbacks
         if (platform == "Oculus" && ShotMode == AimMode.RightHand)
         {
             uIManager.aimIcon.SetActive(false);
+            uIManager.laserSight.enabled = false;
         }
 
         //カメラ格納 プラットフォームごとの初期化処理を行う
@@ -1405,12 +1407,8 @@ public class PlayerController : MonoBehaviourPunCallbacks
         guns[2].SoundLoopOffMachineGun();
     }
 
-    // 死亡関数
-    public void Death(string killerName, int actor)
+    public void OculusResetUI()
     {
-        Debug.Log("Death");
-        currentHP = 0;
-
         if (platform == "Oculus")
         {
             uIManager.ResetUICanvas();
@@ -1419,6 +1417,15 @@ public class PlayerController : MonoBehaviourPunCallbacks
                 oculusGunsHolder.transform.SetParent(this.gameObject.transform);
             }
         }
+    }
+    // 死亡関数
+    public void Death(string killerName, int actor)
+    {
+        Debug.Log("Death");
+
+        currentHP = 0;
+
+        OculusResetUI();
 
         Destroy(myIcon);
         photonView.RPC("AllDestroyThisPlayerMapIcon", RpcTarget.All, photonView.Owner.ActorNumber);
@@ -1444,6 +1451,7 @@ public class PlayerController : MonoBehaviourPunCallbacks
         }
 
         uIManager.UpdateDeathUI(killerName, reSpawnTime);
+
         spawnManager.Die(reSpawnTime);
 
         // キルデスイベント呼び出し (actor, state(0:キル 1:デス), amount)

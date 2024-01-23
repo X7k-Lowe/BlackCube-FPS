@@ -8,6 +8,7 @@ using Photon.Realtime; // IOnEventCallback
 using ExitGames.Client.Photon; // IOnEventCallback
 using System.Linq;
 using UnityEngine.EventSystems;
+using UnityEngine.Events;
 
 public enum GameState
 {
@@ -457,6 +458,16 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
     // ゲーム終了関数
     public void EndGame()
     {
+        GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
+        foreach (GameObject player in players)
+        {
+            PhotonView photonView = player.GetComponent<PhotonView>();
+            if (photonView != null && photonView.IsMine)
+            {
+                player.GetComponent<PlayerController>().OculusResetUI();
+            }
+        }
+
         // 全てのネットワークオブジェクトを削除
         if (PhotonNetwork.IsMasterClient)
         {

@@ -494,7 +494,7 @@ public class UIManager : MonoBehaviour
     {
         // QキーまたはYボタンの操作
         // UpdateHelpRecordAndActionText(Input.GetKey(KeyCode.Q) || OVRInput.Get(OVRInput.Touch.Two, OVRInput.Controller.LTouch), 0);
-        //Q
+        //QキーまたはYボタンの操作
         if (Input.GetKey(KeyCode.Q)
         || OVRInput.Get(OVRInput.Touch.Two, OVRInput.Controller.LTouch)) // Y
         {
@@ -549,15 +549,18 @@ public class UIManager : MonoBehaviour
 
     void UpdateHelpRecordAndActionText(bool isOperationActive, int index)
     {
-        if (isOperationActive)
+        if (helpRecords[index] != null && actionTexts[index] != null)
         {
-            helpRecords[index].color = highlightColor;
-            actionTexts[index].color = Color.black;
-        }
-        else
-        {
-            helpRecords[index].color = defaultColor;
-            actionTexts[index].color = Color.white;
+            if (isOperationActive)
+            {
+                helpRecords[index].color = highlightColor;
+                actionTexts[index].color = Color.black;
+            }
+            else
+            {
+                helpRecords[index].color = defaultColor;
+                actionTexts[index].color = Color.white;
+            }
         }
     }
 
@@ -592,7 +595,6 @@ public class UIManager : MonoBehaviour
     // 死亡パネルを更新して開く
     public void UpdateDeathUI(string name, float reSpawnTime)
     {
-        Debug.Log("UpdateDeathUI");
         this.reSpawnTime = reSpawnTime;
         fiveSecond = 5f;
 

@@ -1542,5 +1542,4 @@ public class PlayerController : MonoBehaviourPunCallbacks
             PhotonNetwork.LeaveRoom();
         }
     }
-
 }

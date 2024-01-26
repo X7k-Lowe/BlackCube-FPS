@@ -298,7 +298,10 @@ public class PlayerController : MonoBehaviourPunCallbacks
             }
 
             // UIをプレイヤーキャンバスに配置
-            uIManager.SetUIAsChildOfPlayerCanvas();
+            if (photonView.IsMine)
+            {
+                uIManager.SetUIAsChildOfPlayerCanvas();
+            }
             playerCanvas.enabled = false;
         }
     }

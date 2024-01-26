@@ -226,6 +226,8 @@ public class UIManager : MonoBehaviour
             aimIcon.transform.localScale = Vector3.one * 1.5f;
         }
 
+        Debug.Log("panelsUI : " + panelsUI);
+        Debug.Log("playerCanvasSize : " + playerCanvasSize);
         panelsUI.transform.SetParent(playerCanvasSize.transform);
         hpUI.transform.SetParent(playerHpUI.transform);
         helpUI.transform.SetParent(playerHelpUI.transform);

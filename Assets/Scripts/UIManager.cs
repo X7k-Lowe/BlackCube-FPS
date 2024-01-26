@@ -472,6 +472,7 @@ public class UIManager : MonoBehaviour
         commandTexts[5].text = "R [上トリガー]";
         if (ShotMode == AimMode.RightHand) actionTexts[5].text = "レーザーサイト";
         commandTexts[6].text = "R [下トリガー]";
+        if (ShotMode == AimMode.Screen) commandTexts[6].text = "なし ";
         commandTexts[7].text = "[Aボタン]";
         commandTexts[8].text = "[Bボタン]";
         commandTexts[9].text = "[Xボタン]";

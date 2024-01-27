@@ -50,8 +50,8 @@ public class PlatformManager : MonoBehaviour
     private void DetectPlatform()
     {
 #if UNITY_EDITOR
-        // Platform = "Windows"; // エディター上でWindowsとして模倣する場合
-        Platform = "Oculus"; // エディター上でQuest2を模倣する場合
+        Platform = "Windows"; // エディター上でWindowsとして模倣する場合
+        // Platform = "Oculus"; // エディター上でQuest2を模倣する場合
 #elif UNITY_STANDALONE_WIN
         Platform = "Windows";
 #elif UNITY_ANDROID

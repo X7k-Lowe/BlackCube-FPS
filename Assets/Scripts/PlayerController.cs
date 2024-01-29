@@ -206,7 +206,7 @@ public class PlayerController : MonoBehaviourPunCallbacks
 
     private float playerRotateY;
 
-
+    public AudioSource healSE;
     private void Awake()
     {
         // uIManager格納
@@ -411,6 +411,7 @@ public class PlayerController : MonoBehaviourPunCallbacks
     {
         if (photonView.IsMine)
         {
+            healSE.Play();
             currentHP += healingPoint;
 
             currentHP = Mathf.Clamp(currentHP, 0, maxHP);

@@ -137,6 +137,7 @@ public class UIManager : MonoBehaviour
     public LineRenderer laserSight;
     public AimMode ShotMode { get; set; }
 
+    public AudioSource audioSource;
 
     void Update()
     {
@@ -157,6 +158,10 @@ public class UIManager : MonoBehaviour
             }
             else if (readyCountdown <= 0 && readyCountdown > -2.0f)
             {
+                // if (readyPanel.activeSelf)
+                // {
+                //     audioSource.Play();
+                // }
                 readyPanel.SetActive(false);
                 goText.SetActive(true);
             }
@@ -739,6 +744,7 @@ public class UIManager : MonoBehaviour
     // ゲーム終了パネル表示
     public void OpenEndPanel(float waitAfterEnding)
     {
+        audioSource.Play();
         GameExitCountdown = waitAfterEnding;
         onCountdown = true;
         gunChangeUI.SetActive(false);

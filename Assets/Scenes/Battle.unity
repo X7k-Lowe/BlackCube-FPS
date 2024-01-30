@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 705507994}
-  m_IndirectSpecularColor: {r: 0.063516974, g: 0.05198465, b: 0.056738935, a: 1}
+  m_IndirectSpecularColor: {r: 0.06361822, g: 0.052069563, b: 0.056787517, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -37079,6 +37079,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playerList: []
   state: 0
+  uIManager: {fileID: 3202655796237432090}
   targetNumber: 3
   waitAfterEnding: 21
   spawnManager: {fileID: 1197416857}
@@ -37089,6 +37090,7 @@ MonoBehaviour:
   rightControllerRenderer: {fileID: 5008821447553634619}
   leftControllerRenderer: {fileID: 2659024654019272726}
   AimMode: 0
+  blackOutMaterial: {fileID: 2100000, guid: 4dfb3632b4a63354fa89e6096bbdbd1a, type: 2}
 --- !u!4 &967329555
 Transform:
   m_ObjectHideFlags: 0

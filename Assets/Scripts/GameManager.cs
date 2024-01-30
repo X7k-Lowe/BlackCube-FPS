@@ -34,7 +34,7 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
     // ゲームの状態
     public GameState state;
 
-    public UIManager uIManager { get; set; }
+    public UIManager uIManager;
 
     private List<PlayerInfomation> playerInfoList = new List<PlayerInfomation>();
 
@@ -67,8 +67,17 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
     public bool allowInput { get; set; } = false;
     float waitTime = 1f;
 
+    public Material blackOutMaterial;
     private void Awake()
     {
+        if (!isStart)
+        {
+            blackOutMaterial.color = new Color(blackOutMaterial.color.r, blackOutMaterial.color.g, blackOutMaterial.color.b, 1);
+            uIManager.hpUI.SetActive(false);
+            ShowScoreboard();
+            uIManager.scoreboard.SetActive(false);
+        }
+
         mainCamera.SetActive(true);
         oVRCameraRig.SetActive(true);
         AllowLeaveRoom = false;

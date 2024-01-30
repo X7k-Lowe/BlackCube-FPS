@@ -138,6 +138,10 @@ public class UIManager : MonoBehaviour
     public AimMode ShotMode { get; set; }
 
     public AudioSource audioSource;
+    void Awake()
+    {
+        currentKeyHelpTextColor = keyHelpTexts[0].color;
+    }
 
     void Update()
     {
@@ -482,12 +486,6 @@ public class UIManager : MonoBehaviour
         commandTexts[8].text = "[Bボタン]";
         commandTexts[9].text = "[Xボタン]";
         practiceText.text = "[≡ボタン]";
-    }
-
-
-    void Awake()
-    {
-        currentKeyHelpTextColor = keyHelpTexts[0].color;
     }
 
     public IEnumerator ShowStartPanel()

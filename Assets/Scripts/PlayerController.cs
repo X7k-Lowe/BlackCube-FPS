@@ -225,6 +225,8 @@ public class PlayerController : MonoBehaviourPunCallbacks
 
         layerMaskGround = 1 << LayerMask.NameToLayer("Ground");
 
+        gameManager.isDead = false;
+
         if (photonView.IsMine)
         {
             uIManager.playerCanvas = playerCanvas;
@@ -1424,6 +1426,8 @@ public class PlayerController : MonoBehaviourPunCallbacks
     public void Death(string killerName, int actor)
     {
         Debug.Log("Death");
+
+        gameManager.isDead = true;
 
         currentHP = 0;
 

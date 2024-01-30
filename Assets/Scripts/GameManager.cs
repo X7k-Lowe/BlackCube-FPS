@@ -67,6 +67,7 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
     public bool allowInput { get; set; } = false;
     float waitTime = 1f;
 
+    public bool isDead { get; set; } = false;
     public Material blackOutMaterial;
     private void Awake()
     {

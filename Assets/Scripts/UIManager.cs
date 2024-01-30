@@ -687,23 +687,29 @@ public class UIManager : MonoBehaviour
         }
         else
         {
-            if (!IsChanging)
+            if (!gameManager.isDead)
             {
-                if (platform == "Windows" || ShotMode == AimMode.Screen)
+                if (!IsChanging)
                 {
-                    aimIcon.SetActive(true);
+                    if (platform == "Windows" || ShotMode == AimMode.Screen)
+                    {
+                        aimIcon.SetActive(true);
+                    }
                 }
+                else changeAimIcon.gameObject.SetActive(true);
+                mapUI.SetActive(true);
             }
-            else changeAimIcon.gameObject.SetActive(true);
-            mapUI.SetActive(true);
         }
     }
 
     // ヘルプボックス表示・非表示
     public void ShowHelpBox()
     {
-        helpUI.SetActive(true);
-        if (!mapUI.activeSelf) mapUI.SetActive(true);
+        if (!gameManager.isDead)
+        {
+            helpUI.SetActive(true);
+            if (!mapUI.activeSelf) mapUI.SetActive(true);
+        }
     }
     public void HideHelpBox()
     {

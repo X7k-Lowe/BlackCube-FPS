@@ -67,6 +67,7 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
 
     public bool isDead { get; set; } = false;
     public Material blackOutMaterial;
+    public LineRenderer laserSight;
     private void Awake()
     {
         if (!isStart)

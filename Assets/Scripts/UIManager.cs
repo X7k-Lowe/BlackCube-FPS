@@ -134,7 +134,6 @@ public class UIManager : MonoBehaviour
     float reSpawnTime;
     float fiveSecond = 5f;
 
-    public LineRenderer laserSight;
     public AimMode ShotMode { get; set; }
 
     public AudioSource audioSource;

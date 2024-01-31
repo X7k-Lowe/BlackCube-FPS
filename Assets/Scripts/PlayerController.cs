@@ -191,13 +191,13 @@ public class PlayerController : MonoBehaviourPunCallbacks
 
 
     GameObject rightController;
-    private LaserPointer laserPointer;
     public GameObject oculusGunsHolder;
     public List<Transform> gunModeTransforms;
     public AimMode ShotMode { get; set; } = AimMode.RightHand;
 
     public GameObject gunModeAimIcon;
     GameObject laserPoint;
+    public LineRenderer laserSight { get; private set; }
 
     public Vector3 viewPointInitLocalPosition;
 
@@ -219,7 +219,7 @@ public class PlayerController : MonoBehaviourPunCallbacks
 
         gameManager.uIManager = uIManager;
 
-        laserPointer = gameManager.laserPointer;
+        laserSight = GameObject.Find("LaserSight").GetComponent<LineRenderer>();
 
         rightController = GameObject.Find("RightHandAnchor");
 
@@ -259,7 +259,7 @@ public class PlayerController : MonoBehaviourPunCallbacks
             postProcessCamera = GameObject.Find("PostProcess").GetComponent<Camera>();
             mainCamera.gameObject.SetActive(true);
             gameManager.oVRCameraRig.SetActive(false);
-            gameManager.uIHelper.SetActive(false);
+            laserSight.gameObject.SetActive(false);
             uIManager.WindowsCanvas(postProcessCamera);
             myIconSpriteFacesCamera.useCamera = postProcessCamera;
             billboard.useCamera = postProcessCamera;
@@ -278,7 +278,7 @@ public class PlayerController : MonoBehaviourPunCallbacks
 
             if (ShotMode == AimMode.Screen)
             {
-                gameManager.uIHelper.SetActive(false);
+                laserSight.gameObject.SetActive(false);
             }
             else if (ShotMode == AimMode.RightHand && photonView.IsMine)
             {
@@ -325,7 +325,7 @@ public class PlayerController : MonoBehaviourPunCallbacks
         if (platform == "Oculus" && ShotMode == AimMode.RightHand)
         {
             uIManager.aimIcon.SetActive(false);
-            uIManager.laserSight.enabled = false;
+            laserSight.enabled = false;
         }
 
         //カメラ格納 プラットフォームごとの初期化処理を行う
@@ -545,6 +545,7 @@ public class PlayerController : MonoBehaviourPunCallbacks
         PlayerMove();
 
 
+
         if (CanJump() && (IsGround() || IsWall()))
         {
             // ジャンプ関数を呼ぶ
@@ -627,6 +628,7 @@ public class PlayerController : MonoBehaviourPunCallbacks
             OutGame();
 
     }
+
     private void FixedUpdate()
     {
         // 自分じゃなければ
@@ -1123,12 +1125,13 @@ public class PlayerController : MonoBehaviourPunCallbacks
         {
             if (allowSwitchGuns && OVRInput.Get(OVRInput.Axis1D.PrimaryHandTrigger, OVRInput.Controller.RTouch) == 1) // 右中指
             {
-                uIManager.laserSight.enabled = true;
+                laserSight.enabled = true;
             }
             else
             {
-                uIManager.laserSight.enabled = false;
+                laserSight.enabled = false;
             }
+
             // Vector3 targetScale;
             // if (OVRInput.Get(OVRInput.Axis1D.PrimaryHandTrigger, OVRInput.Controller.RTouch) == 1) // 右中指
             // {
@@ -1222,10 +1225,12 @@ public class PlayerController : MonoBehaviourPunCallbacks
         else if (platform == "Oculus")
         {
             ray = new Ray();
-            if (ShotMode == AimMode.Screen) ray = centerEyeAnchor.ViewportPointToRay(new Vector2(0.5f, 0.5f));
-            else if (ShotMode == AimMode.RightHand) ray = new Ray(laserPointer.StartPoint, (laserPointer.EndPoint - laserPointer.StartPoint).normalized);
+            float radius = 0.5f; // 球体の半径を設定します。これが「太さ」になります。
 
-            if (Physics.Raycast(ray, out RaycastHit hit, Mathf.Infinity, ~eyeAreaLayer.value))
+            if (ShotMode == AimMode.Screen) ray = new Ray(centerEyeAnchor.transform.position, centerEyeAnchor.transform.forward);
+            else if (ShotMode == AimMode.RightHand) ray = new Ray(rightController.transform.position, rightController.transform.forward);
+
+            if (Physics.SphereCast(ray, radius, out RaycastHit hit, Mathf.Infinity, ~eyeAreaLayer.value))
             {
                 // 当たったのがプレイヤーならHit関数
                 if (hit.collider.gameObject.tag == "Player"
@@ -1241,18 +1246,42 @@ public class PlayerController : MonoBehaviourPunCallbacks
                         photonView.Owner.NickName,
                         PhotonNetwork.LocalPlayer.ActorNumber);
                 }
-                else if (hit.collider.gameObject.tag != "HealingCube"
-                && hit.collider.gameObject != photonView.gameObject)
-                // 当たったのがプレイヤー以外なら弾痕を生成
+                else
                 {
-                    // 当たった場所に弾痕を生成
-                    GameObject bulletImpact = Instantiate(
-                        guns[selectedGun].bulletImpact,
-                        hit.point + (hit.normal * 0.02f),
-                        // hit.normal : ヒットしたコライダーの９０度, Vector3.up : Y軸を上とする
-                        Quaternion.LookRotation(hit.normal, Vector3.up));
+                    ray = new Ray();
+                    if (ShotMode == AimMode.Screen) ray = centerEyeAnchor.ViewportPointToRay(new Vector2(0.5f, 0.5f));
+                    else if (ShotMode == AimMode.RightHand) ray = new Ray(rightController.transform.position, rightController.transform.forward);
 
-                    Destroy(bulletImpact, 10f);
+                    if (Physics.Raycast(ray, out RaycastHit hit2, Mathf.Infinity, ~eyeAreaLayer.value))
+                    {
+                        // 当たったのがプレイヤーならHit関数
+                        if (hit2.collider.gameObject.tag == "Player"
+                        && hit2.collider.gameObject != photonView.gameObject)
+                        {
+                            // 血のエフェクト生成
+                            PhotonNetwork.Instantiate(hitEffect.name, hit2.point, Quaternion.identity);
+
+                            hit2.collider.gameObject.GetPhotonView().RPC(
+                                "Hit",
+                                RpcTarget.All,
+                                guns[selectedGun].shootDamage,
+                                photonView.Owner.NickName,
+                                PhotonNetwork.LocalPlayer.ActorNumber);
+                        }
+                        else if (hit2.collider.gameObject.tag != "HealingCube"
+                        && hit2.collider.gameObject != photonView.gameObject)
+                        // 当たったのがプレイヤー以外なら弾痕を生成
+                        {
+                            // 当たった場所に弾痕を生成
+                            GameObject bulletImpact = Instantiate(
+                                guns[selectedGun].bulletImpact,
+                                hit2.point + (hit2.normal * 0.02f),
+                                // hit.normal : ヒットしたコライダーの９０度, Vector3.up : Y軸を上とする
+                                Quaternion.LookRotation(hit2.normal, Vector3.up));
+
+                            Destroy(bulletImpact, 10f);
+                        }
+                    }
                 }
             }
         }
@@ -1268,7 +1297,9 @@ public class PlayerController : MonoBehaviourPunCallbacks
     {
         if (platform != "Oculus" || ShotMode != AimMode.RightHand) return;
 
-        Ray ray = new Ray(laserPointer.StartPoint, (laserPointer.EndPoint - laserPointer.StartPoint).normalized);
+        oVRCameraRig.transform.position = viewPoint.position;
+
+        Ray ray = new Ray(rightController.transform.position, rightController.transform.forward);
 
         if (Physics.Raycast(ray, out RaycastHit hit, Mathf.Infinity, ~eyeAreaLayer.value))
         {
@@ -1278,14 +1309,21 @@ public class PlayerController : MonoBehaviourPunCallbacks
                 laserPoint.transform.rotation = Quaternion.LookRotation(hit.normal, Vector3.up);
                 if (allowSwitchGuns) laserPoint.SetActive(true);
                 else laserPoint.SetActive(false);
+
+                laserSight.SetPosition(0, rightController.transform.position);
+                laserSight.SetPosition(1, hit.point);
             }
             else
             {
+                laserSight.SetPosition(0, rightController.transform.position);
+                laserSight.SetPosition(1, rightController.transform.position + rightController.transform.forward * 10000);
                 laserPoint.SetActive(false);
             }
         }
         else
         {
+            laserSight.SetPosition(0, rightController.transform.position);
+            laserSight.SetPosition(1, rightController.transform.position + rightController.transform.forward * 10000);
             laserPoint.SetActive(false);
         }
     }

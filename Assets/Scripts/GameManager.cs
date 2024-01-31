@@ -49,11 +49,9 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
     public SpawnManager spawnManager;
     public GameObject mainCamera;
     public GameObject oVRCameraRig;
-    public GameObject uIHelper;
 
     public bool AllowLeaveRoom { get; set; } = false;
 
-    public LaserPointer laserPointer;
     public SkinnedMeshRenderer rightControllerRenderer;
     public SkinnedMeshRenderer leftControllerRenderer;
 

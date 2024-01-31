@@ -228,10 +228,10 @@ public class UIManager : MonoBehaviour
             aimIconsUI.transform.localScale = Vector3.one;
             aimIconsUI.transform.localRotation = Quaternion.Euler(0, 0, 0);
         }
-        else if (platform == "Oculus" && ShotMode == AimMode.Screen)
+        else if (platform == "Oculus" && ShotMode == AimMode.HeadSet)
         {
-            aimIcon.transform.localPosition = new Vector3(aimIconsUI.transform.localPosition.x, aimIconsUI.transform.localPosition.y, 800);
-            aimIcon.transform.localScale = Vector3.one * 1.5f;
+            aimIcon.transform.localPosition = new Vector3(aimIconsUI.transform.localPosition.x, aimIconsUI.transform.localPosition.y, 1000);
+            aimIcon.transform.localScale = Vector3.one * 2.0f;
         }
 
         Debug.Log("panelsUI : " + panelsUI);
@@ -359,7 +359,7 @@ public class UIManager : MonoBehaviour
     {
         gunChangeSlider.value = 0;
         gunChangeUI.SetActive(false);
-        if (platform == "Windows" || ShotMode == AimMode.Screen) aimIcon.SetActive(true);
+        if (platform == "Windows" || ShotMode == AimMode.HeadSet) aimIcon.SetActive(true);
         changeAimIcon.gameObject.SetActive(false);
     }
 
@@ -478,9 +478,9 @@ public class UIManager : MonoBehaviour
         commandTexts[3].text = "L [下トリガー]";
         commandTexts[4].text = "L [上トリガー]";
         commandTexts[5].text = "R [上トリガー]";
-        if (ShotMode == AimMode.RightHand) actionTexts[5].text = "レーザーサイト";
+        // if (ShotMode == AimMode.RightHand) actionTexts[5].text = "レーザーサイト";
         commandTexts[6].text = "R [下トリガー]";
-        if (ShotMode == AimMode.Screen) commandTexts[6].text = "なし ";
+        // if (ShotMode == AimMode.HeadSet) commandTexts[6].text = "sなし ";
         commandTexts[7].text = "[Aボタン]";
         commandTexts[8].text = "[Bボタン]";
         commandTexts[9].text = "[Xボタン]";
@@ -643,7 +643,7 @@ public class UIManager : MonoBehaviour
         {
             if (!IsChanging)
             {
-                if (platform == "Windows" || ShotMode == AimMode.Screen)
+                if (platform == "Windows" || ShotMode == AimMode.HeadSet)
                 {
                     aimIcon.SetActive(true);
                 }
@@ -662,7 +662,7 @@ public class UIManager : MonoBehaviour
         {
             if (!IsChanging)
             {
-                if (platform == "Windows" || ShotMode == AimMode.Screen)
+                if (platform == "Windows" || ShotMode == AimMode.HeadSet)
                 {
                     aimIcon.SetActive(true);
                 }
@@ -690,7 +690,7 @@ public class UIManager : MonoBehaviour
             {
                 if (!IsChanging)
                 {
-                    if (platform == "Windows" || ShotMode == AimMode.Screen)
+                    if (platform == "Windows" || ShotMode == AimMode.HeadSet)
                     {
                         aimIcon.SetActive(true);
                     }

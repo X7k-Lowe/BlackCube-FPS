@@ -149,11 +149,13 @@ public class PhotonManager : MonoBehaviourPunCallbacks // MonoBehaviourとPhoton
     public AudioClip clickToStartSE;
     public AudioClip enterSE;
     public AudioClip exitSE;
+
+    bool allowInput = true;
     public void ChangeAimMode()
     {
         if (aimMode == AimMode.RightHand)
         {
-            aimMode = AimMode.Screen;
+            aimMode = AimMode.HeadSet;
         }
         else
         {
@@ -168,6 +170,7 @@ public class PhotonManager : MonoBehaviourPunCallbacks // MonoBehaviourとPhoton
     {
         // static 変数に格納
         instance = this;
+        allowInput = true;
 
         titleStartSequence = DOTween.Sequence()
        .Append(titleStartTextCanvasGroup.DOFade(0, 0.7f))
@@ -188,13 +191,20 @@ public class PhotonManager : MonoBehaviourPunCallbacks // MonoBehaviourとPhoton
         }
     }
 
+    IEnumerator InputInterval()
+    {
+        allowInput = false;
+        yield return new WaitForSeconds(1.5f);
+        allowInput = true;
+    }
+
     void Update()
     {
         HandleHoverUI();
         if (PlatformManager.Instance.Platform == "Oculus" && buttons.activeSelf)
         {
             if (aimMode == AimMode.RightHand) aimModeText.text = "RIGHT HAND";
-            else aimModeText.text = "SCREEN";
+            else aimModeText.text = "HEAD SET";
 
             if (PlatformManager.Instance.Platform == "Oculus")
             {
@@ -208,12 +218,13 @@ public class PhotonManager : MonoBehaviourPunCallbacks // MonoBehaviourとPhoton
             }
         }
 
-        if (onTitleText)
+        if (onTitleText && allowInput)
         {
             if (Input.GetMouseButtonDown(0)
             || OVRInput.GetDown(OVRInput.Button.PrimaryIndexTrigger, OVRInput.Controller.RTouch)
             || OVRInput.GetDown(OVRInput.Button.One, OVRInput.Controller.RTouch))
             {
+                StartCoroutine(InputInterval());
                 titleStartSequence.Pause();
                 audioSource.PlayOneShot(clickToStartSE);
                 StartCoroutine(TitleFlushText());
@@ -408,8 +419,13 @@ public class PhotonManager : MonoBehaviourPunCallbacks // MonoBehaviourとPhoton
 
     public void LobbyMenuDisplayButton()
     {
-        audioSource.PlayOneShot(exitSE);
-        StartCoroutine(LobbyMenuDisplay(0.5f));
+        if (allowInput)
+        {
+            StartCoroutine(InputInterval());
+            audioSource.PlayOneShot(exitSE);
+            StartCoroutine(LobbyMenuDisplay(0.5f));
+        }
+
     }
 
     // マスターサーバーに接続されたときに呼ばれる関数（継承：コールバック）
@@ -447,7 +463,11 @@ public class PhotonManager : MonoBehaviourPunCallbacks // MonoBehaviourとPhoton
     // ルームを作るボタン用の関数
     public void OpenCreateRoomPanelButton()
     {
-        StartCoroutine(OpenCreateRoomPanel());
+        if (allowInput)
+        {
+            StartCoroutine(InputInterval());
+            StartCoroutine(OpenCreateRoomPanel());
+        }
     }
     public IEnumerator OpenCreateRoomPanel()
     {
@@ -462,8 +482,10 @@ public class PhotonManager : MonoBehaviourPunCallbacks // MonoBehaviourとPhoton
     public void CreateRoomButton()
     {
         // 入力されたとき
-        if (!string.IsNullOrEmpty(enterRoomName.text))
+        if (!string.IsNullOrEmpty(enterRoomName.text) && allowInput)
         {
+            StartCoroutine(InputInterval());
+
             audioSource.PlayOneShot(enterSE);
 
             RoomOptions options = new RoomOptions();
@@ -512,16 +534,20 @@ public class PhotonManager : MonoBehaviourPunCallbacks // MonoBehaviourとPhoton
     // ルーム退出の関数
     public void LeaveRoom()
     {
-        audioSource.PlayOneShot(exitSE);
-        // ルームから退出
-        PhotonNetwork.LeaveRoom();
+        if (allowInput)
+        {
+            StartCoroutine(InputInterval());
+            audioSource.PlayOneShot(exitSE);
+            // ルームから退出
+            PhotonNetwork.LeaveRoom();
 
-        enterRoomNameInputField.text = "";
+            enterRoomNameInputField.text = "";
 
-        // UI
-        CloseMenuUI();
-        loadingText.text = "退出中…";
-        loadingPanel.SetActive(true);
+            // UI
+            CloseMenuUI();
+            loadingText.text = "退出中…";
+            loadingPanel.SetActive(true);
+        }
     }
 
     // ルーム退出時に呼ばれる関数
@@ -544,7 +570,11 @@ public class PhotonManager : MonoBehaviourPunCallbacks // MonoBehaviourとPhoton
     // ルーム一覧パネルを開く関数
     public void FindRoomButton()
     {
-        StartCoroutine(FindRoom());
+        if (allowInput)
+        {
+            StartCoroutine(InputInterval());
+            StartCoroutine(FindRoom());
+        }
     }
     public IEnumerator FindRoom()
     {
@@ -737,6 +767,8 @@ public class PhotonManager : MonoBehaviourPunCallbacks // MonoBehaviourとPhoton
         // 入力フィールドに文字が入力されているか
         if (!string.IsNullOrEmpty(nameInput.text))
         {
+            StartCoroutine(InputInterval());
+
             // ユーザー名登録
             PhotonNetwork.NickName = nameInput.text;
 
@@ -819,20 +851,11 @@ public class PhotonManager : MonoBehaviourPunCallbacks // MonoBehaviourとPhoton
 
     public void PlayGame()
     {
-        // audioSource.PlayOneShot(clickToStartSE);
-
-        // // 入室中のルームを満室にして閉鎖する
-        // PhotonNetwork.CurrentRoom.IsOpen = false;
-        // PhotonNetwork.CurrentRoom.IsVisible = false;
-
-        // if (PhotonNetwork.IsMasterClient)
-        // {
-        //     PlayerPrefs.SetInt("KillNumber", killNumber);
-        // }
-
-        // // ステージをよみこむ
-        // PhotonNetwork.LoadLevel(levelToPlay);
-        StartCoroutine(Play());
+        if (allowInput)
+        {
+            allowInput = false;
+            StartCoroutine(Play());
+        }
     }
 
     IEnumerator Play()

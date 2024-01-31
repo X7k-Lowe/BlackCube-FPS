@@ -157,6 +157,8 @@ public class PhotonManager : MonoBehaviourPunCallbacks // MonoBehaviourとPhoton
     public RectTransform battleRoomHelpLine3;
     public RectTransform battleRoomHelpBackground;
     public TextMeshProUGUI battleRoomHelpText;
+    public TextMeshProUGUI battleRoomCreateHelpText;
+    public TextMeshProUGUI battleRoomSelectHelpText;
 
 
     public GameObject aimModeHelp;
@@ -167,6 +169,9 @@ public class PhotonManager : MonoBehaviourPunCallbacks // MonoBehaviourとPhoton
     public TextMeshProUGUI rightHandModeHelpText;
     public TextMeshProUGUI headSetModeHelpText;
 
+    string hoverUIParentName;
+    string prevHoverUIParentName;
+
     void OpenBattleRoomHelp()
     {
         StartCoroutine(InputInterval(2.0f));
@@ -175,7 +180,10 @@ public class PhotonManager : MonoBehaviourPunCallbacks // MonoBehaviourとPhoton
         battleRoomHelpLine3.localScale = new Vector3(0, battleRoomHelpLine3.localScale.y, battleRoomHelpLine3.localScale.z);
         battleRoomHelpBackground.localScale = new Vector3(battleRoomHelpBackground.localScale.x, 0, battleRoomHelpBackground.localScale.z);
         battleRoomHelpText.color = new Color(battleRoomHelpText.color.r, battleRoomHelpText.color.g, battleRoomHelpText.color.b, 0);
+        battleRoomCreateHelpText.color = new Color(battleRoomCreateHelpText.color.r, battleRoomCreateHelpText.color.g, battleRoomCreateHelpText.color.b, 0);
+        battleRoomSelectHelpText.color = new Color(battleRoomSelectHelpText.color.r, battleRoomSelectHelpText.color.g, battleRoomSelectHelpText.color.b, 0);
         battleRoomHelp.SetActive(true);
+        battleRoomHelpText.gameObject.SetActive(true);
         Sequence helpSequence = DOTween.Sequence();
         helpSequence.Append(battleRoomHelpLine1.DOScaleX(1, 0.2f))
                      .Append(battleRoomHelpLine2.DOScaleY(1, 0.4f))
@@ -211,6 +219,46 @@ public class PhotonManager : MonoBehaviourPunCallbacks // MonoBehaviourとPhoton
         helpSequence.Append(rightHandModeHelpText.DOColor(new Color(rightHandModeHelpText.color.r, rightHandModeHelpText.color.g, rightHandModeHelpText.color.b, aimMode == AimMode.RightHand ? 1 : 0), 1.0f))
                      .Join(headSetModeHelpText.DOColor(new Color(headSetModeHelpText.color.r, headSetModeHelpText.color.g, headSetModeHelpText.color.b, aimMode == AimMode.HeadSet ? 1 : 0), 1.0f));
     }
+
+    void UpdateBattleRoomHelpText(string hoverUIParentName)
+    {
+        if (!battleRoomHelp.activeSelf || !allowInput
+        || (hoverUIParentName == null && prevHoverUIParentName == null)
+        || (hoverUIParentName == prevHoverUIParentName)) return;
+
+        battleRoomHelpText.gameObject.SetActive(false);
+        battleRoomCreateHelpText.gameObject.SetActive(false);
+        battleRoomSelectHelpText.gameObject.SetActive(false);
+
+        battleRoomHelpText.color = new Color(battleRoomHelpText.color.r, battleRoomHelpText.color.g, battleRoomHelpText.color.b, 0);
+        battleRoomCreateHelpText.color = new Color(battleRoomCreateHelpText.color.r, battleRoomCreateHelpText.color.g, battleRoomCreateHelpText.color.b, 0);
+        battleRoomSelectHelpText.color = new Color(battleRoomSelectHelpText.color.r, battleRoomSelectHelpText.color.g, battleRoomSelectHelpText.color.b, 0);
+
+        if (hoverUIParentName == null)
+        {
+            battleRoomHelpText.gameObject.SetActive(true);
+            Sequence helpSequence = DOTween.Sequence();
+            helpSequence.Append(battleRoomHelpText.DOColor(new Color(battleRoomHelpText.color.r, battleRoomHelpText.color.g, battleRoomSelectHelpText.color.b, 1), 0.7f));
+        }
+        else if (hoverUIParentName == "CreateRoomButton")
+        {
+            battleRoomCreateHelpText.gameObject.SetActive(true);
+            Sequence helpSequence = DOTween.Sequence();
+            helpSequence.Append(battleRoomCreateHelpText.DOColor(new Color(battleRoomCreateHelpText.color.r, battleRoomCreateHelpText.color.g, battleRoomCreateHelpText.color.b, 1), 0.7f));
+        }
+        else if (hoverUIParentName == "FindRoomButton")
+        {
+            battleRoomSelectHelpText.gameObject.SetActive(true);
+            Sequence helpSequence = DOTween.Sequence();
+            helpSequence.Append(battleRoomSelectHelpText.DOColor(new Color(battleRoomSelectHelpText.color.r, battleRoomSelectHelpText.color.g, battleRoomSelectHelpText.color.b, 1), 0.7f));
+        }
+        else
+        {
+            battleRoomHelpText.color = new Color(battleRoomHelpText.color.r, battleRoomHelpText.color.g, battleRoomHelpText.color.b, 1);
+            battleRoomHelpText.gameObject.SetActive(true);
+        }
+    }
+
     public bool allowInput { get; private set; } = true;
     public void ChangeAimMode()
     {
@@ -302,11 +350,6 @@ public class PhotonManager : MonoBehaviourPunCallbacks // MonoBehaviourとPhoton
         }
 
         Debug.Log("allowInput:" + allowInput);
-
-        // if (Input.GetKeyDown(KeyCode.O))
-        // {
-        //     OpenAimModeHelp();
-        // }
     }
     IEnumerator TitleFlushText()
     {
@@ -349,8 +392,14 @@ public class PhotonManager : MonoBehaviourPunCallbacks // MonoBehaviourとPhoton
                     OpenAimModeHelp();
                 }
             }
+            hoverUIParentName = hoverUI.transform.parent.name;
+        }
+        else
+        {
+            hoverUIParentName = null;
         }
 
+        UpdateBattleRoomHelpText(hoverUIParentName);
 
         black = hoverUI != null ? hoverUI.transform.GetChild(1).gameObject : null;
 
@@ -365,6 +414,7 @@ public class PhotonManager : MonoBehaviourPunCallbacks // MonoBehaviourとPhoton
         }
 
         previousBlack = black;
+        prevHoverUIParentName = hoverUIParentName;
     }
 
     private void Start()
@@ -503,6 +553,7 @@ public class PhotonManager : MonoBehaviourPunCallbacks // MonoBehaviourとPhoton
         CloseMenuUI();
         battleRoomHelp.SetActive(false);
         aimModeHelp.SetActive(false);
+        allowInput = false;
         buttons.SetActive(true);
         yield return FadeInMenuUI(closeMenuUICanvasGroup);
     }

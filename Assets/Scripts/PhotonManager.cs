@@ -150,7 +150,7 @@ public class PhotonManager : MonoBehaviourPunCallbacks // MonoBehaviourとPhoton
     public AudioClip enterSE;
     public AudioClip exitSE;
 
-    bool allowInput = true;
+    public bool allowInput { get; private set; } = true;
     public void ChangeAimMode()
     {
         if (aimMode == AimMode.RightHand)
@@ -191,7 +191,7 @@ public class PhotonManager : MonoBehaviourPunCallbacks // MonoBehaviourとPhoton
         }
     }
 
-    IEnumerator InputInterval()
+    public IEnumerator InputInterval()
     {
         allowInput = false;
         yield return new WaitForSeconds(1.5f);

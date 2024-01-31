@@ -31,8 +31,12 @@ public class Room : MonoBehaviour
     // このルームボタンが管理しているルームに入室する
     public void OpenRoom()
     {
-        photonManager.RoomButtonSE();
-        // ルーム入室関数を呼び出す
-        PhotonManager.instance.JoinRoom(info);
+        if (photonManager.allowInput)
+        {
+            StartCoroutine(photonManager.InputInterval());
+            photonManager.RoomButtonSE();
+            // ルーム入室関数を呼び出す
+            PhotonManager.instance.JoinRoom(info);
+        }
     }
 }

@@ -60,8 +60,8 @@ public class LaserPointer : OVRCursor
     private Vector3 _startPoint;
     private Vector3 _forward;
     private Vector3 _endPoint;
-    public Vector3 StartPoint { get => _startPoint; }
-    public Vector3 EndPoint { get => _endPoint; }
+    public Vector3 StartPoint { get => _startPoint; set => _startPoint = value; }
+    public Vector3 EndPoint { get => _endPoint; set => _endPoint = value; }
     private bool _hitTarget;
     private LineRenderer lineRenderer;
 

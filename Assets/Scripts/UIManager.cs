@@ -134,9 +134,13 @@ public class UIManager : MonoBehaviour
     float reSpawnTime;
     float fiveSecond = 5f;
 
-    public LineRenderer laserSight;
     public AimMode ShotMode { get; set; }
 
+    public AudioSource audioSource;
+    void Awake()
+    {
+        currentKeyHelpTextColor = keyHelpTexts[0].color;
+    }
 
     void Update()
     {
@@ -157,6 +161,10 @@ public class UIManager : MonoBehaviour
             }
             else if (readyCountdown <= 0 && readyCountdown > -2.0f)
             {
+                // if (readyPanel.activeSelf)
+                // {
+                //     audioSource.Play();
+                // }
                 readyPanel.SetActive(false);
                 goText.SetActive(true);
             }
@@ -472,16 +480,11 @@ public class UIManager : MonoBehaviour
         commandTexts[5].text = "R [上トリガー]";
         if (ShotMode == AimMode.RightHand) actionTexts[5].text = "レーザーサイト";
         commandTexts[6].text = "R [下トリガー]";
+        if (ShotMode == AimMode.Screen) commandTexts[6].text = "なし ";
         commandTexts[7].text = "[Aボタン]";
         commandTexts[8].text = "[Bボタン]";
         commandTexts[9].text = "[Xボタン]";
         practiceText.text = "[≡ボタン]";
-    }
-
-
-    void Awake()
-    {
-        currentKeyHelpTextColor = keyHelpTexts[0].color;
     }
 
     public IEnumerator ShowStartPanel()
@@ -683,23 +686,29 @@ public class UIManager : MonoBehaviour
         }
         else
         {
-            if (!IsChanging)
+            if (!gameManager.isDead)
             {
-                if (platform == "Windows" || ShotMode == AimMode.Screen)
+                if (!IsChanging)
                 {
-                    aimIcon.SetActive(true);
+                    if (platform == "Windows" || ShotMode == AimMode.Screen)
+                    {
+                        aimIcon.SetActive(true);
+                    }
                 }
+                else changeAimIcon.gameObject.SetActive(true);
+                mapUI.SetActive(true);
             }
-            else changeAimIcon.gameObject.SetActive(true);
-            mapUI.SetActive(true);
         }
     }
 
     // ヘルプボックス表示・非表示
     public void ShowHelpBox()
     {
-        helpUI.SetActive(true);
-        if (!mapUI.activeSelf) mapUI.SetActive(true);
+        if (!gameManager.isDead)
+        {
+            helpUI.SetActive(true);
+            if (!mapUI.activeSelf) mapUI.SetActive(true);
+        }
     }
     public void HideHelpBox()
     {
@@ -738,6 +747,7 @@ public class UIManager : MonoBehaviour
     // ゲーム終了パネル表示
     public void OpenEndPanel(float waitAfterEnding)
     {
+        audioSource.Play();
         GameExitCountdown = waitAfterEnding;
         onCountdown = true;
         gunChangeUI.SetActive(false);

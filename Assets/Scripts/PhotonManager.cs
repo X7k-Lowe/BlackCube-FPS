@@ -256,6 +256,16 @@ public class PhotonManager : MonoBehaviourPunCallbacks // MonoBehaviourとPhoton
             }
         }
 
+        if (roomPanel.activeSelf)
+        {
+            if (!PhotonNetwork.IsMasterClient)
+            {
+                SetKillNumber();
+            }
+        }
+
+        Debug.Log("allowInput: " + allowInput);
+
         // if (Input.GetKeyDown(KeyCode.O))
         // {
         //     OpenBattleRoomHelp();
@@ -550,6 +560,8 @@ public class PhotonManager : MonoBehaviourPunCallbacks // MonoBehaviourとPhoton
 
     public IEnumerator JoinRoom()
     {
+        StartCoroutine(InputInterval());
+
         // 入室中のルーム名を取得
         roomName.text = PhotonNetwork.CurrentRoom.Name;
 
@@ -852,7 +864,8 @@ public class PhotonManager : MonoBehaviourPunCallbacks // MonoBehaviourとPhoton
         else
         {
             startButton.SetActive(false);
-            targetNumber.SetActive(false);
+            killNumberText.text = killNumber.ToString();
+            targetNumber.SetActive(true);
             leftButton.gameObject.SetActive(false);
             rightButton.gameObject.SetActive(false);
         }
@@ -867,6 +880,7 @@ public class PhotonManager : MonoBehaviourPunCallbacks // MonoBehaviourとPhoton
             audioSource.PlayOneShot(nameInputSE);
         }
         killNumberText.text = killNumber.ToString();
+        BroadcastKillNumber();
     }
 
     // killNumberをデクリメントして、テキストに反映する関数
@@ -878,6 +892,27 @@ public class PhotonManager : MonoBehaviourPunCallbacks // MonoBehaviourとPhoton
             audioSource.PlayOneShot(nameInputSE);
         }
         killNumberText.text = killNumber.ToString();
+        BroadcastKillNumber();
+    }
+
+    // ルームマスターのkillNumberを全てのローカルユーザーに送信する関数
+    public void BroadcastKillNumber()
+    {
+        // カスタムプロパティにkillNumberを設定
+        ExitGames.Client.Photon.Hashtable customProperties = new ExitGames.Client.Photon.Hashtable
+        {
+            { "KillNumber", killNumber }
+        };
+        PhotonNetwork.CurrentRoom.SetCustomProperties(customProperties);
+    }
+
+    public void SetKillNumber()
+    {
+        if (PhotonNetwork.CurrentRoom.CustomProperties.ContainsKey("KillNumber"))
+        {
+            killNumber = (int)PhotonNetwork.CurrentRoom.CustomProperties["KillNumber"];
+            killNumberText.text = killNumber.ToString();
+        }
     }
 
     // マスターが切り替わったときに呼ばれる関数（継承：コールバック）

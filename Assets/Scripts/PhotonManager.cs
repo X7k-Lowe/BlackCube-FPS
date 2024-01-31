@@ -150,6 +150,29 @@ public class PhotonManager : MonoBehaviourPunCallbacks // MonoBehaviourとPhoton
     public AudioClip enterSE;
     public AudioClip exitSE;
 
+
+    public GameObject battleRoomHelp;
+    public RectTransform battleRoomHelpLine1;
+    public RectTransform battleRoomHelpLine2;
+    public RectTransform battleRoomHelpLine3;
+    public RectTransform battleRoomHelpBackground;
+    public TextMeshProUGUI battleRoomHelpText;
+
+    void OpenBattleRoomHelp()
+    {
+        battleRoomHelpLine1.localScale = new Vector3(0, battleRoomHelpLine1.localScale.y, battleRoomHelpLine1.localScale.z);
+        battleRoomHelpLine2.localScale = new Vector3(battleRoomHelpLine2.localScale.x, 0, battleRoomHelpLine2.localScale.z);
+        battleRoomHelpLine3.localScale = new Vector3(0, battleRoomHelpLine3.localScale.y, battleRoomHelpLine3.localScale.z);
+        battleRoomHelpBackground.localScale = new Vector3(battleRoomHelpBackground.localScale.x, 0, battleRoomHelpBackground.localScale.z);
+        battleRoomHelpText.color = new Color(battleRoomHelpText.color.r, battleRoomHelpText.color.g, battleRoomHelpText.color.b, 0);
+        battleRoomHelp.SetActive(true);
+        Sequence helpSequence = DOTween.Sequence();
+        helpSequence.Append(battleRoomHelpLine1.DOScaleX(1, 0.2f))
+                     .Append(battleRoomHelpLine2.DOScaleY(1, 0.4f))
+                     .Append(battleRoomHelpLine3.DOScaleX(1, 0.2f))
+                     .Append(battleRoomHelpBackground.DOScaleY(1, 0.6f))
+                     .Append(battleRoomHelpText.DOColor(new Color(battleRoomHelpText.color.r, battleRoomHelpText.color.g, battleRoomHelpText.color.b, 1), 0.8f));
+    }
     public bool allowInput { get; private set; } = true;
     public void ChangeAimMode()
     {
@@ -171,6 +194,7 @@ public class PhotonManager : MonoBehaviourPunCallbacks // MonoBehaviourとPhoton
         // static 変数に格納
         instance = this;
         allowInput = true;
+        battleRoomHelp.SetActive(false);
 
         titleStartSequence = DOTween.Sequence()
        .Append(titleStartTextCanvasGroup.DOFade(0, 0.7f))
@@ -231,6 +255,11 @@ public class PhotonManager : MonoBehaviourPunCallbacks // MonoBehaviourとPhoton
                 onTitleText = false;
             }
         }
+
+        // if (Input.GetKeyDown(KeyCode.O))
+        // {
+        //     OpenBattleRoomHelp();
+        // }
     }
     IEnumerator TitleFlushText()
     {
@@ -256,6 +285,17 @@ public class PhotonManager : MonoBehaviourPunCallbacks // MonoBehaviourとPhoton
 
         hoverUI = results.FirstOrDefault(result => result.gameObject.tag == "HoverUI").gameObject;
 
+        if (hoverUI != null)
+        {
+            if (hoverUI.transform.parent.name == "CreateRoomButton"
+            || hoverUI.transform.parent.name == "FindRoomButton")
+            {
+                if (!battleRoomHelp.activeSelf)
+                {
+                    OpenBattleRoomHelp();
+                }
+            }
+        }
 
 
         black = hoverUI != null ? hoverUI.transform.GetChild(1).gameObject : null;
@@ -407,7 +447,7 @@ public class PhotonManager : MonoBehaviourPunCallbacks // MonoBehaviourとPhoton
         yield return FadeOutMenuUI(closeMenuUICanvasGroup, times);
 
         CloseMenuUI();
-
+        battleRoomHelp.SetActive(false);
         buttons.SetActive(true);
         yield return FadeInMenuUI(closeMenuUICanvasGroup);
     }

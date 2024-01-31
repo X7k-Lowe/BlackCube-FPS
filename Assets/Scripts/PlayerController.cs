@@ -20,7 +20,7 @@ public enum Wall
 public enum AimMode
 {
     RightHand,
-    Screen,
+    HeadSet,
 }
 public class PlayerController : MonoBehaviourPunCallbacks
 {
@@ -193,7 +193,7 @@ public class PlayerController : MonoBehaviourPunCallbacks
     GameObject rightController;
     public GameObject oculusGunsHolder;
     public List<Transform> gunModeTransforms;
-    public AimMode ShotMode { get; set; } = AimMode.RightHand;
+    public AimMode AimMode { get; set; } = AimMode.RightHand;
 
     public GameObject gunModeAimIcon;
     GameObject laserPoint;
@@ -204,9 +204,19 @@ public class PlayerController : MonoBehaviourPunCallbacks
     public Material whiteOutMaterial;
     bool isWhiteOut = true;
 
-    private float playerRotateY;
+    private float horizontalInput;
 
     public AudioSource healSE;
+
+    public bool onZoom = false;
+    bool isCameraMoving = false;
+    float zoomTime;
+
+    bool isGetDown = false;
+    bool isGetUp = false;
+    Vector3 targetPos;
+
+
     private void Awake()
     {
         // uIManager格納
@@ -226,6 +236,9 @@ public class PlayerController : MonoBehaviourPunCallbacks
         layerMaskGround = 1 << LayerMask.NameToLayer("Ground");
 
         gameManager.isDead = false;
+        onZoom = false;
+        isCameraMoving = false;
+
 
         if (photonView.IsMine)
         {
@@ -267,7 +280,7 @@ public class PlayerController : MonoBehaviourPunCallbacks
         }
         else if (platform == "Oculus")
         {
-            playerRotateY = transform.eulerAngles.y;
+            horizontalInput = transform.eulerAngles.y;
             centerEyeAnchor = GameObject.Find("CenterEyeAnchor").GetComponent<Camera>();
             oVRCameraRig = GameObject.Find("OVRCameraRig");
             oVRCameraRig.SetActive(true);
@@ -276,11 +289,14 @@ public class PlayerController : MonoBehaviourPunCallbacks
             myIconSpriteFacesCamera.useCamera = centerEyeAnchor;
             billboard.useCamera = centerEyeAnchor;
 
-            if (ShotMode == AimMode.Screen)
+            if (AimMode == AimMode.HeadSet)
             {
                 laserSight.gameObject.SetActive(false);
+                oculusGunsHolder.transform.SetParent(oVRCameraRig.transform);
+                oculusGunsHolder.transform.localPosition = Vector3.zero;
+                oculusGunsHolder.transform.localRotation = Quaternion.identity;
             }
-            else if (ShotMode == AimMode.RightHand && photonView.IsMine)
+            else if (AimMode == AimMode.RightHand && photonView.IsMine)
             {
                 oculusGunsHolder.transform.SetParent(rightController.transform);
                 oculusGunsHolder.transform.localPosition = Vector3.zero;
@@ -319,10 +335,10 @@ public class PlayerController : MonoBehaviourPunCallbacks
         uIManager.platform = platform = (string)customProperties["Platform"];
 
         // Debug.Log(gameManager == null ? "gameManagerはnullです" : "gameManagerはnullではありません");
-        ShotMode = gameManager.AimMode;
+        AimMode = gameManager.AimMode;
 
-        uIManager.ShotMode = ShotMode;
-        if (platform == "Oculus" && ShotMode == AimMode.RightHand)
+        uIManager.ShotMode = AimMode;
+        if (platform == "Oculus" && AimMode == AimMode.RightHand)
         {
             uIManager.aimIcon.SetActive(false);
             laserSight.enabled = false;
@@ -654,7 +670,7 @@ public class PlayerController : MonoBehaviourPunCallbacks
             if (oVRCameraRig != null)
             {
                 //カメラの位置調整
-                oVRCameraRig.transform.position = viewPoint.position;
+                SetOVRCameraRigPos();
             }
             // // 回転
             // centerEyeAnchor.transform.parent.parent.gameObject.transform.rotation = viewPoint.rotation;
@@ -763,9 +779,9 @@ public class PlayerController : MonoBehaviourPunCallbacks
             // 変数にユーザーのサムスティックの動きを格納
             Vector2 rStickInput = OVRInput.Get(OVRInput.Axis2D.PrimaryThumbstick, OVRInput.Controller.RTouch);
 
-            playerRotateY += rStickInput.x * hmdSensitivity;
-            if (playerRotateY < 0) playerRotateY = 360 + playerRotateY;
-            if (playerRotateY > 360) playerRotateY = playerRotateY - 360;
+            horizontalInput += rStickInput.x * hmdSensitivity;
+            if (horizontalInput < 0) horizontalInput = 360 + horizontalInput;
+            if (horizontalInput > 360) horizontalInput = horizontalInput - 360;
 
             // サムスティックのx軸の動きを反映
             if (oVRCameraRig != null)
@@ -776,9 +792,9 @@ public class PlayerController : MonoBehaviourPunCallbacks
             }
 
             // y軸の値に現在の値を足す
-            verticalInput += rStickInput.y;
+            verticalInput += rStickInput.y * hmdSensitivity * 0.25f;
             // 数値を丸める
-            verticalInput = Mathf.Clamp(verticalInput, -60f, 60f);
+            verticalInput = Mathf.Clamp(verticalInput, -30f, 30f);
 
             // viewPointに数値を反映
             viewPoint.rotation = Quaternion.Euler(-verticalInput,
@@ -789,7 +805,7 @@ public class PlayerController : MonoBehaviourPunCallbacks
             if (headDevice.TryGetFeatureValue(CommonUsages.deviceRotation, out Quaternion headRotation))
             {
                 // プレイヤーの水平回転（y軸）をHMDの回転に合わせる
-                transform.rotation = Quaternion.Euler(transform.eulerAngles.x, playerRotateY + headRotation.eulerAngles.y, transform.eulerAngles.z);
+                transform.rotation = Quaternion.Euler(transform.eulerAngles.x, horizontalInput + headRotation.eulerAngles.y, transform.eulerAngles.z);
                 Debug.Log("headRotation : " + headRotation.eulerAngles.y);
                 // 垂直回転（x軸）のためにHMDのPitch値を使用して、viewPointを回転させる
                 // ここでは範囲を-60fから60fに制限している
@@ -801,6 +817,10 @@ public class PlayerController : MonoBehaviourPunCallbacks
 
                 // viewPointの回転を設定
                 viewPoint.rotation = Quaternion.Euler(headPitch, viewPoint.eulerAngles.y, viewPoint.eulerAngles.z);
+                if (AimMode == AimMode.HeadSet)
+                {
+                    oculusGunsHolder.transform.rotation = Quaternion.Euler(headPitch, viewPoint.eulerAngles.y, viewPoint.eulerAngles.z);
+                }
             }
         }
     }
@@ -1125,30 +1145,68 @@ public class PlayerController : MonoBehaviourPunCallbacks
         {
             if (allowSwitchGuns && OVRInput.Get(OVRInput.Axis1D.PrimaryHandTrigger, OVRInput.Controller.RTouch) == 1) // 右中指
             {
+                if (!isGetDown)
+                {
+                    zoomTime = 0.9f / guns[selectedGun].acsSpeed;
+                    isGetDown = true;
+                    isGetUp = false;
+                    isCameraMoving = true;
+                }
+                zoomTime -= Time.deltaTime;
+                if (zoomTime <= 0)
+                {
+                    isCameraMoving = false;
+                }
+
                 laserSight.enabled = true;
+                onZoom = true;
             }
             else
             {
+                if (!isGetUp)
+                {
+                    zoomTime = 0.9f / guns[selectedGun].acsSpeed;
+                    isGetUp = true;
+                    isGetDown = false;
+                    isCameraMoving = true;
+                }
+                zoomTime -= Time.deltaTime;
+                if (zoomTime <= 0)
+                {
+                    isCameraMoving = false;
+                }
+
                 laserSight.enabled = false;
+                onZoom = false;
             }
-
-            // Vector3 targetScale;
-            // if (OVRInput.Get(OVRInput.Axis1D.PrimaryHandTrigger, OVRInput.Controller.RTouch) == 1) // 右中指
-            // {
-            //     // 選択された銃のズームスケールを取得
-            //     targetScale = Vector3.one * guns[selectedGun].adsZoom * 2;
-            // }
-            // else
-            // {
-            //     // 通常のスケール
-            //     targetScale = Vector3.one;
-            // }
-
-            // // オブジェクトのスケールを徐々に変更
-            // oVRCameraRig.transform.localScale = Vector3.Lerp(guns[selectedGun].transform.localScale, targetScale, guns[selectedGun].acsSpeed * Time.deltaTime);
         }
     }
 
+    void SetOVRCameraRigPos()
+    {
+        Vector3 startPos = viewPoint.position;
+        Vector3 forwardDirection = viewPoint.forward;
+        forwardDirection.y = 0; // 上下の向きを無視
+
+        if (onZoom)
+        {
+            RaycastHit hit;
+            if (Physics.Raycast(startPos, forwardDirection, out hit, guns[selectedGun].adsZoom * 0.9f))
+            {
+                if (hit.collider.gameObject.gameObject.tag == "Wall"
+                || hit.collider.gameObject.gameObject.tag == "Player"
+                || hit.collider.gameObject.gameObject.tag == "HealingCube")
+                {
+                    targetPos = hit.point - forwardDirection * 3;
+                }
+            }
+            else targetPos = startPos + forwardDirection * guns[selectedGun].adsZoom * 0.9f;
+        }
+        else targetPos = viewPoint.position;
+
+        if (isCameraMoving) oVRCameraRig.transform.position = Vector3.Lerp(oVRCameraRig.transform.position, targetPos, guns[selectedGun].acsSpeed * Time.deltaTime);
+        else oVRCameraRig.transform.position = targetPos;
+    }
     public void Fire()
     {
         // 撃ちだせるのかの判定
@@ -1227,8 +1285,8 @@ public class PlayerController : MonoBehaviourPunCallbacks
             ray = new Ray();
             float radius = 0.5f; // 球体の半径を設定します。これが「太さ」になります。
 
-            if (ShotMode == AimMode.Screen) ray = new Ray(centerEyeAnchor.transform.position, centerEyeAnchor.transform.forward);
-            else if (ShotMode == AimMode.RightHand) ray = new Ray(rightController.transform.position, rightController.transform.forward);
+            if (AimMode == AimMode.HeadSet) ray = new Ray(centerEyeAnchor.transform.position, centerEyeAnchor.transform.forward);
+            else if (AimMode == AimMode.RightHand) ray = new Ray(rightController.transform.position, rightController.transform.forward);
 
             if (Physics.SphereCast(ray, radius, out RaycastHit hit, Mathf.Infinity, ~eyeAreaLayer.value))
             {
@@ -1249,8 +1307,8 @@ public class PlayerController : MonoBehaviourPunCallbacks
                 else
                 {
                     ray = new Ray();
-                    if (ShotMode == AimMode.Screen) ray = centerEyeAnchor.ViewportPointToRay(new Vector2(0.5f, 0.5f));
-                    else if (ShotMode == AimMode.RightHand) ray = new Ray(rightController.transform.position, rightController.transform.forward);
+                    if (AimMode == AimMode.HeadSet) ray = centerEyeAnchor.ViewportPointToRay(new Vector2(0.5f, 0.5f));
+                    else if (AimMode == AimMode.RightHand) ray = new Ray(rightController.transform.position, rightController.transform.forward);
 
                     if (Physics.Raycast(ray, out RaycastHit hit2, Mathf.Infinity, ~eyeAreaLayer.value))
                     {
@@ -1295,9 +1353,9 @@ public class PlayerController : MonoBehaviourPunCallbacks
 
     void UpdateLaserPoint()
     {
-        if (platform != "Oculus" || ShotMode != AimMode.RightHand) return;
+        if (platform != "Oculus" || AimMode != AimMode.RightHand) return;
 
-        oVRCameraRig.transform.position = viewPoint.position;
+        SetOVRCameraRigPos();
 
         Ray ray = new Ray(rightController.transform.position, rightController.transform.forward);
 
@@ -1454,10 +1512,7 @@ public class PlayerController : MonoBehaviourPunCallbacks
         if (platform == "Oculus")
         {
             uIManager.ResetUICanvas();
-            if (ShotMode == AimMode.RightHand)
-            {
-                oculusGunsHolder.transform.SetParent(this.gameObject.transform);
-            }
+            oculusGunsHolder.transform.SetParent(this.gameObject.transform);
         }
     }
     // 死亡関数

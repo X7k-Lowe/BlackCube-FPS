@@ -197,7 +197,7 @@ public class PlayerController : MonoBehaviourPunCallbacks
 
     public GameObject gunModeAimIcon;
     GameObject laserPoint;
-    public LineRenderer laserSight { get; private set; }
+    public LineRenderer laserSight { get; set; }
 
     public Vector3 viewPointInitLocalPosition;
 
@@ -229,9 +229,7 @@ public class PlayerController : MonoBehaviourPunCallbacks
 
         gameManager.uIManager = uIManager;
 
-        laserSight = GameObject.Find("LaserSight").GetComponent<LineRenderer>();
-
-        rightController = GameObject.Find("RightHandAnchor");
+        laserSight = gameManager.laserSight;
 
         layerMaskGround = 1 << LayerMask.NameToLayer("Ground");
 

@@ -13,6 +13,7 @@ public class PlayerInfomation : MonoBehaviour
     public GameObject crownIcon;
     public GameObject myIcon;
     public GameObject enemyIcon;
+    public GameObject line;
 
 
     public void SetTopPlayer()
@@ -24,6 +25,7 @@ public class PlayerInfomation : MonoBehaviour
         playerNameText.fontMaterial = topPlayerMaterial;
         killsText.fontMaterial = topPlayerMaterial;
         deathText.fontMaterial = topPlayerMaterial;
+        line.SetActive(false);
         myIcon.SetActive(false);
         enemyIcon.SetActive(false);
         crownIcon.SetActive(true);

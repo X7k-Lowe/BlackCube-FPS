@@ -216,7 +216,7 @@ public class UIManager : MonoBehaviour
 
     public void UpdateEndText()
     {
-        endText.text = "Congratulations !";
+        endText.text = "GAME CLEAR !";
         endText.fontMaterial = victoryFontMaterial;
     }
     public void SetUIAsChildOfPlayerCanvas()

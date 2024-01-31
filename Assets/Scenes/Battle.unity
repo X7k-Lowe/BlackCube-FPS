@@ -22907,7 +22907,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 1}
   m_AnchorMax: {x: 0.5, y: 1}
-  m_AnchoredPosition: {x: 166.1, y: -90}
+  m_AnchoredPosition: {x: 347.33, y: -90}
   m_SizeDelta: {x: 1920, y: 200}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &596916131
@@ -33064,7 +33064,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "\u52DD\u5229\u307E\u3067\u3000\u3000   !"
+  m_text: "\u30B2\u30FC\u30E0\u30AF\u30EA\u30A2\u307E\u3067\u3000\u3000   !"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: b2354c04c236995469dfc154a162e465, type: 2}
   m_sharedMaterial: {fileID: 2100000, guid: 349f8ad0d1672a14e8ab6efa9fe1cb32, type: 2}
@@ -64089,7 +64089,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &1539470103
 RectTransform:
   m_ObjectHideFlags: 0
@@ -104680,7 +104680,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Game Over
+  m_text: GAME OVER
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: b2354c04c236995469dfc154a162e465, type: 2}
   m_sharedMaterial: {fileID: 2100000, guid: a09ee95eb2efb284c95375c9c973af35, type: 2}

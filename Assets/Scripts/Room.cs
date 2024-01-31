@@ -33,7 +33,6 @@ public class Room : MonoBehaviour
     {
         if (photonManager.allowInput)
         {
-            StartCoroutine(photonManager.InputInterval());
             photonManager.RoomButtonSE();
             // ルーム入室関数を呼び出す
             PhotonManager.instance.JoinRoom(info);

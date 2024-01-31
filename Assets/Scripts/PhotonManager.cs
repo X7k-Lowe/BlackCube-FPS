@@ -150,6 +150,115 @@ public class PhotonManager : MonoBehaviourPunCallbacks // MonoBehaviourとPhoton
     public AudioClip enterSE;
     public AudioClip exitSE;
 
+
+    public GameObject battleRoomHelp;
+    public RectTransform battleRoomHelpLine1;
+    public RectTransform battleRoomHelpLine2;
+    public RectTransform battleRoomHelpLine3;
+    public RectTransform battleRoomHelpBackground;
+    public TextMeshProUGUI battleRoomHelpText;
+    public TextMeshProUGUI battleRoomCreateHelpText;
+    public TextMeshProUGUI battleRoomSelectHelpText;
+
+
+    public GameObject aimModeHelp;
+    public RectTransform aimModeHelpLine1;
+    public RectTransform aimModeHelpLine2;
+    public RectTransform aimModeHelpLine3;
+    public RectTransform aimModeHelpBackground;
+    public TextMeshProUGUI rightHandModeHelpText;
+    public TextMeshProUGUI headSetModeHelpText;
+
+    string hoverUIParentName;
+    string prevHoverUIParentName;
+
+    void OpenBattleRoomHelp()
+    {
+        StartCoroutine(InputInterval(2.0f));
+        battleRoomHelpLine1.localScale = new Vector3(0, battleRoomHelpLine1.localScale.y, battleRoomHelpLine1.localScale.z);
+        battleRoomHelpLine2.localScale = new Vector3(battleRoomHelpLine2.localScale.x, 0, battleRoomHelpLine2.localScale.z);
+        battleRoomHelpLine3.localScale = new Vector3(0, battleRoomHelpLine3.localScale.y, battleRoomHelpLine3.localScale.z);
+        battleRoomHelpBackground.localScale = new Vector3(battleRoomHelpBackground.localScale.x, 0, battleRoomHelpBackground.localScale.z);
+        battleRoomHelpText.color = new Color(battleRoomHelpText.color.r, battleRoomHelpText.color.g, battleRoomHelpText.color.b, 0);
+        battleRoomCreateHelpText.color = new Color(battleRoomCreateHelpText.color.r, battleRoomCreateHelpText.color.g, battleRoomCreateHelpText.color.b, 0);
+        battleRoomSelectHelpText.color = new Color(battleRoomSelectHelpText.color.r, battleRoomSelectHelpText.color.g, battleRoomSelectHelpText.color.b, 0);
+        battleRoomHelp.SetActive(true);
+        battleRoomHelpText.gameObject.SetActive(true);
+        Sequence helpSequence = DOTween.Sequence();
+        helpSequence.Append(battleRoomHelpLine1.DOScaleX(1, 0.2f))
+                     .Append(battleRoomHelpLine2.DOScaleY(1, 0.4f))
+                     .Append(battleRoomHelpLine3.DOScaleX(1, 0.2f))
+                     .Append(battleRoomHelpBackground.DOScaleY(1, 0.5f))
+                     .Append(battleRoomHelpText.DOColor(new Color(battleRoomHelpText.color.r, battleRoomHelpText.color.g, battleRoomHelpText.color.b, 1), 0.7f));
+    }
+
+    void OpenAimModeHelp()
+    {
+        StartCoroutine(InputInterval(2.0f));
+        aimModeHelpLine1.localScale = new Vector3(0, aimModeHelpLine1.localScale.y, aimModeHelpLine1.localScale.z);
+        aimModeHelpLine2.localScale = new Vector3(aimModeHelpLine2.localScale.x, 0, aimModeHelpLine2.localScale.z);
+        aimModeHelpLine3.localScale = new Vector3(0, aimModeHelpLine3.localScale.y, aimModeHelpLine3.localScale.z);
+        aimModeHelpBackground.localScale = new Vector3(aimModeHelpBackground.localScale.x, 0, aimModeHelpBackground.localScale.z);
+        rightHandModeHelpText.color = new Color(rightHandModeHelpText.color.r, rightHandModeHelpText.color.g, rightHandModeHelpText.color.b, 0);
+        headSetModeHelpText.color = new Color(headSetModeHelpText.color.r, headSetModeHelpText.color.g, headSetModeHelpText.color.b, 0);
+        aimModeHelp.SetActive(true);
+        Sequence helpSequence = DOTween.Sequence();
+        helpSequence.Append(aimModeHelpLine1.DOScaleX(1, 0.2f))
+                     .Append(aimModeHelpLine2.DOScaleY(1, 0.4f))
+                     .Append(aimModeHelpLine3.DOScaleX(1, 0.2f))
+                     .Append(aimModeHelpBackground.DOScaleY(1, 0.5f))
+                     .Append(rightHandModeHelpText.DOColor(new Color(rightHandModeHelpText.color.r, rightHandModeHelpText.color.g, rightHandModeHelpText.color.b, aimMode == AimMode.RightHand ? 1 : 0), 0.7f))
+                     .Join(headSetModeHelpText.DOColor(new Color(headSetModeHelpText.color.r, headSetModeHelpText.color.g, headSetModeHelpText.color.b, aimMode == AimMode.HeadSet ? 1 : 0), 0.7f));
+    }
+
+    void UpdateAimModeHelpText()
+    {
+        rightHandModeHelpText.color = new Color(rightHandModeHelpText.color.r, rightHandModeHelpText.color.g, rightHandModeHelpText.color.b, 0);
+        headSetModeHelpText.color = new Color(headSetModeHelpText.color.r, headSetModeHelpText.color.g, headSetModeHelpText.color.b, 0);
+        Sequence helpSequence = DOTween.Sequence();
+        helpSequence.Append(rightHandModeHelpText.DOColor(new Color(rightHandModeHelpText.color.r, rightHandModeHelpText.color.g, rightHandModeHelpText.color.b, aimMode == AimMode.RightHand ? 1 : 0), 1.0f))
+                     .Join(headSetModeHelpText.DOColor(new Color(headSetModeHelpText.color.r, headSetModeHelpText.color.g, headSetModeHelpText.color.b, aimMode == AimMode.HeadSet ? 1 : 0), 1.0f));
+    }
+
+    void UpdateBattleRoomHelpText(string hoverUIParentName)
+    {
+        if (!battleRoomHelp.activeSelf || !allowInput
+        || (hoverUIParentName == null && prevHoverUIParentName == null)
+        || (hoverUIParentName == prevHoverUIParentName)) return;
+
+        battleRoomHelpText.gameObject.SetActive(false);
+        battleRoomCreateHelpText.gameObject.SetActive(false);
+        battleRoomSelectHelpText.gameObject.SetActive(false);
+
+        battleRoomHelpText.color = new Color(battleRoomHelpText.color.r, battleRoomHelpText.color.g, battleRoomHelpText.color.b, 0);
+        battleRoomCreateHelpText.color = new Color(battleRoomCreateHelpText.color.r, battleRoomCreateHelpText.color.g, battleRoomCreateHelpText.color.b, 0);
+        battleRoomSelectHelpText.color = new Color(battleRoomSelectHelpText.color.r, battleRoomSelectHelpText.color.g, battleRoomSelectHelpText.color.b, 0);
+
+        if (hoverUIParentName == null)
+        {
+            battleRoomHelpText.gameObject.SetActive(true);
+            Sequence helpSequence = DOTween.Sequence();
+            helpSequence.Append(battleRoomHelpText.DOColor(new Color(battleRoomHelpText.color.r, battleRoomHelpText.color.g, battleRoomSelectHelpText.color.b, 1), 0.7f));
+        }
+        else if (hoverUIParentName == "CreateRoomButton")
+        {
+            battleRoomCreateHelpText.gameObject.SetActive(true);
+            Sequence helpSequence = DOTween.Sequence();
+            helpSequence.Append(battleRoomCreateHelpText.DOColor(new Color(battleRoomCreateHelpText.color.r, battleRoomCreateHelpText.color.g, battleRoomCreateHelpText.color.b, 1), 0.7f));
+        }
+        else if (hoverUIParentName == "FindRoomButton")
+        {
+            battleRoomSelectHelpText.gameObject.SetActive(true);
+            Sequence helpSequence = DOTween.Sequence();
+            helpSequence.Append(battleRoomSelectHelpText.DOColor(new Color(battleRoomSelectHelpText.color.r, battleRoomSelectHelpText.color.g, battleRoomSelectHelpText.color.b, 1), 0.7f));
+        }
+        else
+        {
+            battleRoomHelpText.color = new Color(battleRoomHelpText.color.r, battleRoomHelpText.color.g, battleRoomHelpText.color.b, 1);
+            battleRoomHelpText.gameObject.SetActive(true);
+        }
+    }
+
     public bool allowInput { get; private set; } = true;
     public void ChangeAimMode()
     {
@@ -161,6 +270,7 @@ public class PhotonManager : MonoBehaviourPunCallbacks // MonoBehaviourとPhoton
         {
             aimMode = AimMode.RightHand;
         }
+        UpdateAimModeHelpText();
     }
     private void OnDestroy()
     {
@@ -171,6 +281,8 @@ public class PhotonManager : MonoBehaviourPunCallbacks // MonoBehaviourとPhoton
         // static 変数に格納
         instance = this;
         allowInput = true;
+        battleRoomHelp.SetActive(false);
+        aimModeHelp.SetActive(false);
 
         titleStartSequence = DOTween.Sequence()
        .Append(titleStartTextCanvasGroup.DOFade(0, 0.7f))
@@ -191,10 +303,10 @@ public class PhotonManager : MonoBehaviourPunCallbacks // MonoBehaviourとPhoton
         }
     }
 
-    public IEnumerator InputInterval()
+    public IEnumerator InputInterval(float seconds = 1.5f)
     {
         allowInput = false;
-        yield return new WaitForSeconds(1.5f);
+        yield return new WaitForSeconds(seconds);
         allowInput = true;
     }
 
@@ -206,16 +318,13 @@ public class PhotonManager : MonoBehaviourPunCallbacks // MonoBehaviourとPhoton
             if (aimMode == AimMode.RightHand) aimModeText.text = "RIGHT HAND";
             else aimModeText.text = "HEAD SET";
 
-            if (PlatformManager.Instance.Platform == "Oculus")
-            {
-                // カスタムプロパティにプラットフォーム情報を設定
-                ExitGames.Client.Photon.Hashtable customProperties = new ExitGames.Client.Photon.Hashtable
+            // カスタムプロパティにプラットフォーム情報を設定
+            ExitGames.Client.Photon.Hashtable customProperties = new ExitGames.Client.Photon.Hashtable
             {
                 { "Platform", PlatformManager.Instance.Platform },
                 { "AimMode", (int)aimMode }
             };
-                PhotonNetwork.LocalPlayer.SetCustomProperties(customProperties);
-            }
+            PhotonNetwork.LocalPlayer.SetCustomProperties(customProperties);
         }
 
         if (onTitleText && allowInput)
@@ -231,6 +340,16 @@ public class PhotonManager : MonoBehaviourPunCallbacks // MonoBehaviourとPhoton
                 onTitleText = false;
             }
         }
+
+        if (roomPanel.activeSelf)
+        {
+            if (!PhotonNetwork.IsMasterClient)
+            {
+                SetKillNumber();
+            }
+        }
+
+        Debug.Log("allowInput:" + allowInput);
     }
     IEnumerator TitleFlushText()
     {
@@ -256,7 +375,31 @@ public class PhotonManager : MonoBehaviourPunCallbacks // MonoBehaviourとPhoton
 
         hoverUI = results.FirstOrDefault(result => result.gameObject.tag == "HoverUI").gameObject;
 
+        if (hoverUI != null)
+        {
+            if (hoverUI.transform.parent.name == "CreateRoomButton"
+            || hoverUI.transform.parent.name == "FindRoomButton")
+            {
+                if (!battleRoomHelp.activeSelf)
+                {
+                    OpenBattleRoomHelp();
+                }
+            }
+            else if (hoverUI.transform.parent.name == "AimModeButton")
+            {
+                if (!aimModeHelp.activeSelf)
+                {
+                    OpenAimModeHelp();
+                }
+            }
+            hoverUIParentName = hoverUI.transform.parent.name;
+        }
+        else
+        {
+            hoverUIParentName = null;
+        }
 
+        UpdateBattleRoomHelpText(hoverUIParentName);
 
         black = hoverUI != null ? hoverUI.transform.GetChild(1).gameObject : null;
 
@@ -271,6 +414,7 @@ public class PhotonManager : MonoBehaviourPunCallbacks // MonoBehaviourとPhoton
         }
 
         previousBlack = black;
+        prevHoverUIParentName = hoverUIParentName;
     }
 
     private void Start()
@@ -407,7 +551,9 @@ public class PhotonManager : MonoBehaviourPunCallbacks // MonoBehaviourとPhoton
         yield return FadeOutMenuUI(closeMenuUICanvasGroup, times);
 
         CloseMenuUI();
-
+        battleRoomHelp.SetActive(false);
+        aimModeHelp.SetActive(false);
+        allowInput = false;
         buttons.SetActive(true);
         yield return FadeInMenuUI(closeMenuUICanvasGroup);
     }
@@ -510,6 +656,8 @@ public class PhotonManager : MonoBehaviourPunCallbacks // MonoBehaviourとPhoton
 
     public IEnumerator JoinRoom()
     {
+        StartCoroutine(InputInterval());
+
         // 入室中のルーム名を取得
         roomName.text = PhotonNetwork.CurrentRoom.Name;
 
@@ -812,7 +960,8 @@ public class PhotonManager : MonoBehaviourPunCallbacks // MonoBehaviourとPhoton
         else
         {
             startButton.SetActive(false);
-            targetNumber.SetActive(false);
+            killNumberText.text = killNumber.ToString();
+            targetNumber.SetActive(true);
             leftButton.gameObject.SetActive(false);
             rightButton.gameObject.SetActive(false);
         }
@@ -827,6 +976,7 @@ public class PhotonManager : MonoBehaviourPunCallbacks // MonoBehaviourとPhoton
             audioSource.PlayOneShot(nameInputSE);
         }
         killNumberText.text = killNumber.ToString();
+        BroadcastKillNumber();
     }
 
     // killNumberをデクリメントして、テキストに反映する関数
@@ -838,6 +988,27 @@ public class PhotonManager : MonoBehaviourPunCallbacks // MonoBehaviourとPhoton
             audioSource.PlayOneShot(nameInputSE);
         }
         killNumberText.text = killNumber.ToString();
+        BroadcastKillNumber();
+    }
+
+    // ルームマスターのkillNumberを全てのローカルユーザーに送信する関数
+    public void BroadcastKillNumber()
+    {
+        // カスタムプロパティにkillNumberを設定
+        ExitGames.Client.Photon.Hashtable customProperties = new ExitGames.Client.Photon.Hashtable
+        {
+            { "KillNumber", killNumber }
+        };
+        PhotonNetwork.CurrentRoom.SetCustomProperties(customProperties);
+    }
+
+    public void SetKillNumber()
+    {
+        if (PhotonNetwork.CurrentRoom.CustomProperties.ContainsKey("KillNumber"))
+        {
+            killNumber = (int)PhotonNetwork.CurrentRoom.CustomProperties["KillNumber"];
+            killNumberText.text = killNumber.ToString();
+        }
     }
 
     // マスターが切り替わったときに呼ばれる関数（継承：コールバック）

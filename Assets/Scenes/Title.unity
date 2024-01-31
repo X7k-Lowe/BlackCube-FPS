@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.0011351202, g: 0.0031264166, b: 0.0022876433, a: 1}
+  m_IndirectSpecularColor: {r: 0.0011112214, g: 0.0030393223, b: 0.0023889553, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -4222,7 +4222,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: End Game Kills
+  m_text: "\u30B2\u30FC\u30E0\u30AF\u30EA\u30A2\u306E \u30AD\u30EB\u6570"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 57543ca5d6e94dc428b9d0af34037ce8, type: 2}
   m_sharedMaterial: {fileID: 274806248547660405, guid: 57543ca5d6e94dc428b9d0af34037ce8, type: 2}

@@ -1158,7 +1158,7 @@ public class PlayerController : MonoBehaviourPunCallbacks
                     isCameraMoving = false;
                 }
 
-                laserSight.enabled = true;
+                if (!isCameraMoving) laserSight.enabled = true;
                 onZoom = true;
             }
             else

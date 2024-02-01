@@ -159,6 +159,9 @@ public class PhotonManager : MonoBehaviourPunCallbacks // MonoBehaviourとPhoton
     public TextMeshProUGUI battleRoomHelpText;
     public TextMeshProUGUI battleRoomCreateHelpText;
     public TextMeshProUGUI battleRoomSelectHelpText;
+    public CanvasGroup battleRoomHelpTextCanvasGroup;
+    public CanvasGroup battleRoomCreateHelpTextCanvasGroup;
+    public CanvasGroup battleRoomSelectHelpTextCanvasGroup;
 
 
     public GameObject aimModeHelp;
@@ -168,6 +171,9 @@ public class PhotonManager : MonoBehaviourPunCallbacks // MonoBehaviourとPhoton
     public RectTransform aimModeHelpBackground;
     public TextMeshProUGUI rightHandModeHelpText;
     public TextMeshProUGUI headSetModeHelpText;
+    public CanvasGroup rightHandModeHelpTextCanvasGroup;
+    public CanvasGroup headSetModeHelpTextCanvasGroup;
+
 
     string hoverUIParentName;
     string prevHoverUIParentName;
@@ -179,19 +185,20 @@ public class PhotonManager : MonoBehaviourPunCallbacks // MonoBehaviourとPhoton
         battleRoomHelpLine2.localScale = new Vector3(battleRoomHelpLine2.localScale.x, 0, battleRoomHelpLine2.localScale.z);
         battleRoomHelpLine3.localScale = new Vector3(0, battleRoomHelpLine3.localScale.y, battleRoomHelpLine3.localScale.z);
         battleRoomHelpBackground.localScale = new Vector3(battleRoomHelpBackground.localScale.x, 0, battleRoomHelpBackground.localScale.z);
-        battleRoomHelpText.color = new Color(battleRoomHelpText.color.r, battleRoomHelpText.color.g, battleRoomHelpText.color.b, 0);
-        battleRoomCreateHelpText.color = new Color(battleRoomCreateHelpText.color.r, battleRoomCreateHelpText.color.g, battleRoomCreateHelpText.color.b, 0);
-        battleRoomSelectHelpText.color = new Color(battleRoomSelectHelpText.color.r, battleRoomSelectHelpText.color.g, battleRoomSelectHelpText.color.b, 0);
-        battleRoomHelp.SetActive(true);
+        battleRoomHelpTextCanvasGroup.alpha = 0;
+        battleRoomCreateHelpTextCanvasGroup.alpha = 0;
+        battleRoomSelectHelpTextCanvasGroup.alpha = 0;
         battleRoomHelpText.gameObject.SetActive(true);
+        battleRoomCreateHelpText.gameObject.SetActive(false);
+        battleRoomSelectHelpText.gameObject.SetActive(false);
+        battleRoomHelp.SetActive(true);
         Sequence helpSequence = DOTween.Sequence();
         helpSequence.Append(battleRoomHelpLine1.DOScaleX(1, 0.2f))
                      .Append(battleRoomHelpLine2.DOScaleY(1, 0.4f))
                      .Append(battleRoomHelpLine3.DOScaleX(1, 0.2f))
                      .Append(battleRoomHelpBackground.DOScaleY(1, 0.5f))
-                     .Append(battleRoomHelpText.DOColor(new Color(battleRoomHelpText.color.r, battleRoomHelpText.color.g, battleRoomHelpText.color.b, 1), 0.7f));
+                     .Append(battleRoomHelpTextCanvasGroup.DOFade(1, 0.7f));
     }
-
     void OpenAimModeHelp()
     {
         StartCoroutine(InputInterval(2.0f));
@@ -199,25 +206,25 @@ public class PhotonManager : MonoBehaviourPunCallbacks // MonoBehaviourとPhoton
         aimModeHelpLine2.localScale = new Vector3(aimModeHelpLine2.localScale.x, 0, aimModeHelpLine2.localScale.z);
         aimModeHelpLine3.localScale = new Vector3(0, aimModeHelpLine3.localScale.y, aimModeHelpLine3.localScale.z);
         aimModeHelpBackground.localScale = new Vector3(aimModeHelpBackground.localScale.x, 0, aimModeHelpBackground.localScale.z);
-        rightHandModeHelpText.color = new Color(rightHandModeHelpText.color.r, rightHandModeHelpText.color.g, rightHandModeHelpText.color.b, 0);
-        headSetModeHelpText.color = new Color(headSetModeHelpText.color.r, headSetModeHelpText.color.g, headSetModeHelpText.color.b, 0);
+        rightHandModeHelpTextCanvasGroup.alpha = 0;
+        headSetModeHelpTextCanvasGroup.alpha = 0;
         aimModeHelp.SetActive(true);
         Sequence helpSequence = DOTween.Sequence();
         helpSequence.Append(aimModeHelpLine1.DOScaleX(1, 0.2f))
                      .Append(aimModeHelpLine2.DOScaleY(1, 0.4f))
                      .Append(aimModeHelpLine3.DOScaleX(1, 0.2f))
                      .Append(aimModeHelpBackground.DOScaleY(1, 0.5f))
-                     .Append(rightHandModeHelpText.DOColor(new Color(rightHandModeHelpText.color.r, rightHandModeHelpText.color.g, rightHandModeHelpText.color.b, aimMode == AimMode.RightHand ? 1 : 0), 0.7f))
-                     .Join(headSetModeHelpText.DOColor(new Color(headSetModeHelpText.color.r, headSetModeHelpText.color.g, headSetModeHelpText.color.b, aimMode == AimMode.HeadSet ? 1 : 0), 0.7f));
+                     .Append(rightHandModeHelpTextCanvasGroup.DOFade(aimMode == AimMode.RightHand ? 1 : 0, 0.7f))
+                     .Join(headSetModeHelpTextCanvasGroup.DOFade(aimMode == AimMode.HeadSet ? 1 : 0, 0.7f));
     }
 
     void UpdateAimModeHelpText()
     {
-        rightHandModeHelpText.color = new Color(rightHandModeHelpText.color.r, rightHandModeHelpText.color.g, rightHandModeHelpText.color.b, 0);
-        headSetModeHelpText.color = new Color(headSetModeHelpText.color.r, headSetModeHelpText.color.g, headSetModeHelpText.color.b, 0);
+        rightHandModeHelpTextCanvasGroup.alpha = 0;
+        headSetModeHelpTextCanvasGroup.alpha = 0;
         Sequence helpSequence = DOTween.Sequence();
-        helpSequence.Append(rightHandModeHelpText.DOColor(new Color(rightHandModeHelpText.color.r, rightHandModeHelpText.color.g, rightHandModeHelpText.color.b, aimMode == AimMode.RightHand ? 1 : 0), 1.0f))
-                     .Join(headSetModeHelpText.DOColor(new Color(headSetModeHelpText.color.r, headSetModeHelpText.color.g, headSetModeHelpText.color.b, aimMode == AimMode.HeadSet ? 1 : 0), 1.0f));
+        helpSequence.Append(rightHandModeHelpTextCanvasGroup.DOFade(aimMode == AimMode.RightHand ? 1 : 0, 1.0f))
+                     .Join(headSetModeHelpTextCanvasGroup.DOFade(aimMode == AimMode.HeadSet ? 1 : 0, 1.0f));
     }
 
     void UpdateBattleRoomHelpText(string hoverUIParentName)
@@ -230,31 +237,31 @@ public class PhotonManager : MonoBehaviourPunCallbacks // MonoBehaviourとPhoton
         battleRoomCreateHelpText.gameObject.SetActive(false);
         battleRoomSelectHelpText.gameObject.SetActive(false);
 
-        battleRoomHelpText.color = new Color(battleRoomHelpText.color.r, battleRoomHelpText.color.g, battleRoomHelpText.color.b, 0);
-        battleRoomCreateHelpText.color = new Color(battleRoomCreateHelpText.color.r, battleRoomCreateHelpText.color.g, battleRoomCreateHelpText.color.b, 0);
-        battleRoomSelectHelpText.color = new Color(battleRoomSelectHelpText.color.r, battleRoomSelectHelpText.color.g, battleRoomSelectHelpText.color.b, 0);
+        battleRoomHelpTextCanvasGroup.alpha = 0;
+        battleRoomCreateHelpTextCanvasGroup.alpha = 0;
+        battleRoomSelectHelpTextCanvasGroup.alpha = 0;
 
         if (hoverUIParentName == null)
         {
             battleRoomHelpText.gameObject.SetActive(true);
             Sequence helpSequence = DOTween.Sequence();
-            helpSequence.Append(battleRoomHelpText.DOColor(new Color(battleRoomHelpText.color.r, battleRoomHelpText.color.g, battleRoomSelectHelpText.color.b, 1), 0.7f));
+            helpSequence.Append(battleRoomHelpTextCanvasGroup.DOFade(1, 0.7f));
         }
         else if (hoverUIParentName == "CreateRoomButton")
         {
             battleRoomCreateHelpText.gameObject.SetActive(true);
             Sequence helpSequence = DOTween.Sequence();
-            helpSequence.Append(battleRoomCreateHelpText.DOColor(new Color(battleRoomCreateHelpText.color.r, battleRoomCreateHelpText.color.g, battleRoomCreateHelpText.color.b, 1), 0.7f));
+            helpSequence.Append(battleRoomCreateHelpTextCanvasGroup.DOFade(1, 0.7f));
         }
         else if (hoverUIParentName == "FindRoomButton")
         {
             battleRoomSelectHelpText.gameObject.SetActive(true);
             Sequence helpSequence = DOTween.Sequence();
-            helpSequence.Append(battleRoomSelectHelpText.DOColor(new Color(battleRoomSelectHelpText.color.r, battleRoomSelectHelpText.color.g, battleRoomSelectHelpText.color.b, 1), 0.7f));
+            helpSequence.Append(battleRoomSelectHelpTextCanvasGroup.DOFade(1, 0.7f));
         }
         else
         {
-            battleRoomHelpText.color = new Color(battleRoomHelpText.color.r, battleRoomHelpText.color.g, battleRoomHelpText.color.b, 1);
+            battleRoomHelpTextCanvasGroup.alpha = 1;
             battleRoomHelpText.gameObject.SetActive(true);
         }
     }

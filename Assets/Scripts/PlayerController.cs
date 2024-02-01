@@ -1281,7 +1281,7 @@ public class PlayerController : MonoBehaviourPunCallbacks
         else if (platform == "Oculus")
         {
             ray = new Ray();
-            float radius = 0.5f; // 球体の半径を設定します。これが「太さ」になります。
+            float radius = 0.7f; // 球体の半径を設定します。これが「太さ」になります。
 
             if (AimMode == AimMode.HeadSet) ray = new Ray(centerEyeAnchor.transform.position, centerEyeAnchor.transform.forward);
             else if (AimMode == AimMode.RightHand) ray = new Ray(rightController.transform.position, rightController.transform.forward);

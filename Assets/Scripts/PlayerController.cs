@@ -229,6 +229,8 @@ public class PlayerController : MonoBehaviourPunCallbacks
 
         gameManager.uIManager = uIManager;
 
+        rightController = GameObject.Find("RightHandAnchor");
+
         laserSight = gameManager.laserSight;
 
         layerMaskGround = 1 << LayerMask.NameToLayer("Ground");

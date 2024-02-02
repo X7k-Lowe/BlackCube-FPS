@@ -269,6 +269,8 @@ public class PhotonManager : MonoBehaviourPunCallbacks // MonoBehaviourとPhoton
     public bool allowInput { get; private set; } = true;
     public void ChangeAimMode()
     {
+        if (!allowInput) return;
+
         if (aimMode == AimMode.RightHand)
         {
             aimMode = AimMode.HeadSet;

@@ -730,6 +730,10 @@ public class UIManager : MonoBehaviour
             {
                 mapUIParentRect.localScale = Vector3.one * 1.6f;
             }
+            else
+            {
+                playerMapUI.transform.localScale = Vector3.one * 1.75f;
+            }
         }
         else
         {
@@ -740,6 +744,10 @@ public class UIManager : MonoBehaviour
             if (platform == "Windows")
             {
                 mapUIParentRect.localScale = Vector3.one;
+            }
+            else
+            {
+                playerMapUI.transform.localScale = Vector3.one * 1.2f;
             }
         }
     }

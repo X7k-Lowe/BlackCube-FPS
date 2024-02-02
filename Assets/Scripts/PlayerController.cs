@@ -229,6 +229,8 @@ public class PlayerController : MonoBehaviourPunCallbacks
 
         gameManager.uIManager = uIManager;
 
+        rightController = GameObject.Find("RightHandAnchor");
+
         laserSight = gameManager.laserSight;
 
         layerMaskGround = 1 << LayerMask.NameToLayer("Ground");
@@ -1156,7 +1158,7 @@ public class PlayerController : MonoBehaviourPunCallbacks
                     isCameraMoving = false;
                 }
 
-                laserSight.enabled = true;
+                if (!isCameraMoving) laserSight.enabled = true;
                 onZoom = true;
             }
             else
@@ -1189,16 +1191,16 @@ public class PlayerController : MonoBehaviourPunCallbacks
         if (onZoom)
         {
             RaycastHit hit;
-            if (Physics.Raycast(startPos, forwardDirection, out hit, guns[selectedGun].adsZoom * 0.9f))
+            if (Physics.SphereCast(startPos, 0.7f, forwardDirection, out hit, guns[selectedGun].adsZoom * 0.5f))
             {
-                if (hit.collider.gameObject.gameObject.tag == "Wall"
-                || hit.collider.gameObject.gameObject.tag == "Player"
-                || hit.collider.gameObject.gameObject.tag == "HealingCube")
+                if (hit.collider.gameObject.tag == "Wall"
+                || hit.collider.gameObject.tag == "Player"
+                || hit.collider.gameObject.tag == "HealingCube")
                 {
                     targetPos = hit.point - forwardDirection * 3;
                 }
             }
-            else targetPos = startPos + forwardDirection * guns[selectedGun].adsZoom * 0.9f;
+            else targetPos = startPos + forwardDirection * guns[selectedGun].adsZoom * 0.5f;
         }
         else targetPos = viewPoint.position;
 
@@ -1281,7 +1283,7 @@ public class PlayerController : MonoBehaviourPunCallbacks
         else if (platform == "Oculus")
         {
             ray = new Ray();
-            float radius = 0.5f; // 球体の半径を設定します。これが「太さ」になります。
+            float radius = 0.7f; // 球体の半径を設定します。これが「太さ」になります。
 
             if (AimMode == AimMode.HeadSet) ray = new Ray(centerEyeAnchor.transform.position, centerEyeAnchor.transform.forward);
             else if (AimMode == AimMode.RightHand) ray = new Ray(rightController.transform.position, rightController.transform.forward);

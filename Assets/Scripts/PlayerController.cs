@@ -45,15 +45,16 @@ public class PlayerController : MonoBehaviourPunCallbacks
     private Camera postProcessCamera;
     private Camera centerEyeAnchor;
     private GameObject oVRCameraRig;
+    private GameObject cameraRigPlayerRotatePoint;
 
     // プレイヤーキャンバスUI
     public Billboard billboard;
     public Canvas playerCanvas;
-    public RectTransform playerCanvasSize;
     public GameObject aimIconsUI;
     public GameObject hpUI;
     public GameObject helpUI;
     public GameObject mapUI;
+    public GameObject panelsUI;
 
 
     //入力された値格納
@@ -230,6 +231,7 @@ public class PlayerController : MonoBehaviourPunCallbacks
         gameManager.uIManager = uIManager;
 
         rightController = GameObject.Find("RightHandAnchor");
+        cameraRigPlayerRotatePoint = GameObject.Find("PlayerRotatePoint");
 
         laserSight = gameManager.laserSight;
 
@@ -243,11 +245,11 @@ public class PlayerController : MonoBehaviourPunCallbacks
         if (photonView.IsMine)
         {
             uIManager.playerCanvas = playerCanvas;
-            uIManager.playerCanvasSize = playerCanvasSize;
             uIManager.playerAimIconsUI = aimIconsUI;
             uIManager.playerHpUI = hpUI;
             uIManager.playerHelpUI = helpUI;
             uIManager.playerMapUI = mapUI;
+            uIManager.playerPanelsUI = panelsUI;
         }
 
 
@@ -822,6 +824,8 @@ public class PlayerController : MonoBehaviourPunCallbacks
                     oculusGunsHolder.transform.rotation = Quaternion.Euler(headPitch, viewPoint.eulerAngles.y, viewPoint.eulerAngles.z);
                 }
             }
+
+            cameraRigPlayerRotatePoint.transform.rotation = Quaternion.Euler(0, viewPoint.eulerAngles.y, 0);
         }
     }
 
@@ -1143,7 +1147,8 @@ public class PlayerController : MonoBehaviourPunCallbacks
         }
         else if (platform == "Oculus")
         {
-            if (allowSwitchGuns && OVRInput.Get(OVRInput.Axis1D.PrimaryHandTrigger, OVRInput.Controller.RTouch) == 1) // 右中指
+            if (allowSwitchGuns && OVRInput.Get(OVRInput.Axis1D.PrimaryHandTrigger, OVRInput.Controller.RTouch) == 1
+            || Input.GetMouseButton(1)) // 右中指
             {
                 if (!isGetDown)
                 {

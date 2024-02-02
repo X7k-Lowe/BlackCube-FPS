@@ -23558,12 +23558,12 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 620303293}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.725, z: 0.3}
+  m_LocalPosition: {x: 0, y: 0, z: 0.3}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 22711132}
-  m_Father: {fileID: 1445509034255413335}
+  m_Father: {fileID: 2084057912}
   m_RootOrder: -1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &620456073
@@ -36477,7 +36477,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!81 &963194226
 AudioListener:
   m_ObjectHideFlags: 0
@@ -89479,6 +89479,38 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: aff5cd16afc129f4e8d9368455da13ad, type: 3}
+--- !u!1 &2084057911
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2084057912}
+  m_Layer: 0
+  m_Name: PlayerRotatePoint
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2084057912
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2084057911}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: -0.3}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 620303294}
+  m_Father: {fileID: 1445509034255413335}
+  m_RootOrder: -1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &2084754755
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -93700,7 +93732,7 @@ Transform:
   m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 5672554072551967986}
-  - {fileID: 620303294}
+  - {fileID: 2084057912}
   - {fileID: 1206674225}
   m_Father: {fileID: 0}
   m_RootOrder: 7
@@ -96793,6 +96825,12 @@ MonoBehaviour:
   hpUI: {fileID: 7672890662642486012}
   helpUI: {fileID: 56578779}
   mapUI: {fileID: 414785816}
+  cameraRigCanvas: {fileID: 22711136}
+  cameraRigCanvasSize: {fileID: 1795231419}
+  cameraRigAimIconsUI: {fileID: 1383763124}
+  cameraRigHpUI: {fileID: 829239549}
+  cameraRigHelpUI: {fileID: 225779352}
+  cameraRigMapUI: {fileID: 1290699497}
   countdownBox: {fileID: 1935927185}
   countdownText: {fileID: 1677989410}
   gameManager: {fileID: 967329554}

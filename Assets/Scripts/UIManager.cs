@@ -117,11 +117,19 @@ public class UIManager : MonoBehaviour
 
     // プレイヤーキャンバス
     public Canvas playerCanvas { get; set; }
-    public RectTransform playerCanvasSize { get; set; }
     public GameObject playerAimIconsUI { get; set; }
     public GameObject playerHpUI { get; set; }
     public GameObject playerHelpUI { get; set; }
     public GameObject playerMapUI { get; set; }
+    public GameObject playerPanelsUI { get; set; }
+
+    // カメラリグキャンバス
+    public Canvas cameraRigCanvas;
+    public RectTransform cameraRigCanvasSize;
+    public GameObject cameraRigAimIconsUI;
+    public GameObject cameraRigHpUI;
+    public GameObject cameraRigHelpUI;
+    public GameObject cameraRigMapUI;
 
     public bool IsChanging { get; set; } = false;
 
@@ -234,27 +242,25 @@ public class UIManager : MonoBehaviour
             aimIcon.transform.localScale = Vector3.one * 2.0f;
         }
 
-        Debug.Log("panelsUI : " + panelsUI);
-        Debug.Log("playerCanvasSize : " + playerCanvasSize);
-        panelsUI.transform.SetParent(playerCanvasSize.transform);
         hpUI.transform.SetParent(playerHpUI.transform);
         helpUI.transform.SetParent(playerHelpUI.transform);
         mapUI.transform.SetParent(playerMapUI.transform);
+        panelsUI.transform.SetParent(playerPanelsUI.transform);
 
-        panelsUI.transform.localPosition = Vector3.zero;
         hpUI.transform.localPosition = Vector3.zero;
         helpUI.transform.localPosition = Vector3.zero;
         mapUI.transform.localPosition = Vector3.zero;
+        panelsUI.transform.localPosition = Vector3.zero;
 
-        panelsUI.transform.localScale = Vector3.one;
         hpUI.transform.localScale = Vector3.one;
         helpUI.transform.localScale = Vector3.one;
         mapUI.transform.localScale = Vector3.one;
+        panelsUI.transform.localScale = Vector3.one;
 
-        panelsUI.transform.localRotation = Quaternion.Euler(0, 0, 0);
         hpUI.transform.localRotation = Quaternion.Euler(0, 0, 0);
         helpUI.transform.localRotation = Quaternion.Euler(0, 0, 0);
         mapUI.transform.localRotation = Quaternion.Euler(0, 0, 0);
+        panelsUI.transform.localRotation = Quaternion.Euler(0, 0, 0);
         playerMapUI.transform.localScale = Vector3.one * 1.75f;
 
         deathPanelBackground.enabled = false;
@@ -265,7 +271,6 @@ public class UIManager : MonoBehaviour
 
     public void ResetUICanvas()
     {
-        Debug.Log("ResetUICanvas");
         if (platform == "Oculus" && ShotMode == AimMode.RightHand)
         {
             aimIconsUI.transform.SetParent(aimIconsParent.transform);

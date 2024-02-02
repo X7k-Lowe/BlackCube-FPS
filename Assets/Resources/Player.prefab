@@ -2881,7 +2881,7 @@ Transform:
   - {fileID: 3961133697429389746}
   - {fileID: 7289887389763034988}
   m_Father: {fileID: 0}
-  m_RootOrder: 2
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &4947767976695388449
 MeshFilter:
@@ -3002,11 +3002,11 @@ MonoBehaviour:
   hmdSensitivity: 1
   billboard: {fileID: 3520696361672961433}
   playerCanvas: {fileID: 8292545752976665822}
-  playerCanvasSize: {fileID: 8777427462498559313}
   aimIconsUI: {fileID: 6215901429138470358}
   hpUI: {fileID: 4723590795351963036}
   helpUI: {fileID: 4346536217446188153}
   mapUI: {fileID: 1264019756304893929}
+  panelsUI: {fileID: 5631856021424947676}
   jumpForce: {x: 0, y: 8, z: 0}
   isJumping: 1
   jumpInterval: 0

@@ -318,11 +318,12 @@ public class PlayerController : MonoBehaviourPunCallbacks
             }
 
             // UIをプレイヤーキャンバスに配置
-            if (photonView.IsMine)
+            if (photonView.IsMine && !gameManager.isStart)
             {
                 uIManager.SetUIAsChildOfPlayerCanvas();
             }
             playerCanvas.enabled = false;
+            uIManager.cameraRigCanvas.enabled = false;
         }
     }
     private void Start()
@@ -549,7 +550,6 @@ public class PlayerController : MonoBehaviourPunCallbacks
             return;
         }
 
-        // Debug.Log("EyeAreaCounter : " + EyeAreaCounter);
         CheckEyeAreaStatus();
         uIManager.UpdateMapIconPos(this.gameObject, myIcon);
 

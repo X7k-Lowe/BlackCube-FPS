@@ -125,11 +125,11 @@ public class UIManager : MonoBehaviour
 
     // カメラリグキャンバス
     public Canvas cameraRigCanvas;
-    public RectTransform cameraRigCanvasSize;
     public GameObject cameraRigAimIconsUI;
     public GameObject cameraRigHpUI;
     public GameObject cameraRigHelpUI;
     public GameObject cameraRigMapUI;
+    public GameObject cameraRigPanelsUI;
 
     public bool IsChanging { get; set; } = false;
 
@@ -229,23 +229,29 @@ public class UIManager : MonoBehaviour
     }
     public void SetUIAsChildOfPlayerCanvas()
     {
-        if (platform == "Oculus" && ShotMode == AimMode.RightHand)
+        if (ShotMode == AimMode.RightHand)
         {
-            aimIconsUI.transform.SetParent(playerAimIconsUI.transform);
+            // aimIconsUI.transform.SetParent(playerAimIconsUI.transform);
+            aimIconsUI.transform.SetParent(cameraRigAimIconsUI.transform);
             aimIconsUI.transform.localPosition = Vector3.zero;
             aimIconsUI.transform.localScale = Vector3.one;
             aimIconsUI.transform.localRotation = Quaternion.Euler(0, 0, 0);
         }
-        else if (platform == "Oculus" && ShotMode == AimMode.HeadSet)
+        else if (ShotMode == AimMode.HeadSet)
         {
             aimIcon.transform.localPosition = new Vector3(aimIconsUI.transform.localPosition.x, aimIconsUI.transform.localPosition.y, 1000);
             aimIcon.transform.localScale = Vector3.one * 2.0f;
         }
 
-        hpUI.transform.SetParent(playerHpUI.transform);
-        helpUI.transform.SetParent(playerHelpUI.transform);
-        mapUI.transform.SetParent(playerMapUI.transform);
-        panelsUI.transform.SetParent(playerPanelsUI.transform);
+        // hpUI.transform.SetParent(playerHpUI.transform);
+        // helpUI.transform.SetParent(playerHelpUI.transform);
+        // mapUI.transform.SetParent(playerMapUI.transform);
+        // panelsUI.transform.SetParent(playerPanelsUI.transform);
+
+        hpUI.transform.SetParent(cameraRigHpUI.transform);
+        helpUI.transform.SetParent(cameraRigHelpUI.transform);
+        mapUI.transform.SetParent(cameraRigMapUI.transform);
+        panelsUI.transform.SetParent(cameraRigPanelsUI.transform);
 
         hpUI.transform.localPosition = Vector3.zero;
         helpUI.transform.localPosition = Vector3.zero;
@@ -261,7 +267,8 @@ public class UIManager : MonoBehaviour
         helpUI.transform.localRotation = Quaternion.Euler(0, 0, 0);
         mapUI.transform.localRotation = Quaternion.Euler(0, 0, 0);
         panelsUI.transform.localRotation = Quaternion.Euler(0, 0, 0);
-        playerMapUI.transform.localScale = Vector3.one * 1.75f;
+        // playerMapUI.transform.localScale = Vector3.one * 1.75f;
+        cameraRigMapUI.transform.localScale = Vector3.one * 1.75f;
 
         deathPanelBackground.enabled = false;
 
@@ -271,34 +278,35 @@ public class UIManager : MonoBehaviour
 
     public void ResetUICanvas()
     {
-        if (platform == "Oculus" && ShotMode == AimMode.RightHand)
-        {
-            aimIconsUI.transform.SetParent(aimIconsParent.transform);
-            aimIconsUI.transform.localPosition = Vector3.zero;
-            aimIconsUI.transform.localScale = Vector3.one;
-            aimIconsUI.transform.localRotation = Quaternion.Euler(0, 0, 0);
-        }
-        playerMapUI.transform.localScale = Vector3.one;
+        // if (platform == "Oculus" && ShotMode == AimMode.RightHand)
+        // {
+        //     aimIconsUI.transform.SetParent(aimIconsParent.transform);
+        //     aimIconsUI.transform.localPosition = Vector3.zero;
+        //     aimIconsUI.transform.localScale = Vector3.one;
+        //     aimIconsUI.transform.localRotation = Quaternion.Euler(0, 0, 0);
+        // }
+        // // playerMapUI.transform.localScale = Vector3.one;
+        // cameraRigMapUI.transform.localScale = Vector3.one;
 
-        panelsUI.transform.SetParent(canvasSize.transform);
-        hpUI.transform.SetParent(hpUIParent.transform);
-        helpUI.transform.SetParent(helpUIParent.transform);
-        mapUI.transform.SetParent(mapUIParent.transform);
+        // panelsUI.transform.SetParent(canvasSize.transform);
+        // hpUI.transform.SetParent(hpUIParent.transform);
+        // helpUI.transform.SetParent(helpUIParent.transform);
+        // mapUI.transform.SetParent(mapUIParent.transform);
 
-        panelsUI.transform.localPosition = Vector3.zero;
-        hpUI.transform.localPosition = Vector3.zero;
-        helpUI.transform.localPosition = Vector3.zero;
-        mapUI.transform.localPosition = Vector3.zero;
+        // panelsUI.transform.localPosition = Vector3.zero;
+        // hpUI.transform.localPosition = Vector3.zero;
+        // helpUI.transform.localPosition = Vector3.zero;
+        // mapUI.transform.localPosition = Vector3.zero;
 
-        panelsUI.transform.localScale = Vector3.one;
-        hpUI.transform.localScale = Vector3.one;
-        helpUI.transform.localScale = Vector3.one;
-        mapUI.transform.localScale = Vector3.one;
+        // panelsUI.transform.localScale = Vector3.one;
+        // hpUI.transform.localScale = Vector3.one;
+        // helpUI.transform.localScale = Vector3.one;
+        // mapUI.transform.localScale = Vector3.one;
 
-        panelsUI.transform.localRotation = Quaternion.Euler(0, 0, 0);
-        hpUI.transform.localRotation = Quaternion.Euler(0, 0, 0);
-        helpUI.transform.localRotation = Quaternion.Euler(0, 0, 0);
-        mapUI.transform.localRotation = Quaternion.Euler(0, 0, 0);
+        // panelsUI.transform.localRotation = Quaternion.Euler(0, 0, 0);
+        // hpUI.transform.localRotation = Quaternion.Euler(0, 0, 0);
+        // helpUI.transform.localRotation = Quaternion.Euler(0, 0, 0);
+        // mapUI.transform.localRotation = Quaternion.Euler(0, 0, 0);
 
         hpUI.SetActive(false);
     }
@@ -737,7 +745,8 @@ public class UIManager : MonoBehaviour
             }
             else
             {
-                playerMapUI.transform.localScale = Vector3.one * 1.75f;
+                // playerMapUI.transform.localScale = Vector3.one * 1.75f;
+                cameraRigMapUI.transform.localScale = Vector3.one * 1.75f;
             }
         }
         else
@@ -752,7 +761,8 @@ public class UIManager : MonoBehaviour
             }
             else
             {
-                playerMapUI.transform.localScale = Vector3.one * 1.2f;
+                // playerMapUI.transform.localScale = Vector3.one * 1.2f;
+                cameraRigMapUI.transform.localScale = Vector3.one * 1.2f;
             }
         }
     }

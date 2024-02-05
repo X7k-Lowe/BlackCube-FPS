@@ -1215,24 +1215,39 @@ public class PlayerController : MonoBehaviourPunCallbacks
         Vector3 forwardDirection = viewPoint.forward;
         forwardDirection.y = 0; // 上下の向きを無視
         float distance;
+        float zoom = 0.3f;
+        if (AimMode == AimMode.HeadSet) zoom = 0.6f;
 
         if (onZoom)
         {
             RaycastHit hit;
-            if (Physics.SphereCast(startPos, 0.1f, forwardDirection, out hit, guns[selectedGun].adsZoom * 0.7f))
+            if (Physics.SphereCast(startPos, 4.0f, forwardDirection, out hit, guns[selectedGun].adsZoom * zoom))
             {
-                if (hit.collider.gameObject.tag == "Wall"
-                || hit.collider.gameObject.tag == "Player"
-                || hit.collider.gameObject.tag == "HealingCube")
+                if (hit.collider.gameObject.tag == "Player")
                 {
                     targetPos = hit.point - forwardDirection * 4;
                     isZoomingHit = true;
                     hitObjectNormal = new Vector3(hit.normal.x, 0, hit.normal.z); // 水平方向のみにする
                 }
+                else if (Physics.SphereCast(startPos, 0.5f, forwardDirection, out hit, guns[selectedGun].adsZoom * zoom))
+                {
+                    if (hit.collider.gameObject.tag == "Wall"
+                    || hit.collider.gameObject.tag == "HealingCube")
+                    {
+                        targetPos = hit.point - forwardDirection * 4;
+                        isZoomingHit = true;
+                        hitObjectNormal = new Vector3(hit.normal.x, 0, hit.normal.z); // 水平方向のみにする
+                    }
+                }
+                else
+                {
+                    targetPos = startPos + forwardDirection * guns[selectedGun].adsZoom * zoom;
+                    isZoomingHit = false;
+                }
             }
             else
             {
-                targetPos = startPos + forwardDirection * guns[selectedGun].adsZoom * 0.7f;
+                targetPos = startPos + forwardDirection * guns[selectedGun].adsZoom * zoom;
                 isZoomingHit = false;
             }
 

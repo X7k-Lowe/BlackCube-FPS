@@ -296,7 +296,7 @@ public class PlayerController : MonoBehaviourPunCallbacks
             myIconSpriteFacesCamera.useCamera = centerEyeAnchor;
             billboard.useCamera = centerEyeAnchor;
 
-            if (AimMode == AimMode.HeadSet)
+            if (AimMode == AimMode.HeadSet && photonView.IsMine)
             {
                 laserSight.gameObject.SetActive(false);
                 oculusGunsHolder.transform.SetParent(oVRCameraRig.transform);
@@ -323,12 +323,19 @@ public class PlayerController : MonoBehaviourPunCallbacks
             }
 
             // UIをプレイヤーキャンバスに配置
-            if (photonView.IsMine && !gameManager.isStart)
+            if (photonView.IsMine)
             {
-                uIManager.SetUIAsChildOfPlayerCanvas();
+                if (!gameManager.isStart)
+                {
+                    uIManager.SetUIAsChildOfPlayerCanvas();
+                    playerCanvas.enabled = false;
+                    uIManager.cameraRigCanvas.enabled = false;
+                }
+                else
+                {
+                    uIManager.hpUI.SetActive(true);
+                }
             }
-            playerCanvas.enabled = false;
-            uIManager.cameraRigCanvas.enabled = false;
         }
     }
     private void Start()
@@ -1572,6 +1579,7 @@ public class PlayerController : MonoBehaviourPunCallbacks
         Debug.Log("Death");
 
         gameManager.isDead = true;
+        laserSight.enabled = false;
 
         currentHP = 0;
 
@@ -1623,11 +1631,6 @@ public class PlayerController : MonoBehaviourPunCallbacks
     public void AllDestroyThisPlayerMapIcon(int actor)
     {
         Debug.Log("AllDestroyThisPlayerMapIcon");
-        // GameObject playerObject = uIManager.worldObjects.Find(x => x.GetPhotonView().Owner.ActorNumber == actor);
-        // if (playerObject != null)
-        // {
-        //     RemoveWorldObject(playerObject);
-        // }
 
         for (int i = uIManager.worldObjects.Count - 1; i >= 0; i--)
         {

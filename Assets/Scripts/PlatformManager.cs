@@ -6,6 +6,7 @@ public class PlatformManager : MonoBehaviour
 
     public string Platform { get; private set; }
     public bool IsEditor { get; private set; }
+    public bool IsStarted { get; set; } = false;
     private void Awake()
     {
         // 既にインスタンスが存在する場合は、新たに生成されたオブジェクトを破棄する

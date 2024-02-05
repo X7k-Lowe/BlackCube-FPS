@@ -220,6 +220,8 @@ public class PlayerController : MonoBehaviourPunCallbacks
     Vector3 prevTargetPos;
     float prevDistance;
 
+    bool isZoomingHit = false;
+    Vector3 hitObjectNormal;
 
     private void Awake()
     {
@@ -860,9 +862,19 @@ public class PlayerController : MonoBehaviourPunCallbacks
         }
         else if (platform == "Oculus")
         {
-            if (oVRCameraRig != null)
+            movement = ((oVRCameraRig.transform.forward * moveDir.z) + (oVRCameraRig.transform.right * moveDir.x)).normalized;
+
+            if (isZoomingHit)
             {
-                movement = ((oVRCameraRig.transform.forward * moveDir.z) + (oVRCameraRig.transform.right * moveDir.x)).normalized;
+                if (Vector3.Distance(this.transform.position, oVRCameraRig.transform.position) <= 2.0f)
+                {
+                    float velocityAlongNormal = Vector3.Dot(movement, hitObjectNormal);
+                    if (velocityAlongNormal < 0)
+                    {
+                        Vector3 normalComponent = hitObjectNormal * velocityAlongNormal;
+                        movement = movement - normalComponent;
+                    }
+                }
             }
         }
 
@@ -919,7 +931,10 @@ public class PlayerController : MonoBehaviourPunCallbacks
             }
         }
         // 地面についているか、その他ジャンプ中
-        else if (IsGround() || isJumping) rb.velocity = new Vector3(movement.x * activeMoveSpeed, rb.velocity.y, movement.z * activeMoveSpeed);
+        else if (IsGround() || isJumping)
+        {
+            rb.velocity = new Vector3(movement.x * activeMoveSpeed, rb.velocity.y, movement.z * activeMoveSpeed);
+        }
     }
 
     public void jump()
@@ -1197,18 +1212,21 @@ public class PlayerController : MonoBehaviourPunCallbacks
         if (onZoom)
         {
             RaycastHit hit;
-            if (Physics.SphereCast(startPos, 0.7f, forwardDirection, out hit, guns[selectedGun].adsZoom * 0.7f))
+            if (Physics.SphereCast(startPos, 0.1f, forwardDirection, out hit, guns[selectedGun].adsZoom * 0.7f))
             {
                 if (hit.collider.gameObject.tag == "Wall"
                 || hit.collider.gameObject.tag == "Player"
                 || hit.collider.gameObject.tag == "HealingCube")
                 {
                     targetPos = hit.point - forwardDirection * 4;
+                    isZoomingHit = true;
+                    hitObjectNormal = new Vector3(hit.normal.x, 0, hit.normal.z); // 水平方向のみにする
                 }
             }
             else
             {
                 targetPos = startPos + forwardDirection * guns[selectedGun].adsZoom * 0.7f;
+                isZoomingHit = false;
             }
 
             distance = Vector3.Distance(startPos, targetPos);
@@ -1217,6 +1235,7 @@ public class PlayerController : MonoBehaviourPunCallbacks
         {
             targetPos = viewPoint.position;
             distance = 0;
+            isZoomingHit = false;
         }
 
         if (Mathf.Abs(distance - prevDistance) > 0.1f)

@@ -378,6 +378,7 @@ public class PhotonManager : MonoBehaviourPunCallbacks // MonoBehaviourとPhoton
         }
         else if (PlatformManager.Instance.Platform == "Oculus")
         {
+
             oVRPointerEventData.worldSpaceRay = new Ray(laserPointer.StartPoint, (laserPointer.EndPoint - laserPointer.StartPoint).normalized);
             oVRRaycaster.Raycast(oVRPointerEventData, results);
         }
@@ -446,11 +447,11 @@ public class PhotonManager : MonoBehaviourPunCallbacks // MonoBehaviourとPhoton
             mainCamera.SetActive(false);
             eventSystemObjectOculus.SetActive(true);
             eventSystemObjectWindows.SetActive(false);
-            LobbyButtons.localPosition = new Vector3(
-                LobbyButtons.localPosition.x,
-                LobbyButtons.localPosition.y,
-                -200
-            );
+            // LobbyButtons.localPosition = new Vector3(
+            //     LobbyButtons.localPosition.x,
+            //     LobbyButtons.localPosition.y,
+            //     -200
+            // );
             aimModeButton.SetActive(true);
         }
         titleImage.SetActive(false);

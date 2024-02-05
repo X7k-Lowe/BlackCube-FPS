@@ -216,6 +216,7 @@ public class PlayerController : MonoBehaviourPunCallbacks
     bool isGetDown = false;
     bool isGetUp = false;
     Vector3 targetPos;
+    Vector3 prevTargetPos;
 
 
     private void Awake()
@@ -393,6 +394,7 @@ public class PlayerController : MonoBehaviourPunCallbacks
             {
                 // キャンバスの表示を切り替える
                 uIManager.playerCanvas.enabled = true;
+                uIManager.cameraRigCanvas.enabled = true;
             }
 
             billboard.gameObject.SetActive(false);
@@ -1187,6 +1189,9 @@ public class PlayerController : MonoBehaviourPunCallbacks
         }
     }
 
+    // oVRCameraRigのスケールを小さくしてズームするかを確かめる
+    // 値は 20 / guns[selectedGun].adsZoom
+
     void SetOVRCameraRigPos()
     {
         Vector3 startPos = viewPoint.position;
@@ -1203,11 +1208,20 @@ public class PlayerController : MonoBehaviourPunCallbacks
                 || hit.collider.gameObject.tag == "HealingCube")
                 {
                     targetPos = hit.point - forwardDirection * 3;
+                    // if (prevTargetPos != targetPos)
+                    // {
+                    //     zoomTime = 0.9f / guns[selectedGun].acsSpeed;
+                    //     isCameraMoving = true;
+                    // }
                 }
             }
             else targetPos = startPos + forwardDirection * guns[selectedGun].adsZoom * 0.5f;
+
         }
-        else targetPos = viewPoint.position;
+        else
+        {
+            targetPos = viewPoint.position;
+        }
 
         if (isCameraMoving) oVRCameraRig.transform.position = Vector3.Lerp(oVRCameraRig.transform.position, targetPos, guns[selectedGun].acsSpeed * Time.deltaTime);
         else oVRCameraRig.transform.position = targetPos;

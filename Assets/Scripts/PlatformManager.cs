@@ -5,7 +5,7 @@ public class PlatformManager : MonoBehaviour
     public static PlatformManager Instance { get; private set; }
 
     public string Platform { get; private set; }
-
+    public bool IsEditor { get; private set; }
     private void Awake()
     {
         // 既にインスタンスが存在する場合は、新たに生成されたオブジェクトを破棄する
@@ -52,10 +52,13 @@ public class PlatformManager : MonoBehaviour
 #if UNITY_EDITOR
         // Platform = "Windows"; // エディター上でWindowsとして模倣する場合
         Platform = "Oculus"; // エディター上でQuest2を模倣する場合
+        IsEditor = true;
 #elif UNITY_STANDALONE_WIN
         Platform = "Windows";
+        IsEditor = false;
 #elif UNITY_ANDROID
         Platform = "Oculus";
+        IsEditor = false;
 #else
         Platform = "Unknown";
 #endif

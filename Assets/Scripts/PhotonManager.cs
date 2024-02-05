@@ -279,6 +279,7 @@ public class PhotonManager : MonoBehaviourPunCallbacks // MonoBehaviourとPhoton
         {
             aimMode = AimMode.RightHand;
         }
+        audioSource.PlayOneShot(enterSE);
         UpdateAimModeHelpText();
     }
     private void OnDestroy()
@@ -447,11 +448,6 @@ public class PhotonManager : MonoBehaviourPunCallbacks // MonoBehaviourとPhoton
             mainCamera.SetActive(false);
             eventSystemObjectOculus.SetActive(true);
             eventSystemObjectWindows.SetActive(false);
-            // LobbyButtons.localPosition = new Vector3(
-            //     LobbyButtons.localPosition.x,
-            //     LobbyButtons.localPosition.y,
-            //     -200
-            // );
             aimModeButton.SetActive(true);
         }
         titleImage.SetActive(false);

@@ -55,6 +55,7 @@ public class PlayerController : MonoBehaviourPunCallbacks
     public GameObject helpUI;
     public GameObject mapUI;
     public GameObject panelsUI;
+    public GameObject playerCubeIcon;
 
 
     //入力された値格納
@@ -217,6 +218,7 @@ public class PlayerController : MonoBehaviourPunCallbacks
     bool isGetUp = false;
     Vector3 targetPos;
     Vector3 prevTargetPos;
+    float prevDistance;
 
 
     private void Awake()
@@ -398,6 +400,7 @@ public class PlayerController : MonoBehaviourPunCallbacks
             }
 
             billboard.gameObject.SetActive(false);
+            playerCubeIcon.SetActive(false);
         }
         else
         {
@@ -577,7 +580,7 @@ public class PlayerController : MonoBehaviourPunCallbacks
 
         // カーソルの表示判定関数
         UpdateCursorLock();
-        UpdateLaserPoint();
+        // UpdateLaserPoint();
 
         if (!gameManager.isStart)
         {
@@ -671,13 +674,7 @@ public class PlayerController : MonoBehaviourPunCallbacks
         }
         else if (platform == "Oculus")
         {
-            if (oVRCameraRig != null)
-            {
-                //カメラの位置調整
-                SetOVRCameraRigPos();
-            }
-            // // 回転
-            // centerEyeAnchor.transform.parent.parent.gameObject.transform.rotation = viewPoint.rotation;
+            UpdateLaserPoint();
         }
     }
 
@@ -1154,7 +1151,7 @@ public class PlayerController : MonoBehaviourPunCallbacks
             {
                 if (!isGetDown)
                 {
-                    zoomTime = 0.9f / guns[selectedGun].acsSpeed;
+                    zoomTime = 1.5f / guns[selectedGun].acsSpeed;
                     isGetDown = true;
                     isGetUp = false;
                     isCameraMoving = true;
@@ -1165,14 +1162,15 @@ public class PlayerController : MonoBehaviourPunCallbacks
                     isCameraMoving = false;
                 }
 
-                if (!isCameraMoving) laserSight.enabled = true;
+                // if (!isCameraMoving) 
+                laserSight.enabled = true;
                 onZoom = true;
             }
             else
             {
                 if (!isGetUp)
                 {
-                    zoomTime = 0.9f / guns[selectedGun].acsSpeed;
+                    zoomTime = 1.5f / guns[selectedGun].acsSpeed;
                     isGetUp = true;
                     isGetDown = false;
                     isCameraMoving = true;
@@ -1189,42 +1187,55 @@ public class PlayerController : MonoBehaviourPunCallbacks
         }
     }
 
-    // oVRCameraRigのスケールを小さくしてズームするかを確かめる
-    // 値は 20 / guns[selectedGun].adsZoom
-
     void SetOVRCameraRigPos()
     {
         Vector3 startPos = viewPoint.position;
         Vector3 forwardDirection = viewPoint.forward;
         forwardDirection.y = 0; // 上下の向きを無視
+        float distance;
 
         if (onZoom)
         {
             RaycastHit hit;
-            if (Physics.SphereCast(startPos, 0.7f, forwardDirection, out hit, guns[selectedGun].adsZoom * 0.5f))
+            if (Physics.SphereCast(startPos, 0.7f, forwardDirection, out hit, guns[selectedGun].adsZoom * 0.7f))
             {
                 if (hit.collider.gameObject.tag == "Wall"
                 || hit.collider.gameObject.tag == "Player"
                 || hit.collider.gameObject.tag == "HealingCube")
                 {
-                    targetPos = hit.point - forwardDirection * 3;
-                    // if (prevTargetPos != targetPos)
-                    // {
-                    //     zoomTime = 0.9f / guns[selectedGun].acsSpeed;
-                    //     isCameraMoving = true;
-                    // }
+                    targetPos = hit.point - forwardDirection * 4;
                 }
             }
-            else targetPos = startPos + forwardDirection * guns[selectedGun].adsZoom * 0.5f;
+            else
+            {
+                targetPos = startPos + forwardDirection * guns[selectedGun].adsZoom * 0.7f;
+            }
 
+            distance = Vector3.Distance(startPos, targetPos);
         }
         else
         {
             targetPos = viewPoint.position;
+            distance = 0;
         }
 
-        if (isCameraMoving) oVRCameraRig.transform.position = Vector3.Lerp(oVRCameraRig.transform.position, targetPos, guns[selectedGun].acsSpeed * Time.deltaTime);
-        else oVRCameraRig.transform.position = targetPos;
+        if (Mathf.Abs(distance - prevDistance) > 0.1f)
+        {
+            zoomTime = 1.5f / guns[selectedGun].acsSpeed;
+            isCameraMoving = true;
+        }
+
+        prevDistance = distance;
+
+        if (isCameraMoving)
+        {
+            float step = (targetPos - oVRCameraRig.transform.position).magnitude / (1.5f / guns[selectedGun].acsSpeed) * Time.deltaTime; // 0.3秒で移動を完了させる
+            oVRCameraRig.transform.position = Vector3.MoveTowards(oVRCameraRig.transform.position, targetPos, step);
+        }
+        else
+        {
+            oVRCameraRig.transform.position = targetPos;
+        }
     }
     public void Fire()
     {
@@ -1372,9 +1383,11 @@ public class PlayerController : MonoBehaviourPunCallbacks
 
     void UpdateLaserPoint()
     {
-        if (platform != "Oculus" || AimMode != AimMode.RightHand) return;
+        if (platform != "Oculus") return;
 
         SetOVRCameraRigPos();
+
+        if (AimMode != AimMode.RightHand) return;
 
         Ray ray = new Ray(rightController.transform.position, rightController.transform.forward);
 

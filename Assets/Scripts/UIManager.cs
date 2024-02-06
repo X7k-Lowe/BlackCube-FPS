@@ -23,6 +23,7 @@ public class UIManager : MonoBehaviour
     public RectTransform changeIcon;
 
     public GameObject aimIcon;
+    public RectTransform aimIconRect;
     public RectTransform changeAimIcon;
 
     // 死亡パネル
@@ -117,11 +118,19 @@ public class UIManager : MonoBehaviour
 
     // プレイヤーキャンバス
     public Canvas playerCanvas { get; set; }
-    public RectTransform playerCanvasSize { get; set; }
     public GameObject playerAimIconsUI { get; set; }
     public GameObject playerHpUI { get; set; }
     public GameObject playerHelpUI { get; set; }
     public GameObject playerMapUI { get; set; }
+    public GameObject playerPanelsUI { get; set; }
+
+    // カメラリグキャンバス
+    public Canvas cameraRigCanvas;
+    public GameObject cameraRigAimIconsUI;
+    public GameObject cameraRigHpUI;
+    public GameObject cameraRigHelpUI;
+    public GameObject cameraRigMapUI;
+    public GameObject cameraRigPanelsUI;
 
     public bool IsChanging { get; set; } = false;
 
@@ -134,7 +143,7 @@ public class UIManager : MonoBehaviour
     float reSpawnTime;
     float fiveSecond = 5f;
 
-    public AimMode ShotMode { get; set; }
+    public AimMode AimMode { get; set; }
 
     public AudioSource audioSource;
     void Awake()
@@ -221,41 +230,49 @@ public class UIManager : MonoBehaviour
     }
     public void SetUIAsChildOfPlayerCanvas()
     {
-        if (platform == "Oculus" && ShotMode == AimMode.RightHand)
+        if (AimMode == AimMode.RightHand)
         {
-            aimIconsUI.transform.SetParent(playerAimIconsUI.transform);
+            // aimIconsUI.transform.SetParent(playerAimIconsUI.transform);
+            aimIconsUI.transform.SetParent(cameraRigAimIconsUI.transform);
             aimIconsUI.transform.localPosition = Vector3.zero;
             aimIconsUI.transform.localScale = Vector3.one;
             aimIconsUI.transform.localRotation = Quaternion.Euler(0, 0, 0);
         }
-        else if (platform == "Oculus" && ShotMode == AimMode.HeadSet)
+        else if (AimMode == AimMode.HeadSet)
         {
-            aimIcon.transform.localPosition = new Vector3(aimIconsUI.transform.localPosition.x, aimIconsUI.transform.localPosition.y, 1000);
-            aimIcon.transform.localScale = Vector3.one * 2.0f;
+            aimIcon.transform.localPosition = new Vector3(aimIconsUI.transform.localPosition.x, aimIconsUI.transform.localPosition.y, 180);
+            // aimIcon.transform.localScale = Vector3.one * 1.5f;
+            aimIconRect.sizeDelta = new Vector2(150 * 1.4f, 150 * 1.4f);
+            changeAimIcon.sizeDelta = new Vector2(160 * 1.4f, 160 * 1.4f);
         }
 
-        Debug.Log("panelsUI : " + panelsUI);
-        Debug.Log("playerCanvasSize : " + playerCanvasSize);
-        panelsUI.transform.SetParent(playerCanvasSize.transform);
-        hpUI.transform.SetParent(playerHpUI.transform);
-        helpUI.transform.SetParent(playerHelpUI.transform);
-        mapUI.transform.SetParent(playerMapUI.transform);
+        // hpUI.transform.SetParent(playerHpUI.transform);
+        // helpUI.transform.SetParent(playerHelpUI.transform);
+        // mapUI.transform.SetParent(playerMapUI.transform);
+        // panelsUI.transform.SetParent(playerPanelsUI.transform);
 
-        panelsUI.transform.localPosition = Vector3.zero;
+        hpUI.transform.SetParent(cameraRigHpUI.transform);
+        helpUI.transform.SetParent(cameraRigHelpUI.transform);
+        mapUI.transform.SetParent(cameraRigMapUI.transform);
+        panelsUI.transform.SetParent(cameraRigPanelsUI.transform);
+
         hpUI.transform.localPosition = Vector3.zero;
         helpUI.transform.localPosition = Vector3.zero;
         mapUI.transform.localPosition = Vector3.zero;
+        panelsUI.transform.localPosition = Vector3.zero;
 
-        panelsUI.transform.localScale = Vector3.one;
         hpUI.transform.localScale = Vector3.one;
         helpUI.transform.localScale = Vector3.one;
         mapUI.transform.localScale = Vector3.one;
+        panelsUI.transform.localScale = Vector3.one;
 
-        panelsUI.transform.localRotation = Quaternion.Euler(0, 0, 0);
         hpUI.transform.localRotation = Quaternion.Euler(0, 0, 0);
         helpUI.transform.localRotation = Quaternion.Euler(0, 0, 0);
         mapUI.transform.localRotation = Quaternion.Euler(0, 0, 0);
-        playerMapUI.transform.localScale = Vector3.one * 1.75f;
+        panelsUI.transform.localRotation = Quaternion.Euler(0, 0, 0);
+        // playerMapUI.transform.localScale = Vector3.one * 1.75f;
+        cameraRigMapUI.transform.localScale = Vector3.one * 1.75f;
+        cameraRigMapUI.GetComponent<RectTransform>().pivot = new Vector2(1.5f, 1.5f);
 
         deathPanelBackground.enabled = false;
 
@@ -265,35 +282,35 @@ public class UIManager : MonoBehaviour
 
     public void ResetUICanvas()
     {
-        Debug.Log("ResetUICanvas");
-        if (platform == "Oculus" && ShotMode == AimMode.RightHand)
-        {
-            aimIconsUI.transform.SetParent(aimIconsParent.transform);
-            aimIconsUI.transform.localPosition = Vector3.zero;
-            aimIconsUI.transform.localScale = Vector3.one;
-            aimIconsUI.transform.localRotation = Quaternion.Euler(0, 0, 0);
-        }
-        playerMapUI.transform.localScale = Vector3.one;
+        // if (platform == "Oculus" && ShotMode == AimMode.RightHand)
+        // {
+        //     aimIconsUI.transform.SetParent(aimIconsParent.transform);
+        //     aimIconsUI.transform.localPosition = Vector3.zero;
+        //     aimIconsUI.transform.localScale = Vector3.one;
+        //     aimIconsUI.transform.localRotation = Quaternion.Euler(0, 0, 0);
+        // }
+        // // playerMapUI.transform.localScale = Vector3.one;
+        // cameraRigMapUI.transform.localScale = Vector3.one;
 
-        panelsUI.transform.SetParent(canvasSize.transform);
-        hpUI.transform.SetParent(hpUIParent.transform);
-        helpUI.transform.SetParent(helpUIParent.transform);
-        mapUI.transform.SetParent(mapUIParent.transform);
+        // panelsUI.transform.SetParent(canvasSize.transform);
+        // hpUI.transform.SetParent(hpUIParent.transform);
+        // helpUI.transform.SetParent(helpUIParent.transform);
+        // mapUI.transform.SetParent(mapUIParent.transform);
 
-        panelsUI.transform.localPosition = Vector3.zero;
-        hpUI.transform.localPosition = Vector3.zero;
-        helpUI.transform.localPosition = Vector3.zero;
-        mapUI.transform.localPosition = Vector3.zero;
+        // panelsUI.transform.localPosition = Vector3.zero;
+        // hpUI.transform.localPosition = Vector3.zero;
+        // helpUI.transform.localPosition = Vector3.zero;
+        // mapUI.transform.localPosition = Vector3.zero;
 
-        panelsUI.transform.localScale = Vector3.one;
-        hpUI.transform.localScale = Vector3.one;
-        helpUI.transform.localScale = Vector3.one;
-        mapUI.transform.localScale = Vector3.one;
+        // panelsUI.transform.localScale = Vector3.one;
+        // hpUI.transform.localScale = Vector3.one;
+        // helpUI.transform.localScale = Vector3.one;
+        // mapUI.transform.localScale = Vector3.one;
 
-        panelsUI.transform.localRotation = Quaternion.Euler(0, 0, 0);
-        hpUI.transform.localRotation = Quaternion.Euler(0, 0, 0);
-        helpUI.transform.localRotation = Quaternion.Euler(0, 0, 0);
-        mapUI.transform.localRotation = Quaternion.Euler(0, 0, 0);
+        // panelsUI.transform.localRotation = Quaternion.Euler(0, 0, 0);
+        // hpUI.transform.localRotation = Quaternion.Euler(0, 0, 0);
+        // helpUI.transform.localRotation = Quaternion.Euler(0, 0, 0);
+        // mapUI.transform.localRotation = Quaternion.Euler(0, 0, 0);
 
         hpUI.SetActive(false);
     }
@@ -305,6 +322,22 @@ public class UIManager : MonoBehaviour
         IsEnd = false;
         onCountdown = false;
     }
+    public void ZoomIn()
+    {
+        aimIcon.transform.localPosition = new Vector3(aimIconsUI.transform.localPosition.x, aimIconsUI.transform.localPosition.y, 2500);
+        // aimIcon.transform.localScale = Vector3.one * 2.5f;
+        aimIconRect.sizeDelta = new Vector2(150 * 2.8f, 150 * 2.8f);
+        changeAimIcon.sizeDelta = new Vector2(160 * 2.8f, 160 * 2.8f);
+    }
+
+    public void ZoomOut()
+    {
+        aimIcon.transform.localPosition = new Vector3(aimIconsUI.transform.localPosition.x, aimIconsUI.transform.localPosition.y, 500);
+        // aimIcon.transform.localScale = Vector3.one * 1.5f;
+        aimIconRect.sizeDelta = new Vector2(150 * 1.4f, 150 * 1.4f);
+        changeAimIcon.sizeDelta = new Vector2(160 * 1.4f, 160 * 1.4f);
+    }
+
 
     public IEnumerator PracticeModeSetStartText()
     {
@@ -359,7 +392,7 @@ public class UIManager : MonoBehaviour
     {
         gunChangeSlider.value = 0;
         gunChangeUI.SetActive(false);
-        if (platform == "Windows" || ShotMode == AimMode.HeadSet) aimIcon.SetActive(true);
+        if (platform == "Windows" || AimMode == AimMode.HeadSet) aimIcon.SetActive(true);
         changeAimIcon.gameObject.SetActive(false);
     }
 
@@ -471,7 +504,15 @@ public class UIManager : MonoBehaviour
 
     public void OculusCanvas()
     {
-        // canvas.planeDistance = f;
+        if (AimMode == AimMode.HeadSet)
+        {
+            aimIconRect.localRotation = Quaternion.Euler(-2.5f, 0, 0);
+            changeAimIcon.localRotation = Quaternion.Euler(-2.5f, 0, 0);
+        }
+        else if (AimMode == AimMode.RightHand)
+        {
+            cameraRigAimIconsUI.GetComponent<RectTransform>().localRotation = Quaternion.Euler(-2.5f, 0, 0);
+        }
         commandTexts[0].text = "[Yボタン]";
         commandTexts[1].text = "R [スティック]";
         commandTexts[2].text = "L [スティック]";
@@ -643,7 +684,7 @@ public class UIManager : MonoBehaviour
         {
             if (!IsChanging)
             {
-                if (platform == "Windows" || ShotMode == AimMode.HeadSet)
+                if (platform == "Windows" || AimMode == AimMode.HeadSet)
                 {
                     aimIcon.SetActive(true);
                 }
@@ -662,7 +703,7 @@ public class UIManager : MonoBehaviour
         {
             if (!IsChanging)
             {
-                if (platform == "Windows" || ShotMode == AimMode.HeadSet)
+                if (platform == "Windows" || AimMode == AimMode.HeadSet)
                 {
                     aimIcon.SetActive(true);
                 }
@@ -690,7 +731,7 @@ public class UIManager : MonoBehaviour
             {
                 if (!IsChanging)
                 {
-                    if (platform == "Windows" || ShotMode == AimMode.HeadSet)
+                    if (platform == "Windows" || AimMode == AimMode.HeadSet)
                     {
                         aimIcon.SetActive(true);
                     }
@@ -732,7 +773,8 @@ public class UIManager : MonoBehaviour
             }
             else
             {
-                playerMapUI.transform.localScale = Vector3.one * 1.75f;
+                // playerMapUI.transform.localScale = Vector3.one * 1.75f;
+                cameraRigMapUI.transform.localScale = Vector3.one * 1.75f;
             }
         }
         else
@@ -747,7 +789,8 @@ public class UIManager : MonoBehaviour
             }
             else
             {
-                playerMapUI.transform.localScale = Vector3.one * 1.2f;
+                // playerMapUI.transform.localScale = Vector3.one * 1.2f;
+                cameraRigMapUI.transform.localScale = Vector3.one * 1.2f;
             }
         }
     }

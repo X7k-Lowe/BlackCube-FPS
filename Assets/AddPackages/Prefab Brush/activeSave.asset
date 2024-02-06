@@ -14,17 +14,29 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   prefabList: []
   prefabData:
-  - prefab: {fileID: 9081904295549263799, guid: 3b375d58d3adfc14e9977acbec2bf703, type: 3}
+  - prefab: {fileID: 9081904295549263799, guid: 554d2c9153847724980b65a5549a4719, type: 3}
+    selected: 1
+  - prefab: {fileID: 9081904295549263799, guid: aff5cd16afc129f4e8d9368455da13ad, type: 3}
+    selected: 1
+  - prefab: {fileID: 9081904295549263799, guid: d90ffd80a87a4b349badfa530eeccc49, type: 3}
     selected: 1
   - prefab: {fileID: 9081904295549263799, guid: 8e1ebd17167829147a25c912e1717d5a, type: 3}
     selected: 1
-  - prefab: {fileID: 9081904295549263799, guid: c3ba409ff3a678f4cbdceac7fe6b0f79, type: 3}
-    selected: 1
   - prefab: {fileID: 9081904295549263799, guid: 73e9416a87eb1fa4b85bc683d7f8cc38, type: 3}
     selected: 1
-  - prefab: {fileID: 9081904295549263799, guid: 79e506b408357e749a9cb6cdab5465ab, type: 3}
-    selected: 1
   - prefab: {fileID: 9081904295549263799, guid: 039208217828b7d4593df094ba10d02b, type: 3}
+    selected: 1
+  - prefab: {fileID: 9081904295549263799, guid: 766b352bff10a67489c116fcfcf4ae07, type: 3}
+    selected: 1
+  - prefab: {fileID: 9081904295549263799, guid: 924fb7a0be1379044804fa2cc51dd323, type: 3}
+    selected: 1
+  - prefab: {fileID: 9081904295549263799, guid: 8a893e8c0c378024d9e3649013b1df3c, type: 3}
+    selected: 1
+  - prefab: {fileID: 9081904295549263799, guid: b045820bc31ea4a48a2b9a501a08ebbf, type: 3}
+    selected: 1
+  - prefab: {fileID: 9081904295549263799, guid: 8cb717b75d0fe6541a103fb2d35afb81, type: 3}
+    selected: 1
+  - prefab: {fileID: 9081904295549263799, guid: 0adf702461d794f48aec7954e7c3eb10, type: 3}
     selected: 1
   paintType: 0
   brushSize: 37
@@ -50,7 +62,7 @@ MonoBehaviour:
   requiredLayerMask: 0
   minRequiredSlope: 0
   maxRequiredSlope: 0
-  prefabOriginOffset: {x: 0, y: 20, z: 0}
+  prefabOriginOffset: {x: -45.7, y: 114.6, z: -22.9}
   prefabRotationOffset: {x: 0, y: 0, z: 0}
   draggingAction: 0
   rotationAxis: 0

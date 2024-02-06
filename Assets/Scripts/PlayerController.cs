@@ -45,15 +45,17 @@ public class PlayerController : MonoBehaviourPunCallbacks
     private Camera postProcessCamera;
     private Camera centerEyeAnchor;
     private GameObject oVRCameraRig;
+    private GameObject cameraRigPlayerRotatePoint;
 
     // プレイヤーキャンバスUI
     public Billboard billboard;
     public Canvas playerCanvas;
-    public RectTransform playerCanvasSize;
     public GameObject aimIconsUI;
     public GameObject hpUI;
     public GameObject helpUI;
     public GameObject mapUI;
+    public GameObject panelsUI;
+    public GameObject playerCubeIcon;
 
 
     //入力された値格納
@@ -215,7 +217,11 @@ public class PlayerController : MonoBehaviourPunCallbacks
     bool isGetDown = false;
     bool isGetUp = false;
     Vector3 targetPos;
+    Vector3 prevTargetPos;
+    float prevDistance;
 
+    bool isZoomingHit = false;
+    Vector3 hitObjectNormal;
 
     private void Awake()
     {
@@ -230,6 +236,7 @@ public class PlayerController : MonoBehaviourPunCallbacks
         gameManager.uIManager = uIManager;
 
         rightController = GameObject.Find("RightHandAnchor");
+        cameraRigPlayerRotatePoint = GameObject.Find("PlayerRotatePoint");
 
         laserSight = gameManager.laserSight;
 
@@ -243,11 +250,11 @@ public class PlayerController : MonoBehaviourPunCallbacks
         if (photonView.IsMine)
         {
             uIManager.playerCanvas = playerCanvas;
-            uIManager.playerCanvasSize = playerCanvasSize;
             uIManager.playerAimIconsUI = aimIconsUI;
             uIManager.playerHpUI = hpUI;
             uIManager.playerHelpUI = helpUI;
             uIManager.playerMapUI = mapUI;
+            uIManager.playerPanelsUI = panelsUI;
         }
 
 
@@ -268,7 +275,7 @@ public class PlayerController : MonoBehaviourPunCallbacks
     {
         if (platform == "Windows")
         {
-            mainCamera = Camera.main;
+            mainCamera = gameManager.mainCamera.GetComponent<Camera>();
             postProcessCamera = GameObject.Find("PostProcess").GetComponent<Camera>();
             mainCamera.gameObject.SetActive(true);
             gameManager.oVRCameraRig.SetActive(false);
@@ -289,7 +296,7 @@ public class PlayerController : MonoBehaviourPunCallbacks
             myIconSpriteFacesCamera.useCamera = centerEyeAnchor;
             billboard.useCamera = centerEyeAnchor;
 
-            if (AimMode == AimMode.HeadSet)
+            if (AimMode == AimMode.HeadSet && photonView.IsMine)
             {
                 laserSight.gameObject.SetActive(false);
                 oculusGunsHolder.transform.SetParent(oVRCameraRig.transform);
@@ -318,9 +325,17 @@ public class PlayerController : MonoBehaviourPunCallbacks
             // UIをプレイヤーキャンバスに配置
             if (photonView.IsMine)
             {
-                uIManager.SetUIAsChildOfPlayerCanvas();
+                if (!gameManager.isStart)
+                {
+                    uIManager.SetUIAsChildOfPlayerCanvas();
+                    playerCanvas.enabled = false;
+                    uIManager.cameraRigCanvas.enabled = false;
+                }
+                else
+                {
+                    uIManager.hpUI.SetActive(true);
+                }
             }
-            playerCanvas.enabled = false;
         }
     }
     private void Start()
@@ -337,7 +352,7 @@ public class PlayerController : MonoBehaviourPunCallbacks
         // Debug.Log(gameManager == null ? "gameManagerはnullです" : "gameManagerはnullではありません");
         AimMode = gameManager.AimMode;
 
-        uIManager.ShotMode = AimMode;
+        uIManager.AimMode = AimMode;
         if (platform == "Oculus" && AimMode == AimMode.RightHand)
         {
             uIManager.aimIcon.SetActive(false);
@@ -390,9 +405,11 @@ public class PlayerController : MonoBehaviourPunCallbacks
             {
                 // キャンバスの表示を切り替える
                 uIManager.playerCanvas.enabled = true;
+                uIManager.cameraRigCanvas.enabled = true;
             }
 
             billboard.gameObject.SetActive(false);
+            playerCubeIcon.SetActive(false);
         }
         else
         {
@@ -547,7 +564,6 @@ public class PlayerController : MonoBehaviourPunCallbacks
             return;
         }
 
-        // Debug.Log("EyeAreaCounter : " + EyeAreaCounter);
         CheckEyeAreaStatus();
         uIManager.UpdateMapIconPos(this.gameObject, myIcon);
 
@@ -573,7 +589,7 @@ public class PlayerController : MonoBehaviourPunCallbacks
 
         // カーソルの表示判定関数
         UpdateCursorLock();
-        UpdateLaserPoint();
+        // UpdateLaserPoint();
 
         if (!gameManager.isStart)
         {
@@ -667,13 +683,7 @@ public class PlayerController : MonoBehaviourPunCallbacks
         }
         else if (platform == "Oculus")
         {
-            if (oVRCameraRig != null)
-            {
-                //カメラの位置調整
-                SetOVRCameraRigPos();
-            }
-            // // 回転
-            // centerEyeAnchor.transform.parent.parent.gameObject.transform.rotation = viewPoint.rotation;
+            UpdateLaserPoint();
         }
     }
 
@@ -822,6 +832,8 @@ public class PlayerController : MonoBehaviourPunCallbacks
                     oculusGunsHolder.transform.rotation = Quaternion.Euler(headPitch, viewPoint.eulerAngles.y, viewPoint.eulerAngles.z);
                 }
             }
+
+            cameraRigPlayerRotatePoint.transform.rotation = Quaternion.Euler(0, viewPoint.eulerAngles.y, 0);
         }
     }
 
@@ -857,9 +869,19 @@ public class PlayerController : MonoBehaviourPunCallbacks
         }
         else if (platform == "Oculus")
         {
-            if (oVRCameraRig != null)
+            movement = ((oVRCameraRig.transform.forward * moveDir.z) + (oVRCameraRig.transform.right * moveDir.x)).normalized;
+
+            if (isZoomingHit)
             {
-                movement = ((oVRCameraRig.transform.forward * moveDir.z) + (oVRCameraRig.transform.right * moveDir.x)).normalized;
+                if (Vector3.Distance(this.transform.position, oVRCameraRig.transform.position) <= 2.0f)
+                {
+                    float velocityAlongNormal = Vector3.Dot(movement, hitObjectNormal);
+                    if (velocityAlongNormal < 0)
+                    {
+                        Vector3 normalComponent = hitObjectNormal * velocityAlongNormal;
+                        movement = movement - normalComponent;
+                    }
+                }
             }
         }
 
@@ -916,7 +938,10 @@ public class PlayerController : MonoBehaviourPunCallbacks
             }
         }
         // 地面についているか、その他ジャンプ中
-        else if (IsGround() || isJumping) rb.velocity = new Vector3(movement.x * activeMoveSpeed, rb.velocity.y, movement.z * activeMoveSpeed);
+        else if (IsGround() || isJumping)
+        {
+            rb.velocity = new Vector3(movement.x * activeMoveSpeed, rb.velocity.y, movement.z * activeMoveSpeed);
+        }
     }
 
     public void jump()
@@ -1143,11 +1168,12 @@ public class PlayerController : MonoBehaviourPunCallbacks
         }
         else if (platform == "Oculus")
         {
-            if (allowSwitchGuns && OVRInput.Get(OVRInput.Axis1D.PrimaryHandTrigger, OVRInput.Controller.RTouch) == 1) // 右中指
+            if (allowSwitchGuns && OVRInput.Get(OVRInput.Axis1D.PrimaryHandTrigger, OVRInput.Controller.RTouch) == 1
+            || Input.GetMouseButton(1)) // 右中指
             {
                 if (!isGetDown)
                 {
-                    zoomTime = 0.9f / guns[selectedGun].acsSpeed;
+                    zoomTime = 1.5f / guns[selectedGun].acsSpeed + 0.5f;
                     isGetDown = true;
                     isGetUp = false;
                     isCameraMoving = true;
@@ -1158,14 +1184,16 @@ public class PlayerController : MonoBehaviourPunCallbacks
                     isCameraMoving = false;
                 }
 
-                if (!isCameraMoving) laserSight.enabled = true;
+                if (AimMode == AimMode.HeadSet) uIManager.ZoomIn();
+                else if (AimMode == AimMode.RightHand) laserSight.enabled = true;
+
                 onZoom = true;
             }
             else
             {
                 if (!isGetUp)
                 {
-                    zoomTime = 0.9f / guns[selectedGun].acsSpeed;
+                    zoomTime = 1.5f / guns[selectedGun].acsSpeed + 0.5f;
                     isGetUp = true;
                     isGetDown = false;
                     isCameraMoving = true;
@@ -1176,7 +1204,9 @@ public class PlayerController : MonoBehaviourPunCallbacks
                     isCameraMoving = false;
                 }
 
-                laserSight.enabled = false;
+                if (AimMode == AimMode.HeadSet) uIManager.ZoomOut();
+                else if (AimMode == AimMode.RightHand) laserSight.enabled = false;
+
                 onZoom = false;
             }
         }
@@ -1187,25 +1217,75 @@ public class PlayerController : MonoBehaviourPunCallbacks
         Vector3 startPos = viewPoint.position;
         Vector3 forwardDirection = viewPoint.forward;
         forwardDirection.y = 0; // 上下の向きを無視
+        float distance;
+        float zoom = 0.1f;
+        float zoomScale = 5.0f;
+
+        if (AimMode == AimMode.HeadSet)
+        {
+            zoom = 0.3f;
+            zoomScale = 15.0f;
+        }
 
         if (onZoom)
         {
             RaycastHit hit;
-            if (Physics.SphereCast(startPos, 0.7f, forwardDirection, out hit, guns[selectedGun].adsZoom * 0.5f))
+            if (Physics.SphereCast(startPos, zoomScale, forwardDirection, out hit, guns[selectedGun].adsZoom * zoom))
             {
-                if (hit.collider.gameObject.tag == "Wall"
-                || hit.collider.gameObject.tag == "Player"
-                || hit.collider.gameObject.tag == "HealingCube")
+                if (hit.collider.gameObject.tag == "Player")
                 {
-                    targetPos = hit.point - forwardDirection * 3;
+                    targetPos = hit.point - forwardDirection * 4;
+                    isZoomingHit = true;
+                    hitObjectNormal = new Vector3(hit.normal.x, 0, hit.normal.z); // 水平方向のみにする
+                }
+                else if (Physics.SphereCast(startPos, 0.5f, forwardDirection, out hit, guns[selectedGun].adsZoom * zoom))
+                {
+                    if (hit.collider.gameObject.tag == "Wall"
+                    || hit.collider.gameObject.tag == "HealingCube")
+                    {
+                        targetPos = hit.point - forwardDirection * 4;
+                        isZoomingHit = true;
+                        hitObjectNormal = new Vector3(hit.normal.x, 0, hit.normal.z); // 水平方向のみにする
+                    }
+                }
+                else
+                {
+                    targetPos = startPos + forwardDirection * guns[selectedGun].adsZoom * zoom;
+                    isZoomingHit = false;
                 }
             }
-            else targetPos = startPos + forwardDirection * guns[selectedGun].adsZoom * 0.5f;
-        }
-        else targetPos = viewPoint.position;
+            else
+            {
+                targetPos = startPos + forwardDirection * guns[selectedGun].adsZoom * zoom;
+                isZoomingHit = false;
+            }
 
-        if (isCameraMoving) oVRCameraRig.transform.position = Vector3.Lerp(oVRCameraRig.transform.position, targetPos, guns[selectedGun].acsSpeed * Time.deltaTime);
-        else oVRCameraRig.transform.position = targetPos;
+            distance = Vector3.Distance(startPos, targetPos);
+        }
+        else
+        {
+            targetPos = viewPoint.position;
+            distance = 0;
+            isZoomingHit = false;
+        }
+
+        if (Mathf.Abs(distance - prevDistance) > 0.1f)
+        {
+            zoomTime = 1.5f / guns[selectedGun].acsSpeed + 0.5f;
+            isCameraMoving = true;
+        }
+
+        prevDistance = distance;
+
+        if (isCameraMoving)
+        {
+            float step = (targetPos - oVRCameraRig.transform.position).magnitude / (1.5f / guns[selectedGun].acsSpeed) * Time.deltaTime; // 0.3秒で移動を完了させる
+            oVRCameraRig.transform.position = Vector3.MoveTowards(oVRCameraRig.transform.position, targetPos, step);
+        }
+        else
+        {
+            oVRCameraRig.transform.position = targetPos;
+        }
     }
     public void Fire()
     {
@@ -1353,9 +1433,11 @@ public class PlayerController : MonoBehaviourPunCallbacks
 
     void UpdateLaserPoint()
     {
-        if (platform != "Oculus" || AimMode != AimMode.RightHand) return;
+        if (platform != "Oculus") return;
 
         SetOVRCameraRigPos();
+
+        if (AimMode != AimMode.RightHand) return;
 
         Ray ray = new Ray(rightController.transform.position, rightController.transform.forward);
 
@@ -1521,6 +1603,7 @@ public class PlayerController : MonoBehaviourPunCallbacks
         Debug.Log("Death");
 
         gameManager.isDead = true;
+        laserSight.enabled = false;
 
         currentHP = 0;
 
@@ -1572,11 +1655,6 @@ public class PlayerController : MonoBehaviourPunCallbacks
     public void AllDestroyThisPlayerMapIcon(int actor)
     {
         Debug.Log("AllDestroyThisPlayerMapIcon");
-        // GameObject playerObject = uIManager.worldObjects.Find(x => x.GetPhotonView().Owner.ActorNumber == actor);
-        // if (playerObject != null)
-        // {
-        //     RemoveWorldObject(playerObject);
-        // }
 
         for (int i = uIManager.worldObjects.Count - 1; i >= 0; i--)
         {

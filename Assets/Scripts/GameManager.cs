@@ -484,6 +484,11 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
             PhotonNetwork.DestroyAll();
         }
 
+        laserSight.gameObject.SetActive(false);
+        rightControllerRenderer.enabled = true;
+        leftControllerRenderer.enabled = true;
+        uIManager.mapUI.SetActive(false);
+
         uIManager.IsEnd = true;
         spawnManager.IsEnd = true;
 

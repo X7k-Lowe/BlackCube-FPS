@@ -178,6 +178,10 @@ public class PhotonManager : MonoBehaviourPunCallbacks // MonoBehaviourとPhoton
     string hoverUIParentName;
     string prevHoverUIParentName;
 
+    public GameObject vRCautionPanel;
+    public CanvasGroup vRCautionTextCanvasGroup;
+    public GameObject oKTextObject;
+
     void OpenBattleRoomHelp()
     {
         StartCoroutine(InputInterval(2.0f));
@@ -279,6 +283,7 @@ public class PhotonManager : MonoBehaviourPunCallbacks // MonoBehaviourとPhoton
         {
             aimMode = AimMode.RightHand;
         }
+        audioSource.PlayOneShot(enterSE);
         UpdateAimModeHelpText();
     }
     private void OnDestroy()
@@ -378,6 +383,7 @@ public class PhotonManager : MonoBehaviourPunCallbacks // MonoBehaviourとPhoton
         }
         else if (PlatformManager.Instance.Platform == "Oculus")
         {
+
             oVRPointerEventData.worldSpaceRay = new Ray(laserPointer.StartPoint, (laserPointer.EndPoint - laserPointer.StartPoint).normalized);
             oVRRaycaster.Raycast(oVRPointerEventData, results);
         }
@@ -446,11 +452,6 @@ public class PhotonManager : MonoBehaviourPunCallbacks // MonoBehaviourとPhoton
             mainCamera.SetActive(false);
             eventSystemObjectOculus.SetActive(true);
             eventSystemObjectWindows.SetActive(false);
-            LobbyButtons.localPosition = new Vector3(
-                LobbyButtons.localPosition.x,
-                LobbyButtons.localPosition.y,
-                -200
-            );
             aimModeButton.SetActive(true);
         }
         titleImage.SetActive(false);
@@ -612,7 +613,51 @@ public class PhotonManager : MonoBehaviourPunCallbacks // MonoBehaviourとPhoton
         // NickNameは参加中のユーザー名
         PhotonNetwork.NickName = Random.Range(0, 1000).ToString();
 
-        // 名前が入力済みか確認してUI更新
+        if (PlatformManager.Instance.Platform == "Windows")
+        {
+            // 名前が入力済みか確認してUI更新
+            ConfirmationName();
+        }
+        else if (PlatformManager.Instance.Platform == "Oculus")
+        {
+            if (PlatformManager.Instance.IsStarted)
+            {
+                ConfirmationName();
+            }
+            else
+            {
+                OpenVRCautionPanel();
+            }
+        }
+    }
+
+    void OpenVRCautionPanel()
+    {
+        StartCoroutine(OpenVRCautionPanelCoroutine());
+    }
+
+    IEnumerator OpenVRCautionPanelCoroutine()
+    {
+        CloseMenuUI();
+        vRCautionTextCanvasGroup.alpha = 0;
+        vRCautionPanel.SetActive(true);
+        yield return new WaitForSeconds(0.5f);
+        yield return FadeInMenuUI(vRCautionTextCanvasGroup, 2.0f);
+        yield return new WaitForSeconds(0.5f);
+        oKTextObject.SetActive(true);
+    }
+
+    public void CloseVRCautionPanelButton()
+    {
+        StartCoroutine(CloseVRCautionPanelCoroutine());
+    }
+
+    IEnumerator CloseVRCautionPanelCoroutine()
+    {
+        audioSource.PlayOneShot(nameInputSE);
+        yield return FadeOutMenuUI(vRCautionTextCanvasGroup, 1.0f);
+        vRCautionPanel.SetActive(false);
+        PlatformManager.Instance.IsStarted = true;
         ConfirmationName();
     }
     // ルームを作るボタン用の関数

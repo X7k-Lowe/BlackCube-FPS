@@ -3007,6 +3007,7 @@ MonoBehaviour:
   helpUI: {fileID: 4346536217446188153}
   mapUI: {fileID: 1264019756304893929}
   panelsUI: {fileID: 5631856021424947676}
+  playerCubeIcon: {fileID: 1686626301581465999}
   jumpForce: {x: 0, y: 8, z: 0}
   isJumping: 1
   jumpInterval: 0

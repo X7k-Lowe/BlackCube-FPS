@@ -352,7 +352,7 @@ public class PlayerController : MonoBehaviourPunCallbacks
         // Debug.Log(gameManager == null ? "gameManagerはnullです" : "gameManagerはnullではありません");
         AimMode = gameManager.AimMode;
 
-        uIManager.ShotMode = AimMode;
+        uIManager.AimMode = AimMode;
         if (platform == "Oculus" && AimMode == AimMode.RightHand)
         {
             uIManager.aimIcon.SetActive(false);

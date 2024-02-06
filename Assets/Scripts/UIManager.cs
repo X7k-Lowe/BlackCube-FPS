@@ -243,7 +243,7 @@ public class UIManager : MonoBehaviour
             aimIcon.transform.localPosition = new Vector3(aimIconsUI.transform.localPosition.x, aimIconsUI.transform.localPosition.y, 180);
             // aimIcon.transform.localScale = Vector3.one * 1.5f;
             aimIconRect.sizeDelta = new Vector2(150 * 1.4f, 150 * 1.4f);
-            changeAimIcon.sizeDelta = new Vector2(150 * 1.4f, 160 * 1.4f);
+            changeAimIcon.sizeDelta = new Vector2(160 * 1.4f, 160 * 1.4f);
         }
 
         // hpUI.transform.SetParent(playerHpUI.transform);
@@ -327,7 +327,7 @@ public class UIManager : MonoBehaviour
         aimIcon.transform.localPosition = new Vector3(aimIconsUI.transform.localPosition.x, aimIconsUI.transform.localPosition.y, 2500);
         // aimIcon.transform.localScale = Vector3.one * 2.5f;
         aimIconRect.sizeDelta = new Vector2(150 * 2.8f, 150 * 2.8f);
-        changeAimIcon.sizeDelta = new Vector2(150 * 2.8f, 160 * 2.8f);
+        changeAimIcon.sizeDelta = new Vector2(160 * 2.8f, 160 * 2.8f);
     }
 
     public void ZoomOut()
@@ -335,7 +335,7 @@ public class UIManager : MonoBehaviour
         aimIcon.transform.localPosition = new Vector3(aimIconsUI.transform.localPosition.x, aimIconsUI.transform.localPosition.y, 500);
         // aimIcon.transform.localScale = Vector3.one * 1.5f;
         aimIconRect.sizeDelta = new Vector2(150 * 1.4f, 150 * 1.4f);
-        changeAimIcon.sizeDelta = new Vector2(150 * 1.4f, 160 * 1.4f);
+        changeAimIcon.sizeDelta = new Vector2(160 * 1.4f, 160 * 1.4f);
     }
 
 

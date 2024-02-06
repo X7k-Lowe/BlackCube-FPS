@@ -184,7 +184,7 @@ public class PhotonManager : MonoBehaviourPunCallbacks // MonoBehaviourとPhoton
 
     void OpenBattleRoomHelp()
     {
-        StartCoroutine(InputInterval(2.0f));
+        StartCoroutine(InputInterval(1.2f));
         battleRoomHelpLine1.localScale = new Vector3(0, battleRoomHelpLine1.localScale.y, battleRoomHelpLine1.localScale.z);
         battleRoomHelpLine2.localScale = new Vector3(battleRoomHelpLine2.localScale.x, 0, battleRoomHelpLine2.localScale.z);
         battleRoomHelpLine3.localScale = new Vector3(0, battleRoomHelpLine3.localScale.y, battleRoomHelpLine3.localScale.z);
@@ -205,7 +205,7 @@ public class PhotonManager : MonoBehaviourPunCallbacks // MonoBehaviourとPhoton
     }
     void OpenAimModeHelp()
     {
-        StartCoroutine(InputInterval(2.0f));
+        StartCoroutine(InputInterval(1.2f));
         aimModeHelpLine1.localScale = new Vector3(0, aimModeHelpLine1.localScale.y, aimModeHelpLine1.localScale.z);
         aimModeHelpLine2.localScale = new Vector3(aimModeHelpLine2.localScale.x, 0, aimModeHelpLine2.localScale.z);
         aimModeHelpLine3.localScale = new Vector3(0, aimModeHelpLine3.localScale.y, aimModeHelpLine3.localScale.z);
@@ -425,7 +425,15 @@ public class PhotonManager : MonoBehaviourPunCallbacks // MonoBehaviourとPhoton
 
         foreach (GameObject blackImage in buttonsBlackImages)
         {
-            blackImage.SetActive(black != blackImage);
+            if (black == blackImage)
+            {
+                if (allowInput) blackImage.SetActive(false);
+                else blackImage.SetActive(true);
+            }
+            else
+            {
+                blackImage.SetActive(true);
+            }
         }
 
         previousBlack = black;
@@ -453,6 +461,12 @@ public class PhotonManager : MonoBehaviourPunCallbacks // MonoBehaviourとPhoton
             eventSystemObjectOculus.SetActive(true);
             eventSystemObjectWindows.SetActive(false);
             aimModeButton.SetActive(true);
+
+            if (PlatformManager.Instance.IsEditor)
+            {
+                eventSystemObjectOculus.SetActive(false);
+                eventSystemObjectWindows.SetActive(true);
+            }
         }
         titleImage.SetActive(false);
         titleText.gameObject.SetActive(false);

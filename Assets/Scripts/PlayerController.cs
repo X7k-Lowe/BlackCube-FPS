@@ -275,7 +275,7 @@ public class PlayerController : MonoBehaviourPunCallbacks
     {
         if (platform == "Windows")
         {
-            mainCamera = Camera.main;
+            mainCamera = gameManager.mainCamera.GetComponent<Camera>();
             postProcessCamera = GameObject.Find("PostProcess").GetComponent<Camera>();
             mainCamera.gameObject.SetActive(true);
             gameManager.oVRCameraRig.SetActive(false);
@@ -352,7 +352,7 @@ public class PlayerController : MonoBehaviourPunCallbacks
         // Debug.Log(gameManager == null ? "gameManagerはnullです" : "gameManagerはnullではありません");
         AimMode = gameManager.AimMode;
 
-        uIManager.ShotMode = AimMode;
+        uIManager.AimMode = AimMode;
         if (platform == "Oculus" && AimMode == AimMode.RightHand)
         {
             uIManager.aimIcon.SetActive(false);
@@ -1173,7 +1173,7 @@ public class PlayerController : MonoBehaviourPunCallbacks
             {
                 if (!isGetDown)
                 {
-                    zoomTime = 1.5f / guns[selectedGun].acsSpeed;
+                    zoomTime = 1.5f / guns[selectedGun].acsSpeed + 0.5f;
                     isGetDown = true;
                     isGetUp = false;
                     isCameraMoving = true;
@@ -1184,15 +1184,16 @@ public class PlayerController : MonoBehaviourPunCallbacks
                     isCameraMoving = false;
                 }
 
-                // if (!isCameraMoving) 
-                laserSight.enabled = true;
+                if (AimMode == AimMode.HeadSet) uIManager.ZoomIn();
+                else if (AimMode == AimMode.RightHand) laserSight.enabled = true;
+
                 onZoom = true;
             }
             else
             {
                 if (!isGetUp)
                 {
-                    zoomTime = 1.5f / guns[selectedGun].acsSpeed;
+                    zoomTime = 1.5f / guns[selectedGun].acsSpeed + 0.5f;
                     isGetUp = true;
                     isGetDown = false;
                     isCameraMoving = true;
@@ -1203,7 +1204,9 @@ public class PlayerController : MonoBehaviourPunCallbacks
                     isCameraMoving = false;
                 }
 
-                laserSight.enabled = false;
+                if (AimMode == AimMode.HeadSet) uIManager.ZoomOut();
+                else if (AimMode == AimMode.RightHand) laserSight.enabled = false;
+
                 onZoom = false;
             }
         }
@@ -1216,12 +1219,18 @@ public class PlayerController : MonoBehaviourPunCallbacks
         forwardDirection.y = 0; // 上下の向きを無視
         float distance;
         float zoom = 0.1f;
-        if (AimMode == AimMode.HeadSet) zoom = 0.3f;
+        float zoomScale = 5.0f;
+
+        if (AimMode == AimMode.HeadSet)
+        {
+            zoom = 0.3f;
+            zoomScale = 15.0f;
+        }
 
         if (onZoom)
         {
             RaycastHit hit;
-            if (Physics.SphereCast(startPos, 8.0f, forwardDirection, out hit, guns[selectedGun].adsZoom * zoom))
+            if (Physics.SphereCast(startPos, zoomScale, forwardDirection, out hit, guns[selectedGun].adsZoom * zoom))
             {
                 if (hit.collider.gameObject.tag == "Player")
                 {
@@ -1262,7 +1271,7 @@ public class PlayerController : MonoBehaviourPunCallbacks
 
         if (Mathf.Abs(distance - prevDistance) > 0.1f)
         {
-            zoomTime = 1.5f / guns[selectedGun].acsSpeed;
+            zoomTime = 1.5f / guns[selectedGun].acsSpeed + 0.5f;
             isCameraMoving = true;
         }
 

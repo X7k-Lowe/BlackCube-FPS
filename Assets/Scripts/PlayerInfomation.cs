@@ -14,6 +14,8 @@ public class PlayerInfomation : MonoBehaviour
     public GameObject crownIcon;
     public GameObject myIcon;
     public GameObject enemyIcon;
+    public GameObject line;
+    public GameObject otherLine;
 
     public void SetTopPlayer()
     {
@@ -24,11 +26,15 @@ public class PlayerInfomation : MonoBehaviour
         myIcon.SetActive(false);
         enemyIcon.SetActive(false);
         crownIcon.SetActive(true);
+        otherLine.SetActive(false);
+        line.SetActive(true);
     }
 
     public void SetOtherPlayer()
     {
         background.color = otherColor;
+        line.SetActive(false);
+        otherLine.SetActive(true);
     }
     public void SetPlayerDetails(string name, int kills, int death, GameState state)
     {

@@ -420,6 +420,8 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
 
         if (state == GameState.Ending)
         {
+            foreach (PlayerInfomation info in playerInfoList) info.SetOtherPlayer();
+
             PlayerInfomation topPlayer = playerInfoList.OrderByDescending(info => int.Parse(info.killsText.text)).First();
             topPlayer.SetTopPlayer();
             if (PhotonNetwork.LocalPlayer.NickName == topPlayer.playerNameText.text)

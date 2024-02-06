@@ -1215,13 +1215,13 @@ public class PlayerController : MonoBehaviourPunCallbacks
         Vector3 forwardDirection = viewPoint.forward;
         forwardDirection.y = 0; // 上下の向きを無視
         float distance;
-        float zoom = 0.3f;
-        if (AimMode == AimMode.HeadSet) zoom = 0.6f;
+        float zoom = 0.1f;
+        if (AimMode == AimMode.HeadSet) zoom = 0.3f;
 
         if (onZoom)
         {
             RaycastHit hit;
-            if (Physics.SphereCast(startPos, 4.0f, forwardDirection, out hit, guns[selectedGun].adsZoom * zoom))
+            if (Physics.SphereCast(startPos, 8.0f, forwardDirection, out hit, guns[selectedGun].adsZoom * zoom))
             {
                 if (hit.collider.gameObject.tag == "Player")
                 {

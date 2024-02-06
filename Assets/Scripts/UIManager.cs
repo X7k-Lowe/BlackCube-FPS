@@ -23,6 +23,7 @@ public class UIManager : MonoBehaviour
     public RectTransform changeIcon;
 
     public GameObject aimIcon;
+    public RectTransform aimIconRect;
     public RectTransform changeAimIcon;
 
     // 死亡パネル
@@ -239,8 +240,10 @@ public class UIManager : MonoBehaviour
         }
         else if (ShotMode == AimMode.HeadSet)
         {
-            aimIcon.transform.localPosition = new Vector3(aimIconsUI.transform.localPosition.x, aimIconsUI.transform.localPosition.y, 1500);
-            aimIcon.transform.localScale = Vector3.one * 2.0f;
+            aimIcon.transform.localPosition = new Vector3(aimIconsUI.transform.localPosition.x, aimIconsUI.transform.localPosition.y, 180);
+            // aimIcon.transform.localScale = Vector3.one * 1.5f;
+            aimIconRect.sizeDelta = new Vector2(150 * 1.5f, 150 * 1.5f);
+            changeAimIcon.sizeDelta = new Vector2(150 * 1.5f, 160 * 1.5f);
         }
 
         // hpUI.transform.SetParent(playerHpUI.transform);
@@ -319,6 +322,22 @@ public class UIManager : MonoBehaviour
         IsEnd = false;
         onCountdown = false;
     }
+    public void ZoomIn()
+    {
+        aimIcon.transform.localPosition = new Vector3(aimIconsUI.transform.localPosition.x, aimIconsUI.transform.localPosition.y, 2500);
+        // aimIcon.transform.localScale = Vector3.one * 2.5f;
+        aimIconRect.sizeDelta = new Vector2(150 * 2.5f, 150 * 2.5f);
+        changeAimIcon.sizeDelta = new Vector2(150 * 2.5f, 160 * 2.5f);
+    }
+
+    public void ZoomOut()
+    {
+        aimIcon.transform.localPosition = new Vector3(aimIconsUI.transform.localPosition.x, aimIconsUI.transform.localPosition.y, 500);
+        // aimIcon.transform.localScale = Vector3.one * 1.5f;
+        aimIconRect.sizeDelta = new Vector2(150 * 1.5f, 150 * 1.5f);
+        changeAimIcon.sizeDelta = new Vector2(150 * 1.5f, 160 * 1.5f);
+    }
+
 
     public IEnumerator PracticeModeSetStartText()
     {

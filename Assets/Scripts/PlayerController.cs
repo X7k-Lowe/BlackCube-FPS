@@ -1184,8 +1184,9 @@ public class PlayerController : MonoBehaviourPunCallbacks
                     isCameraMoving = false;
                 }
 
-                // if (!isCameraMoving) 
-                laserSight.enabled = true;
+                if (AimMode == AimMode.HeadSet) uIManager.ZoomIn();
+                else if (AimMode == AimMode.RightHand) laserSight.enabled = true;
+
                 onZoom = true;
             }
             else
@@ -1203,7 +1204,9 @@ public class PlayerController : MonoBehaviourPunCallbacks
                     isCameraMoving = false;
                 }
 
-                laserSight.enabled = false;
+                if (AimMode == AimMode.HeadSet) uIManager.ZoomOut();
+                else if (AimMode == AimMode.RightHand) laserSight.enabled = false;
+
                 onZoom = false;
             }
         }
@@ -1216,12 +1219,18 @@ public class PlayerController : MonoBehaviourPunCallbacks
         forwardDirection.y = 0; // 上下の向きを無視
         float distance;
         float zoom = 0.1f;
-        if (AimMode == AimMode.HeadSet) zoom = 0.3f;
+        float zoomScale = 5.0f;
+
+        if (AimMode == AimMode.HeadSet)
+        {
+            zoom = 0.3f;
+            zoomScale = 15.0f;
+        }
 
         if (onZoom)
         {
             RaycastHit hit;
-            if (Physics.SphereCast(startPos, 8.0f, forwardDirection, out hit, guns[selectedGun].adsZoom * zoom))
+            if (Physics.SphereCast(startPos, zoomScale, forwardDirection, out hit, guns[selectedGun].adsZoom * zoom))
             {
                 if (hit.collider.gameObject.tag == "Player")
                 {

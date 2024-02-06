@@ -506,8 +506,8 @@ public class UIManager : MonoBehaviour
     {
         if (AimMode == AimMode.HeadSet)
         {
-            aimIconRect.localRotation = Quaternion.Euler(-5f, 0, 0);
-            changeAimIcon.localRotation = Quaternion.Euler(-5f, 0, 0);
+            aimIconRect.localRotation = Quaternion.Euler(-2.5f, 0, 0);
+            changeAimIcon.localRotation = Quaternion.Euler(-2.5f, 0, 0);
         }
         else if (AimMode == AimMode.RightHand)
         {

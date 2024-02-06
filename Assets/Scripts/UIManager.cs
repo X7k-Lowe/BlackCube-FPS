@@ -239,7 +239,7 @@ public class UIManager : MonoBehaviour
         }
         else if (ShotMode == AimMode.HeadSet)
         {
-            aimIcon.transform.localPosition = new Vector3(aimIconsUI.transform.localPosition.x, aimIconsUI.transform.localPosition.y, 1000);
+            aimIcon.transform.localPosition = new Vector3(aimIconsUI.transform.localPosition.x, aimIconsUI.transform.localPosition.y, 1200);
             aimIcon.transform.localScale = Vector3.one * 2.0f;
         }
 
@@ -269,6 +269,7 @@ public class UIManager : MonoBehaviour
         panelsUI.transform.localRotation = Quaternion.Euler(0, 0, 0);
         // playerMapUI.transform.localScale = Vector3.one * 1.75f;
         cameraRigMapUI.transform.localScale = Vector3.one * 1.75f;
+        cameraRigMapUI.GetComponent<RectTransform>().pivot = new Vector2(1.5f, 1.5f);
 
         deathPanelBackground.enabled = false;
 

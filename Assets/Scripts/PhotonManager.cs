@@ -461,6 +461,12 @@ public class PhotonManager : MonoBehaviourPunCallbacks // MonoBehaviourとPhoton
             eventSystemObjectOculus.SetActive(true);
             eventSystemObjectWindows.SetActive(false);
             aimModeButton.SetActive(true);
+
+            if (PlatformManager.Instance.IsEditor)
+            {
+                eventSystemObjectOculus.SetActive(false);
+                eventSystemObjectWindows.SetActive(true);
+            }
         }
         titleImage.SetActive(false);
         titleText.gameObject.SetActive(false);

@@ -275,7 +275,7 @@ public class PlayerController : MonoBehaviourPunCallbacks
     {
         if (platform == "Windows")
         {
-            mainCamera = Camera.main;
+            mainCamera = gameManager.mainCamera.GetComponent<Camera>();
             postProcessCamera = GameObject.Find("PostProcess").GetComponent<Camera>();
             mainCamera.gameObject.SetActive(true);
             gameManager.oVRCameraRig.SetActive(false);
@@ -1173,7 +1173,7 @@ public class PlayerController : MonoBehaviourPunCallbacks
             {
                 if (!isGetDown)
                 {
-                    zoomTime = 1.5f / guns[selectedGun].acsSpeed;
+                    zoomTime = 1.5f / guns[selectedGun].acsSpeed + 0.5f;
                     isGetDown = true;
                     isGetUp = false;
                     isCameraMoving = true;
@@ -1193,7 +1193,7 @@ public class PlayerController : MonoBehaviourPunCallbacks
             {
                 if (!isGetUp)
                 {
-                    zoomTime = 1.5f / guns[selectedGun].acsSpeed;
+                    zoomTime = 1.5f / guns[selectedGun].acsSpeed + 0.5f;
                     isGetUp = true;
                     isGetDown = false;
                     isCameraMoving = true;
@@ -1271,7 +1271,7 @@ public class PlayerController : MonoBehaviourPunCallbacks
 
         if (Mathf.Abs(distance - prevDistance) > 0.1f)
         {
-            zoomTime = 1.5f / guns[selectedGun].acsSpeed;
+            zoomTime = 1.5f / guns[selectedGun].acsSpeed + 0.5f;
             isCameraMoving = true;
         }
 

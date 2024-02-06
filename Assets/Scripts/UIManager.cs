@@ -239,7 +239,7 @@ public class UIManager : MonoBehaviour
         }
         else if (ShotMode == AimMode.HeadSet)
         {
-            aimIcon.transform.localPosition = new Vector3(aimIconsUI.transform.localPosition.x, aimIconsUI.transform.localPosition.y, 1200);
+            aimIcon.transform.localPosition = new Vector3(aimIconsUI.transform.localPosition.x, aimIconsUI.transform.localPosition.y, 1500);
             aimIcon.transform.localScale = Vector3.one * 2.0f;
         }
 

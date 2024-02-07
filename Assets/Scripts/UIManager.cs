@@ -506,21 +506,21 @@ public class UIManager : MonoBehaviour
     {
         if (AimMode == AimMode.HeadSet)
         {
-            aimIconRect.localRotation = Quaternion.Euler(-2.5f, 0, 0);
-            changeAimIcon.localRotation = Quaternion.Euler(-2.5f, 0, 0);
+            aimIconRect.localRotation = Quaternion.Euler(-13f, 0, 0);
+            changeAimIcon.localRotation = Quaternion.Euler(-13f, 0, 0);
         }
         else if (AimMode == AimMode.RightHand)
         {
             cameraRigAimIconsUI.GetComponent<RectTransform>().localRotation = Quaternion.Euler(-2.5f, 0, 0);
         }
         commandTexts[0].text = "[Yボタン]";
-        commandTexts[1].text = "R [スティック]";
-        commandTexts[2].text = "L [スティック]";
-        commandTexts[3].text = "L [下トリガー]";
-        commandTexts[4].text = "L [上トリガー]";
-        commandTexts[5].text = "R [上トリガー]";
-        // if (ShotMode == AimMode.RightHand) actionTexts[5].text = "レーザーサイト";
-        commandTexts[6].text = "R [下トリガー]";
+        commandTexts[1].text = "Ｒ [スティック]";
+        commandTexts[2].text = "Ｌ [スティック]";
+        commandTexts[3].text = "Ｌ [下トリガー]";
+        commandTexts[4].text = "Ｌ [上トリガー]";
+        commandTexts[5].text = "Ｒ [上トリガー]";
+        if (AimMode == AimMode.RightHand) actionTexts[5].text = "レーザーサイト";
+        commandTexts[6].text = "Ｒ [下トリガー]";
         // if (ShotMode == AimMode.HeadSet) commandTexts[6].text = "sなし ";
         commandTexts[7].text = "[Aボタン]";
         commandTexts[8].text = "[Bボタン]";

@@ -19,6 +19,10 @@ public class Gun : MonoBehaviour
     [Tooltip("覗き込み時の速度")]
     public float acsSpeed;
 
+    // 当たり判定
+    [Tooltip("当たり判定")]
+    public float hitBox;
+
     // 弾痕オブジェクト
     public GameObject bulletImpact;
 

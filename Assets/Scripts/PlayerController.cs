@@ -1173,7 +1173,7 @@ public class PlayerController : MonoBehaviourPunCallbacks
             {
                 if (!isGetDown)
                 {
-                    zoomTime = 1.5f / guns[selectedGun].acsSpeed + 0.5f;
+                    zoomTime = 1.5f / guns[selectedGun].acsSpeed + 0.3f;
                     isGetDown = true;
                     isGetUp = false;
                     isCameraMoving = true;
@@ -1193,7 +1193,7 @@ public class PlayerController : MonoBehaviourPunCallbacks
             {
                 if (!isGetUp)
                 {
-                    zoomTime = 1.5f / guns[selectedGun].acsSpeed + 0.5f;
+                    zoomTime = 1.5f / guns[selectedGun].acsSpeed + 0.3f;
                     isGetUp = true;
                     isGetDown = false;
                     isCameraMoving = true;
@@ -1223,7 +1223,7 @@ public class PlayerController : MonoBehaviourPunCallbacks
 
         if (AimMode == AimMode.HeadSet)
         {
-            zoom = 0.3f;
+            zoom = 0.2f;
             zoomScale = 15.0f;
         }
 
@@ -1271,7 +1271,7 @@ public class PlayerController : MonoBehaviourPunCallbacks
 
         if (Mathf.Abs(distance - prevDistance) > 0.1f)
         {
-            zoomTime = 1.5f / guns[selectedGun].acsSpeed + 0.5f;
+            zoomTime = 1.5f / guns[selectedGun].acsSpeed + 0.3f;
             isCameraMoving = true;
         }
 
@@ -1329,46 +1329,9 @@ public class PlayerController : MonoBehaviourPunCallbacks
         if (platform == "Windows")
         {
             ray = mainCamera.ViewportPointToRay(new Vector2(0.5f, 0.5f));
-            if (Physics.Raycast(ray, out RaycastHit hit, Mathf.Infinity, ~eyeAreaLayer.value))
-            {
-                // 当たったのがプレイヤーならHit関数
-                if (hit.collider.gameObject.tag == "Player"
-                && hit.collider.gameObject != photonView.gameObject)
-                {
-                    // 血のエフェクト生成
-                    PhotonNetwork.Instantiate(hitEffect.name, hit.point, Quaternion.identity);
+            float hitBox = guns[selectedGun].hitBox * 0.2f; // 球体の半径を設定します。これが「太さ」になります。
 
-                    hit.collider.gameObject.GetPhotonView().RPC(
-                        "Hit",
-                        RpcTarget.All,
-                        guns[selectedGun].shootDamage,
-                        photonView.Owner.NickName,
-                        PhotonNetwork.LocalPlayer.ActorNumber);
-                }
-                else if (hit.collider.gameObject.tag != "HealingCube"
-                && hit.collider.gameObject != photonView.gameObject)
-                // 当たったのがプレイヤー以外なら弾痕を生成
-                {
-                    // 当たった場所に弾痕を生成
-                    GameObject bulletImpact = Instantiate(
-                        guns[selectedGun].bulletImpact,
-                        hit.point + (hit.normal * 0.02f),
-                        // hit.normal : ヒットしたコライダーの９０度, Vector3.up : Y軸を上とする
-                        Quaternion.LookRotation(hit.normal, Vector3.up));
-
-                    Destroy(bulletImpact, 10f);
-                }
-            }
-        }
-        else if (platform == "Oculus")
-        {
-            ray = new Ray();
-            float radius = 0.7f; // 球体の半径を設定します。これが「太さ」になります。
-
-            if (AimMode == AimMode.HeadSet) ray = new Ray(centerEyeAnchor.transform.position, centerEyeAnchor.transform.forward);
-            else if (AimMode == AimMode.RightHand) ray = new Ray(rightController.transform.position, rightController.transform.forward);
-
-            if (Physics.SphereCast(ray, radius, out RaycastHit hit, Mathf.Infinity, ~eyeAreaLayer.value))
+            if (Physics.SphereCast(ray, hitBox, out RaycastHit hit, Mathf.Infinity, ~eyeAreaLayer.value))
             {
                 // 当たったのがプレイヤーならHit関数
                 if (hit.collider.gameObject.tag == "Player"
@@ -1386,10 +1349,65 @@ public class PlayerController : MonoBehaviourPunCallbacks
                 }
                 else
                 {
-                    ray = new Ray();
-                    if (AimMode == AimMode.HeadSet) ray = centerEyeAnchor.ViewportPointToRay(new Vector2(0.5f, 0.5f));
-                    else if (AimMode == AimMode.RightHand) ray = new Ray(rightController.transform.position, rightController.transform.forward);
+                    if (Physics.Raycast(ray, out RaycastHit hit2, Mathf.Infinity, ~eyeAreaLayer.value))
+                    {
+                        // 当たったのがプレイヤーならHit関数
+                        if (hit2.collider.gameObject.tag == "Player"
+                        && hit2.collider.gameObject != photonView.gameObject)
+                        {
+                            // 血のエフェクト生成
+                            PhotonNetwork.Instantiate(hitEffect.name, hit2.point, Quaternion.identity);
 
+                            hit2.collider.gameObject.GetPhotonView().RPC(
+                                "Hit",
+                                RpcTarget.All,
+                                guns[selectedGun].shootDamage,
+                                photonView.Owner.NickName,
+                                PhotonNetwork.LocalPlayer.ActorNumber);
+                        }
+                        else if (hit2.collider.gameObject.tag != "HealingCube"
+                        && hit2.collider.gameObject != photonView.gameObject)
+                        // 当たったのがプレイヤー以外なら弾痕を生成
+                        {
+                            // 当たった場所に弾痕を生成
+                            GameObject bulletImpact = Instantiate(
+                                guns[selectedGun].bulletImpact,
+                                hit2.point + (hit2.normal * 0.02f),
+                                // hit.normal : ヒットしたコライダーの９０度, Vector3.up : Y軸を上とする
+                                Quaternion.LookRotation(hit2.normal, Vector3.up));
+
+                            Destroy(bulletImpact, 10f);
+                        }
+                    }
+                }
+            }
+        }
+        else if (platform == "Oculus")
+        {
+            ray = new Ray();
+            float hitBox = guns[selectedGun].hitBox; // 球体の半径を設定します。これが「太さ」になります。
+
+            if (AimMode == AimMode.HeadSet) ray = centerEyeAnchor.ViewportPointToRay(new Vector2(0.5f, 0.5f));
+            else if (AimMode == AimMode.RightHand) ray = new Ray(rightController.transform.position, rightController.transform.forward);
+
+            if (Physics.SphereCast(ray, hitBox, out RaycastHit hit, Mathf.Infinity, ~eyeAreaLayer.value))
+            {
+                // 当たったのがプレイヤーならHit関数
+                if (hit.collider.gameObject.tag == "Player"
+                && hit.collider.gameObject != photonView.gameObject)
+                {
+                    // 血のエフェクト生成
+                    PhotonNetwork.Instantiate(hitEffect.name, hit.point, Quaternion.identity);
+
+                    hit.collider.gameObject.GetPhotonView().RPC(
+                        "Hit",
+                        RpcTarget.All,
+                        guns[selectedGun].shootDamage,
+                        photonView.Owner.NickName,
+                        PhotonNetwork.LocalPlayer.ActorNumber);
+                }
+                else
+                {
                     if (Physics.Raycast(ray, out RaycastHit hit2, Mathf.Infinity, ~eyeAreaLayer.value))
                     {
                         // 当たったのがプレイヤーならHit関数

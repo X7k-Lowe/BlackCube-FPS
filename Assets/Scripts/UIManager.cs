@@ -556,13 +556,15 @@ public class UIManager : MonoBehaviour
         // マウス移動またはRスティックの操作
         bool isMouseMoving = platform == "Windows" && (Input.GetAxisRaw("Mouse X") != 0 || Input.GetAxisRaw("Mouse Y") != 0);
         UpdateHighlightTimer(ref isMouseMoving, ref mouseHighlightTimer);
-        bool isRStickTouching = platform == "Oculus" && OVRInput.Get(OVRInput.Touch.PrimaryThumbstick, OVRInput.Controller.RTouch);
+        // bool isRStickTouching = platform == "Oculus" && OVRInput.Get(OVRInput.Touch.PrimaryThumbstick, OVRInput.Controller.RTouch);
+        bool isRStickTouching = platform == "Oculus" && OVRInput.Get(OVRInput.Axis2D.PrimaryThumbstick, OVRInput.Controller.RTouch) != Vector2.zero;
         UpdateHelpRecordAndActionText(isMouseMoving || isRStickTouching, 0);
 
         // WASDキーまたは左スティックの操作
         bool isWASDKeyPressed = Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.D);
         bool isArrowKeyPressed = Input.GetKey(KeyCode.UpArrow) || Input.GetKey(KeyCode.DownArrow) || Input.GetKey(KeyCode.LeftArrow) || Input.GetKey(KeyCode.RightArrow);
-        bool isLStickTouching = OVRInput.Get(OVRInput.Touch.PrimaryThumbstick, OVRInput.Controller.LTouch);
+        // bool isLStickTouching = OVRInput.Get(OVRInput.Touch.PrimaryThumbstick, OVRInput.Controller.LTouch);
+        bool isLStickTouching = OVRInput.Get(OVRInput.Axis2D.PrimaryThumbstick, OVRInput.Controller.LTouch) != Vector2.zero;
         UpdateHelpRecordAndActionText(isWASDKeyPressed || isArrowKeyPressed || isLStickTouching, 1);
 
         // 左Shiftキーまたは中指の操作
@@ -572,25 +574,30 @@ public class UIManager : MonoBehaviour
         UpdateHelpRecordAndActionText(isLeftShiftKeyPressed || isMiddleFingerTriggered, 2);
 
         // Spaceキーまたは左人差し指の操作
-        UpdateHelpRecordAndActionText(Input.GetKey(KeyCode.Space) || OVRInput.Get(OVRInput.Touch.PrimaryIndexTrigger, OVRInput.Controller.LTouch), 3);
+        // UpdateHelpRecordAndActionText(Input.GetKey(KeyCode.Space) || OVRInput.Get(OVRInput.Touch.PrimaryIndexTrigger, OVRInput.Controller.LTouch), 3);
+        UpdateHelpRecordAndActionText(Input.GetKey(KeyCode.Space) || OVRInput.Get(OVRInput.Button.PrimaryIndexTrigger, OVRInput.Controller.LTouch), 3);
 
         // クリックまたは右人差し指の操作
-        UpdateHelpRecordAndActionText(Input.GetMouseButton(0) || OVRInput.Get(OVRInput.Touch.PrimaryIndexTrigger, OVRInput.Controller.RTouch), 4);
+        // UpdateHelpRecordAndActionText(Input.GetMouseButton(0) || OVRInput.Get(OVRInput.Touch.PrimaryIndexTrigger, OVRInput.Controller.RTouch), 4);
+        UpdateHelpRecordAndActionText(Input.GetMouseButton(0) || OVRInput.Get(OVRInput.Button.PrimaryIndexTrigger, OVRInput.Controller.RTouch), 4);
 
         // 右クリックの操作
         UpdateHelpRecordAndActionText(Input.GetMouseButton(1) || OVRInput.Get(OVRInput.Axis1D.PrimaryHandTrigger, OVRInput.Controller.RTouch) > 0, 5);
 
         // RキーまたはAボタンの操作
-        UpdateHelpRecordAndActionText(Input.GetKey(KeyCode.R) || OVRInput.Get(OVRInput.Touch.One, OVRInput.Controller.RTouch), 6);
+        // UpdateHelpRecordAndActionText(Input.GetKey(KeyCode.R) || OVRInput.Get(OVRInput.Touch.One, OVRInput.Controller.RTouch), 6);
+        UpdateHelpRecordAndActionText(Input.GetKey(KeyCode.R) || OVRInput.Get(OVRInput.Button.One, OVRInput.Controller.RTouch), 6);
 
         // ホイール回転またはBボタンの操作
         bool isMouseWheelRotating = platform == "Windows" && Input.GetAxis("Mouse ScrollWheel") != 0f;
         UpdateHighlightTimer(ref isMouseWheelRotating, ref wheelHighlightTimer);
-        bool isBButtonTouching = platform == "Oculus" && OVRInput.Get(OVRInput.Touch.Two, OVRInput.Controller.RTouch);
+        // bool isBButtonTouching = platform == "Oculus" && OVRInput.Get(OVRInput.Touch.Two, OVRInput.Controller.RTouch);
+        bool isBButtonTouching = platform == "Oculus" && OVRInput.Get(OVRInput.Button.Two, OVRInput.Controller.RTouch);
         UpdateHelpRecordAndActionText(isMouseWheelRotating || isBButtonTouching, 7);
 
         // TabキーまたはXボタンの操作
-        UpdateHelpRecordAndActionText(Input.GetKey(KeyCode.Tab) || OVRInput.Get(OVRInput.Touch.One, OVRInput.Controller.LTouch), 8);
+        // UpdateHelpRecordAndActionText(Input.GetKey(KeyCode.Tab) || OVRInput.Get(OVRInput.Touch.One, OVRInput.Controller.LTouch), 8);
+        UpdateHelpRecordAndActionText(Input.GetKey(KeyCode.Tab) || OVRInput.Get(OVRInput.Button.One, OVRInput.Controller.LTouch), 8);
     }
 
     void UpdateHelpRecordAndActionText(bool isOperationActive, int index)

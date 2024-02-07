@@ -1329,7 +1329,7 @@ public class PlayerController : MonoBehaviourPunCallbacks
         if (platform == "Windows")
         {
             ray = mainCamera.ViewportPointToRay(new Vector2(0.5f, 0.5f));
-            float hitBox = guns[selectedGun].hitBox * 0.25f; // 球体の半径を設定します。これが「太さ」になります。
+            float hitBox = guns[selectedGun].hitBox * 0.2f; // 球体の半径を設定します。これが「太さ」になります。
 
             if (Physics.SphereCast(ray, hitBox, out RaycastHit hit, Mathf.Infinity, ~eyeAreaLayer.value))
             {

@@ -513,7 +513,7 @@ public class UIManager : MonoBehaviour
         {
             cameraRigAimIconsUI.GetComponent<RectTransform>().localRotation = Quaternion.Euler(-2.5f, 0, 0);
         }
-        commandTexts[0].text = "[Yボタン]";
+        commandTexts[0].text = "[Ｙボタン]";
         commandTexts[1].text = "Ｒ [スティック]";
         commandTexts[2].text = "Ｌ [スティック]";
         commandTexts[3].text = "Ｌ [下トリガー]";
@@ -522,9 +522,9 @@ public class UIManager : MonoBehaviour
         if (AimMode == AimMode.RightHand) actionTexts[5].text = "レーザーサイト";
         commandTexts[6].text = "Ｒ [下トリガー]";
         // if (ShotMode == AimMode.HeadSet) commandTexts[6].text = "sなし ";
-        commandTexts[7].text = "[Aボタン]";
-        commandTexts[8].text = "[Bボタン]";
-        commandTexts[9].text = "[Xボタン]";
+        commandTexts[7].text = "[Ａボタン]";
+        commandTexts[8].text = "[Ｂボタン]";
+        commandTexts[9].text = "[Ｘボタン]";
         practiceText.text = "[≡ボタン]";
     }
 

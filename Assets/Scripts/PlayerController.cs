@@ -1223,7 +1223,7 @@ public class PlayerController : MonoBehaviourPunCallbacks
 
         if (AimMode == AimMode.HeadSet)
         {
-            zoom = 0.3f;
+            zoom = 0.2f;
             zoomScale = 15.0f;
         }
 

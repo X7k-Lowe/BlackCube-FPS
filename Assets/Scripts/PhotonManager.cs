@@ -182,10 +182,6 @@ public class PhotonManager : MonoBehaviourPunCallbacks // MonoBehaviourとPhoton
     public CanvasGroup vRCautionTextCanvasGroup;
     public GameObject oKTextObject;
 
-
-    private float serviceInterval = 5.0f;
-    private float lastServiceTime = 0.0f;
-
     void OpenBattleRoomHelp()
     {
         StartCoroutine(InputInterval(1.2f));
@@ -330,19 +326,6 @@ public class PhotonManager : MonoBehaviourPunCallbacks // MonoBehaviourとPhoton
 
     void Update()
     {
-        if (Time.time - lastServiceTime > serviceInterval)
-        {
-            // 既存のカスタムプロパティを取得
-            var props = PhotonNetwork.LocalPlayer.CustomProperties;
-
-            // 接続維持用のプロパティを追加または更新
-            props["KeepAlive"] = Time.time;
-
-            // カスタムプロパティを更新
-            PhotonNetwork.LocalPlayer.SetCustomProperties(props);
-
-            lastServiceTime = Time.time;
-        }
 
         HandleHoverUI();
         if (PlatformManager.Instance.Platform == "Oculus" && buttons.activeSelf)

@@ -570,7 +570,7 @@ public class UIManager : MonoBehaviour
         // 左Shiftキーまたは中指の操作
         bool isLeftShiftKeyPressed = platform == "Windows" && Input.GetKey(KeyCode.LeftShift);
         bool isMiddleFingerTriggered = platform == "Oculus" && (OVRInput.Get(OVRInput.Axis1D.PrimaryHandTrigger, OVRInput.Controller.LTouch) > 0);
-        UpdateHighlightTimer(ref isMiddleFingerTriggered, ref triggerHighlightTimer);
+        // UpdateHighlightTimer(ref isMiddleFingerTriggered, ref triggerHighlightTimer);
         UpdateHelpRecordAndActionText(isLeftShiftKeyPressed || isMiddleFingerTriggered, 2);
 
         // Spaceキーまたは左人差し指の操作

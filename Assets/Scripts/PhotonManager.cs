@@ -8,6 +8,8 @@ using UnityEngine.EventSystems;
 using System.Linq;
 using DG.Tweening;
 using System.Collections;
+using ExitGames.Client.Photon; // IOnEventCallback
+
 public class PhotonManager : MonoBehaviourPunCallbacks // MonoBehaviourとPhotonの機能の継承
 {
     // static 変数
@@ -182,9 +184,8 @@ public class PhotonManager : MonoBehaviourPunCallbacks // MonoBehaviourとPhoton
     public CanvasGroup vRCautionTextCanvasGroup;
     public GameObject oKTextObject;
 
-
-    private float serviceInterval = 5.0f;
-    private float lastServiceTime = 0.0f;
+    // private float lastServiceTime;
+    // public float serviceInterval = 5.0f; // 5秒ごとにイベントを送信
 
     void OpenBattleRoomHelp()
     {
@@ -330,19 +331,26 @@ public class PhotonManager : MonoBehaviourPunCallbacks // MonoBehaviourとPhoton
 
     void Update()
     {
-        if (Time.time - lastServiceTime > serviceInterval)
-        {
-            // 既存のカスタムプロパティを取得
-            var props = PhotonNetwork.LocalPlayer.CustomProperties;
 
-            // 接続維持用のプロパティを追加または更新
-            props["KeepAlive"] = Time.time;
+        // if (PhotonNetwork.IsConnected && Time.time - lastServiceTime > serviceInterval)
+        // {
+        //     // イベントコードを定義（ここでは1を使用）
+        //     byte eventCode = 1;
+        //     // イベントデータ（ここではnullを使用）
+        //     object content = null;
+        //     // イベントの送信オプション
+        //     RaiseEventOptions raiseEventOptions = new RaiseEventOptions { Receivers = ReceiverGroup.All };
+        //     // 信頼性のある送信方法を選択
+        //     SendOptions sendOptions = new SendOptions { Reliability = true };
 
-            // カスタムプロパティを更新
-            PhotonNetwork.LocalPlayer.SetCustomProperties(props);
+        //     // イベントを送信
+        //     PhotonNetwork.RaiseEvent(eventCode, content, raiseEventOptions, sendOptions);
 
-            lastServiceTime = Time.time;
-        }
+        //     // 最後のサービス時刻を更新
+        //     lastServiceTime = Time.time;
+
+        //     Debug.Log("KeepAlive event sent");
+        // }
 
         HandleHoverUI();
         if (PlatformManager.Instance.Platform == "Oculus" && buttons.activeSelf)
@@ -380,8 +388,6 @@ public class PhotonManager : MonoBehaviourPunCallbacks // MonoBehaviourとPhoton
                 SetKillNumber();
             }
         }
-
-        Debug.Log("allowInput:" + allowInput);
     }
     IEnumerator TitleFlushText()
     {

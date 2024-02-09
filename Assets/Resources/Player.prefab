@@ -1468,10 +1468,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   shootInterval: 0.1
-  shootDamage: 4
+  shootDamage: 3
   adsZoom: 35
   acsSpeed: 7
-  hitBox: 1.1
+  hitBox: 0.9
   bulletImpact: {fileID: 1196932036670882321, guid: 3699c3ca125f6374db6fd1b9d9db6da4, type: 3}
   shotSound: {fileID: 1353426497222700492}
   playerPhotonView: {fileID: 0}
@@ -1669,10 +1669,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   shootInterval: 0.1
-  shootDamage: 4
+  shootDamage: 3
   adsZoom: 35
   acsSpeed: 7
-  hitBox: 1.1
+  hitBox: 0.9
   bulletImpact: {fileID: 1196932036670882321, guid: 3699c3ca125f6374db6fd1b9d9db6da4, type: 3}
   shotSound: {fileID: 1353426497222700492}
   playerPhotonView: {fileID: 0}
@@ -1870,10 +1870,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   shootInterval: 1.8
-  shootDamage: 35
+  shootDamage: 38
   adsZoom: 30
   acsSpeed: 5
-  hitBox: 0.9
+  hitBox: 1.1
   bulletImpact: {fileID: 3177904212827585999, guid: dcee71f537192c443a97a2e41a02becc, type: 3}
   shotSound: {fileID: 931520334966209967}
   playerPhotonView: {fileID: 0}
@@ -3222,10 +3222,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   shootInterval: 1.8
-  shootDamage: 35
+  shootDamage: 38
   adsZoom: 30
   acsSpeed: 5
-  hitBox: 0.9
+  hitBox: 1.1
   bulletImpact: {fileID: 3177904212827585999, guid: dcee71f537192c443a97a2e41a02becc, type: 3}
   shotSound: {fileID: 931520334966209967}
   playerPhotonView: {fileID: 0}

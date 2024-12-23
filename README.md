@@ -9,7 +9,6 @@ BlackCube-FPS は、PC と VR に対応したオンライン対戦型のファ�
 - 完成したゲームのデモ動画は、[こちらの YouTube リンク](https://youtu.be/Vjga6WCmYYA)からご覧いただけます。
 
 * ## ソースコードの場所
-*
 * プロジェクトのソースコードは、[`Assets/Scripts`](https://github.com/X7k-Lowe/BlackCube-FPS/tree/main/Assets/Scripts) ディレクトリに格納されています。このディレクトリには、ゲームのロジックや UI 管理などのスクリプトが含まれています。
 
 ## 特徴

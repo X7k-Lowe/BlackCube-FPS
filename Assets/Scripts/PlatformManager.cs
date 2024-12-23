@@ -1,12 +1,14 @@
 using UnityEngine;
+using Photon.Pun;
 
-public class PlatformManager : MonoBehaviour
+public class PlatformManager : MonoBehaviourPunCallbacks
 {
     public static PlatformManager Instance { get; private set; }
 
     public string Platform { get; private set; }
     public bool IsEditor { get; private set; }
     public bool IsStarted { get; set; } = false;
+
     private void Awake()
     {
         // 既にインスタンスが存在する場合は、新たに生成されたオブジェクトを破棄する
@@ -26,10 +28,7 @@ public class PlatformManager : MonoBehaviour
 
     void Update()
     {
-        // if (Platform == "Windows")
-        // {
-        //     WindowAspectRatio();
-        // }
+
     }
 
     public void WindowAspectRatio()
